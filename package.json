@@ -8,11 +8,18 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "gen-usedisha-catalog": "openapi-generator-cli generate -i http://localhost:3000/docs/usedishaservice-json -g typescript-axios -o src/sdk/usedisha-service"
   },
   "dependencies": {
     "@mantine/core": "^8.0.0",
+    "@mantine/form": "^8.3.14",
     "@mantine/hooks": "^8.0.0",
+    "@mantine/modals": "^8.3.14",
+    "@mantine/notifications": "^8.3.14",
+    "@tanstack/react-query": "^5.90.20",
+    "axios": "^1.13.5",
+    "iconsax-react": "^0.0.8",
     "next": "^15.1.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

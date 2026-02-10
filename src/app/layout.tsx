@@ -4,12 +4,14 @@ import {
   mantineHtmlProps,
   MantineProvider,
 } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { Providers } from "./providers";
 import theme from "./theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Next App Mantine Tailwind Template",
-  description: "Next App Mantine Tailwind Template",
+  title: "Shopkeeper POS Store",
+  description: "Online store inventory for Shopkeeper POS businesses",
 };
 
 export default function RootLayout({
@@ -23,7 +25,10 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body className="antialiased">
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <Providers>{children}</Providers>
+        </MantineProvider>
       </body>
     </html>
   );

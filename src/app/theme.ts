@@ -10,18 +10,23 @@ const theme = createTheme({
   },
   colors: {
     brand: [
-      "#e6f7ff",
-      "#bae7ff",
-      "#91d5ff",
-      "#69c0ff",
-      "#40a9ff",
-      "#1890ff",
-      "#096dd9",
-      "#0050b3",
-      "#003a8c",
-      "#002766",
+      "#f8fafc",
+      "#e2e8f0",
+      "#cbd5e1",
+      "#94a3b8",
+      "#64748b",
+      "#475569",
+      "#334155",
+      "#1e293b",
+      "#0f172a",
+      "#020617",
     ],
   },
+  fontFamily: 'Georgia, "Times New Roman", Times, serif',
+  headings: {
+    fontFamily: 'Georgia, "Times New Roman", Times, serif',
+  },
+  defaultRadius: "sm",
 });
 
 export default theme;
