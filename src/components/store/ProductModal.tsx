@@ -37,7 +37,7 @@ export function ProductModal({
   const [qty, setQty] = useState(1);
 
   const product = data?.data;
-  const inStock = product?.availability === "in_stock" && (product?.stockQuantity ?? 0) > 0;
+  // Stock availability ignored – add to cart always allowed
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -87,10 +87,8 @@ export function ProductModal({
               {formatPrice(product.amount)}
             </Text>
             {product.stockQuantity != null && (
-              <Badge
-                className={inStock ? "bg-stone-600 text-white font-normal" : "bg-red-800/90 text-white font-normal"}
-              >
-                {inStock ? `In stock (${product.stockQuantity})` : "Out of stock"}
+              <Badge className="bg-stone-600 text-white font-normal">
+                In stock ({product.stockQuantity})
               </Badge>
             )}
           </Group>
@@ -108,7 +106,7 @@ export function ProductModal({
             <NumberInput
               label="Quantity"
               min={1}
-              max={inStock ? product.stockQuantity : 1}
+              max={Math.max(1, product?.stockQuantity ?? 999)}
               value={qty}
               onChange={(v) => setQty(Number(v) || 1)}
               w={100}
@@ -117,7 +115,6 @@ export function ProductModal({
             <Button
               className="bg-stone-700 hover:bg-stone-800 text-white font-normal rounded"
               onClick={handleAddToCart}
-              disabled={!inStock}
             >
               Add to cart
             </Button>
