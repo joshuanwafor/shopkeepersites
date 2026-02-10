@@ -17,7 +17,7 @@ export function ProductCard({
   product: StorefrontProductResponse;
   onView: () => void;
 }) {
-  const inStock = product.availability === "in_stock";
+  const inStock = true;
 
   return (
     <Card
