@@ -18,7 +18,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@mantine/form": ["./node_modules/@mantine/form/lib/index.d.ts"]
     },
     "target": "ES2017"
   },

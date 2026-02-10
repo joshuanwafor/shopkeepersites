@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import {
   Container,
@@ -23,7 +23,7 @@ import {
   useOrderStatus,
 } from "@/hooks/use-storefront";
 
-export default function OrdersPage() {
+function OrdersContent() {
   const searchParams = useSearchParams();
   const success = searchParams.get("success") === "1";
   const intentRef = searchParams.get("intentReference");
@@ -130,5 +130,19 @@ export default function OrdersPage() {
         </Button>
       </Container>
     </StoreLayout>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <Suspense fallback={
+      <StoreLayout storeName="Store">
+        <Container size="sm" className="max-w-xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
+          <Skeleton height={200} className="rounded" />
+        </Container>
+      </StoreLayout>
+    }>
+      <OrdersContent />
+    </Suspense>
   );
 }
