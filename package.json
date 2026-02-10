@@ -12,9 +12,9 @@
     "gen-usedisha-catalog": "openapi-generator-cli generate -i http://localhost:3000/docs/usedishaservice-json -g typescript-axios -o src/sdk/usedisha-service"
   },
   "dependencies": {
-    "@mantine/core": "^8.0.0",
+    "@mantine/core": "^8.3.14",
     "@mantine/form": "^8.3.14",
-    "@mantine/hooks": "^8.0.0",
+    "@mantine/hooks": "^8.3.14",
     "@mantine/modals": "^8.3.14",
     "@mantine/notifications": "^8.3.14",
     "@tanstack/react-query": "^5.90.20",
