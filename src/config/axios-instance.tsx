@@ -1,8 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { InfoCircle } from 'iconsax-react';
 import {
-  Box,
-  Button,
   Center,
   Group,
   Paper,
@@ -14,7 +12,7 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { TOKEN_KEY } from './constants';
+import { TOKEN_KEY } from '@/config/constants';
 
 // Global navigation function that can be set from the app
 let globalNavigate: ((path: string) => void) | null = null;

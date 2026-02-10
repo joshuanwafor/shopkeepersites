@@ -1,6 +1,6 @@
 "use client";
 
-import { AppShellHeader, Group, Text, UnstyledButton, Badge } from "@mantine/core";
+import { AppShellHeader, Text, UnstyledButton, Badge } from "@mantine/core";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingCart } from "iconsax-react";
