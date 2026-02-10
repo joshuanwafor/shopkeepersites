@@ -3,8 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  AppShell,
-  AppShellMain,
   Container,
   Title,
   Text,
@@ -18,7 +16,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useSearchParams } from "next/navigation";
-import { StoreHeader } from "@/components/store/StoreHeader";
+import { StoreLayout } from "@/components/store/StoreLayout";
 import {
   useStorefrontProfile,
   useOrdersByEmail,
@@ -48,93 +46,89 @@ export default function OrdersPage() {
   const orderStatus = statusRes?.data;
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
-      <StoreHeader storeName={profile?.name ?? "Store"} />
-      <AppShellMain>
-        <Container size="sm">
-          <Title order={2} mb="lg">
-            View your orders
-          </Title>
-          <Text c="dimmed" mb="md">
-            Enter the email address you used when placing the order.
-          </Text>
+    <StoreLayout storeName={profile?.name ?? "Store"}>
+      <Container size="sm" className="max-w-xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
+        <Title order={2} className="store-classic-title text-2xl text-stone-800 mb-2">
+          View your orders
+        </Title>
+        <Text className="text-stone-600 mb-6">
+          Enter the email address you used when placing the order.
+        </Text>
 
-          {success && (
-            <Alert color="green" title="Payment successful" mb="md">
-              Thank you. Your order has been received. You can check its status below by entering your email.
-            </Alert>
-          )}
+        {success && (
+          <Alert color="green" title="Payment successful" className="mb-6 rounded border border-green-200 bg-green-50/50">
+            Thank you. Your order has been received. You can check its status below by entering your email.
+          </Alert>
+        )}
 
-          <form
-            onSubmit={form.onSubmit((values) => setSubmittedEmail(values.email))}
-          >
-            <Group align="flex-end" mb="md">
-              <TextInput
-                placeholder="you@example.com"
-                style={{ flex: 1 }}
-                {...form.getInputProps("email")}
-              />
-              <Button type="submit" color="brand">
-                Find orders
-              </Button>
-            </Group>
-          </form>
+        <form onSubmit={form.onSubmit((values) => setSubmittedEmail(values.email))}>
+          <Group align="flex-end" mb="md" wrap="nowrap" gap="sm">
+            <TextInput
+              placeholder="you@example.com"
+              className="flex-1 min-w-0"
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("email")}
+            />
+            <Button type="submit" className="bg-stone-700 hover:bg-stone-800 text-white font-normal rounded shrink-0">
+              Find orders
+            </Button>
+          </Group>
+        </form>
 
-          {intentRef && statusLoading && <Skeleton height={80} />}
-          {intentRef && orderStatus && (
-            <Paper p="md" withBorder mb="md">
-              <Text size="sm" c="dimmed">
-                Order reference: {orderStatus.intentReference}
-              </Text>
-              <Text fw={600}>Status: {orderStatus.status}</Text>
-              <Text size="sm">Payment: {orderStatus.paymentStatus}</Text>
-              {orderStatus.orderReference && (
-                <Text size="sm">Order ref: {orderStatus.orderReference}</Text>
-              )}
-            </Paper>
-          )}
+        {intentRef && statusLoading && <Skeleton height={80} className="rounded mb-4" />}
+        {intentRef && orderStatus && (
+          <Paper p="md" className="store-classic-paper mb-6">
+            <Text size="sm" className="text-stone-500">
+              Order reference: {orderStatus.intentReference}
+            </Text>
+            <Text fw={600} className="text-stone-800 mt-1">Status: {orderStatus.status}</Text>
+            <Text size="sm" className="text-stone-600">Payment: {orderStatus.paymentStatus}</Text>
+            {orderStatus.orderReference && (
+              <Text size="sm" className="text-stone-600">Order ref: {orderStatus.orderReference}</Text>
+            )}
+          </Paper>
+        )}
 
-          {submittedEmail && ordersLoading && (
-            <Stack gap="xs">
-              <Skeleton height={60} />
-              <Skeleton height={60} />
-            </Stack>
-          )}
+        {submittedEmail && ordersLoading && (
+          <Stack gap="sm">
+            <Skeleton height={60} className="rounded" />
+            <Skeleton height={60} className="rounded" />
+          </Stack>
+        )}
 
-          {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length === 0 && (
-            <Paper p="md" withBorder>
-              <Text c="dimmed">No orders found for this email.</Text>
-            </Paper>
-          )}
+        {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length === 0 && (
+          <Paper p="md" className="store-classic-paper">
+            <Text className="text-stone-500">No orders found for this email.</Text>
+          </Paper>
+        )}
 
-          {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length > 0 && (
-            <Stack gap="sm">
-              <Text fw={600}>Orders</Text>
-              {orders.map((order: { id?: string; reference?: string; status?: string; createdAt?: string }, i: number) => (
-                <Paper key={order.id ?? i} p="md" withBorder>
-                  <Group justify="space-between">
-                    <div>
-                      <Text size="sm" c="dimmed">
-                        {order.reference ?? order.id ?? `Order #${i + 1}`}
-                      </Text>
-                      <Text fw={500}>{order.status ?? "—"}</Text>
-                    </div>
-                    {order.createdAt && (
-                      <Text size="xs" c="dimmed">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </Text>
-                    )}
-                  </Group>
-                </Paper>
-              ))}
-            </Stack>
-          )}
+        {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length > 0 && (
+          <Stack gap="sm">
+            <Text fw={600} className="text-stone-800 font-serif">Orders</Text>
+            {orders.map((order: { id?: string; reference?: string; status?: string; createdAt?: string }, i: number) => (
+              <Paper key={order.id ?? i} p="md" className="store-classic-paper">
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" className="text-stone-500">
+                      {order.reference ?? order.id ?? `Order #${i + 1}`}
+                    </Text>
+                    <Text fw={500} className="text-stone-800">{order.status ?? "—"}</Text>
+                  </div>
+                  {order.createdAt && (
+                    <Text size="xs" className="text-stone-500">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </Text>
+                  )}
+                </Group>
+              </Paper>
+            ))}
+          </Stack>
+        )}
 
-          <Button component={Link} href="/" variant="light" mt="xl">
-            Back to store
-          </Button>
-        </Container>
-      </AppShellMain>
-    </AppShell>
+        <Button component={Link} href="/" variant="outline" className="mt-10 border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
+          Back to store
+        </Button>
+      </Container>
+    </StoreLayout>
   );
 }

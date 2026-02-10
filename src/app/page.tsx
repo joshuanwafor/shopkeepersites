@@ -9,19 +9,32 @@ import {
   Skeleton,
   Center,
   Alert,
+  Group,
+  UnstyledButton,
+  Paper,
 } from "@mantine/core";
 import { StoreLayout } from "@/components/store/StoreLayout";
+import { StorefrontInfo } from "@/components/store/StorefrontInfo";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ProductModal } from "@/components/store/ProductModal";
-import { useStorefrontProfile, useStorefrontProducts } from "@/hooks/use-storefront";
+import {
+  useStorefrontProfile,
+  useStorefrontProducts,
+  useStorefrontCategories,
+} from "@/hooks/use-storefront";
 
 export default function Home() {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
   const { data: profileRes, isLoading: profileLoading, error: profileError } = useStorefrontProfile();
-  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts();
+  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts({
+    category: categoryFilter,
+  });
+  const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
   const products = productsRes?.data?.products ?? [];
+  const categories = categoriesRes?.data?.categories ?? [];
 
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
@@ -31,19 +44,7 @@ export default function Home() {
         )}
         {profile && !profileLoading && (
           <header className="mb-10 pb-8 border-b border-stone-200">
-            {profile.caption && (
-              <Text size="sm" className="text-stone-500 mb-1 uppercase tracking-wider">
-                {profile.caption}
-              </Text>
-            )}
-            <Title order={1} className="store-classic-title text-3xl sm:text-4xl text-stone-800">
-              {profile.name}
-            </Title>
-            {profile.description && (
-              <Text mt="sm" className="text-stone-600 max-w-2xl text-base leading-relaxed">
-                {profile.description}
-              </Text>
-            )}
+            <StorefrontInfo profile={profile} />
           </header>
         )}
         {(profileError || productsError) && (
@@ -51,9 +52,38 @@ export default function Home() {
             Could not load store. Please try again later.
           </Alert>
         )}
-        <Title order={2} className="store-classic-title text-xl text-stone-800 mb-6">
-          Products
-        </Title>
+
+        <Group justify="space-between" align="flex-end" mb="6" wrap="wrap" gap="sm">
+          <Title order={2} className="store-classic-title text-xl text-stone-800">
+            Products
+          </Title>
+          {categories.length > 0 && (
+            <Group gap={4} wrap="wrap">
+              <UnstyledButton
+                onClick={() => setCategoryFilter(undefined)}
+                className={`
+                  px-3 py-1.5 rounded text-sm font-medium transition-colors
+                  ${categoryFilter == null ? "bg-stone-200 text-stone-800" : "text-stone-600 hover:bg-stone-100"}
+                `}
+              >
+                All
+              </UnstyledButton>
+              {categories.map((cat) => (
+                <UnstyledButton
+                  key={cat.id}
+                  onClick={() => setCategoryFilter(categoryFilter === cat.id ? undefined : cat.id)}
+                  className={`
+                    px-3 py-1.5 rounded text-sm font-medium transition-colors
+                    ${categoryFilter === cat.id ? "bg-stone-200 text-stone-800" : "text-stone-600 hover:bg-stone-100"}
+                  `}
+                >
+                  {cat.name}
+                </UnstyledButton>
+              ))}
+            </Group>
+          )}
+        </Group>
+
         {productsLoading && (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
             {[1, 2, 3, 4].map((i) => (
@@ -62,9 +92,13 @@ export default function Home() {
           </SimpleGrid>
         )}
         {!productsLoading && products.length === 0 && (
-          <Center py="xl">
-            <Text className="text-stone-500">No products available yet.</Text>
-          </Center>
+          <Paper p="xl" className="store-classic-paper">
+            <Center py="md">
+              <Text className="text-stone-500">
+                {categoryFilter ? "No products in this category." : "No products available yet."}
+              </Text>
+            </Center>
+          </Paper>
         )}
         {!productsLoading && products.length > 0 && (
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">

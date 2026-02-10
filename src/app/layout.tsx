@@ -24,7 +24,7 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body className="antialiased">
+      <body className="antialiased bg-stone-50 text-stone-800">
         <MantineProvider theme={theme}>
           <Notifications />
           <Providers>{children}</Providers>

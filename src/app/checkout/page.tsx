@@ -1,10 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import {
-  AppShell,
-  AppShellMain,
   Container,
   Title,
   Text,
@@ -16,13 +13,13 @@ import {
   Image,
   Box,
   Alert,
-  Loader,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { StoreHeader } from "@/components/store/StoreHeader";
+import { StoreLayout } from "@/components/store/StoreLayout";
 import { useCart } from "@/context/cart-context";
 import {
   useStorefrontProfile,
+  useStorefrontDomain,
   useValidateCart,
   useInitiateCheckout,
   buildCheckoutPayload,
@@ -36,6 +33,7 @@ function formatPrice(amount: number) {
 }
 
 export default function CheckoutPage() {
+  const domain = useStorefrontDomain();
   const { data: profileRes } = useStorefrontProfile();
   const profile = profileRes?.data;
   const { items, totalItems, totalAmount } = useCart();
@@ -56,6 +54,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = form.onSubmit(async (values) => {
     const payload = buildCheckoutPayload(
+      domain,
       items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
       {
         email: values.email,
@@ -90,117 +89,116 @@ export default function CheckoutPage() {
 
   if (totalItems === 0 && !validateCart.isPending && !initiateCheckout.isPending) {
     return (
-      <AppShell header={{ height: 60 }} padding="md">
-        <StoreHeader storeName={profile?.name ?? "Store"} />
-        <AppShellMain>
-          <Container size="sm">
-            <Alert title="Your cart is empty">
-              <Text mb="md">Add items from the store to checkout.</Text>
-              <Button component={Link} href="/" variant="light">
-                Continue shopping
-              </Button>
-            </Alert>
-          </Container>
-        </AppShellMain>
-      </AppShell>
+      <StoreLayout storeName={profile?.name ?? "Store"}>
+        <Container size="sm" className="max-w-xl mx-auto py-12 px-4">
+          <Paper className="store-classic-paper p-6">
+            <Title order={2} className="store-classic-title text-stone-800 mb-2">
+              Your cart is empty
+            </Title>
+            <Text className="text-stone-600 mb-6">Add items from the store to checkout.</Text>
+            <Button component={Link} href="/" variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100">
+              Continue shopping
+            </Button>
+          </Paper>
+        </Container>
+      </StoreLayout>
     );
   }
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
-      <StoreHeader storeName={profile?.name ?? "Store"} />
-      <AppShellMain>
-        <Container size="md">
-          <Title order={2} mb="lg">
-            Checkout
-          </Title>
-          <form onSubmit={handleSubmit}>
-            <Stack gap="lg">
-              <Paper p="md" withBorder>
-                <Text fw={600} mb="sm">
-                  Cart ({totalItems} items)
-                </Text>
-                <Stack gap="xs">
-                  {items.map((item) => (
-                    <Group key={item.product.id} justify="space-between">
-                      <Group gap="sm">
-                        <Box w={48} h={48} bg="gray.2">
-                          {item.product.primaryPhoto ? (
-                            <Image
-                              src={item.product.primaryPhoto}
-                              alt=""
-                              w={48}
-                              h={48}
-                              fit="cover"
-                            />
-                          ) : null}
-                        </Box>
-                        <div>
-                          <Text size="sm" fw={500}>
-                            {item.product.name}
-                          </Text>
-                          <Text size="xs" c="dimmed">
-                            {item.quantity} × {formatPrice(item.product.amount)}
-                          </Text>
-                        </div>
-                      </Group>
-                      <Text fw={600}>
-                        {formatPrice(item.product.amount * item.quantity)}
-                      </Text>
+    <StoreLayout storeName={profile?.name ?? "Store"}>
+      <Container size="md" className="max-w-2xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
+        <Title order={2} className="store-classic-title text-2xl text-stone-800 mb-8">
+          Checkout
+        </Title>
+        <form onSubmit={handleSubmit}>
+          <Stack gap="lg">
+            <Paper p="md" className="store-classic-paper">
+              <Text fw={600} className="text-stone-800 font-serif mb-4">
+                Cart ({totalItems} items)
+              </Text>
+              <Stack gap="sm">
+                {items.map((item) => (
+                  <Group key={item.product.id} justify="space-between" className="py-2 border-b border-stone-100 last:border-0">
+                    <Group gap="sm">
+                      <Box w={48} h={48} className="bg-stone-100 rounded overflow-hidden shrink-0">
+                        {item.product.primaryPhoto ? (
+                          <Image src={item.product.primaryPhoto} alt="" w={48} h={48} fit="cover" />
+                        ) : null}
+                      </Box>
+                      <div>
+                        <Text size="sm" fw={500} className="text-stone-800">
+                          {item.product.name}
+                        </Text>
+                        <Text size="xs" className="text-stone-500">
+                          {item.quantity} × {formatPrice(item.product.amount)}
+                        </Text>
+                      </div>
                     </Group>
-                  ))}
-                </Stack>
-                <Group justify="flex-end" mt="md">
-                  <Text fw={700}>Total: {formatPrice(totalAmount)}</Text>
-                </Group>
-              </Paper>
-
-              <Text fw={600}>Contact details</Text>
-              <TextInput
-                label="Email"
-                placeholder="you@example.com"
-                required
-                {...form.getInputProps("email")}
-              />
-              <TextInput
-                label="Full name"
-                placeholder="Your name"
-                {...form.getInputProps("fullName")}
-              />
-              <TextInput
-                label="Phone"
-                placeholder="+234..."
-                {...form.getInputProps("phone")}
-              />
-              <TextInput
-                label="Order notes (optional)"
-                placeholder="Delivery instructions, etc."
-                {...form.getInputProps("customerNotes")}
-              />
-
-              {(validateCart.isError || initiateCheckout.isError) && (
-                <Alert color="red">
-                  Something went wrong. Please check your details and try again.
-                </Alert>
-              )}
-
-              <Group>
-                <Button
-                  type="submit"
-                  color="brand"
-                  loading={validateCart.isPending || initiateCheckout.isPending}
-                  loaderProps={{ type: "dots" }}
-                >
-                  Proceed to payment
-                </Button>
-                <Button component={Link} href="/" variant="default">
-                  Continue shopping
-                </Button>
+                    <Text fw={600} className="text-stone-700">
+                      {formatPrice(item.product.amount * item.quantity)}
+                    </Text>
+                  </Group>
+                ))}
+              </Stack>
+              <Group justify="flex-end" mt="md" className="pt-4 border-t border-stone-200">
+                <Text fw={700} className="text-stone-800">
+                  Total: {formatPrice(totalAmount)}
+                </Text>
               </Group>
-            </Stack>
-          </form>
-        </Container>
-      </AppShellMain>
-    </AppShell>
+            </Paper>
+
+            <Text fw={600} className="text-stone-800 font-serif">
+              Contact details
+            </Text>
+            <TextInput
+              label="Email"
+              placeholder="you@example.com"
+              required
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("email")}
+            />
+            <TextInput
+              label="Full name"
+              placeholder="Your name"
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("fullName")}
+            />
+            <TextInput
+              label="Phone"
+              placeholder="+234..."
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("phone")}
+            />
+            <TextInput
+              label="Order notes (optional)"
+              placeholder="Delivery instructions, etc."
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("customerNotes")}
+            />
+
+            {(validateCart.isError || initiateCheckout.isError) && (
+              <Alert color="red" className="rounded border border-red-200">
+                Something went wrong. Please check your details and try again.
+              </Alert>
+            )}
+
+            <Group className="pt-2">
+              <Button
+                type="submit"
+                className="bg-stone-700 hover:bg-stone-800 text-white font-normal rounded"
+                loading={validateCart.isPending || initiateCheckout.isPending}
+                loaderProps={{ type: "dots" }}
+              >
+                Proceed to payment
+              </Button>
+              <Button component={Link} href="/" variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
+                Continue shopping
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Container>
+    </StoreLayout>
   );
 }

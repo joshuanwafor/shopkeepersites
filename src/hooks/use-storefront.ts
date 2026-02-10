@@ -1,10 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   usedishaClientApi,
   usedishaCheckoutApi,
-  STOREFRONT_DOMAIN,
 } from "@/config/sdk";
 import type {
   UsedishaInitiateCheckoutDto,
@@ -13,9 +13,45 @@ import type {
   UsedishaCheckoutCustomerDto,
 } from "@/sdk/usedisha-service";
 
-const domain = STOREFRONT_DOMAIN;
+const FALLBACK_DOMAIN =
+  process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "demo";
+const SITES_BASE_DOMAIN =
+  process.env.NEXT_PUBLIC_SITES_BASE_DOMAIN ?? "sitesdomain.ng";
+
+/**
+ * Resolves the storefront domain key from the current URL:
+ * - Query: ?domain=key
+ * - Subdomain: [key].sitesdomain.ng
+ * - Fallback: NEXT_PUBLIC_STOREFRONT_DOMAIN or "demo"
+ */
+export function getStorefrontDomainKey(): string {
+  if (typeof window === "undefined") return FALLBACK_DOMAIN;
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get("domain");
+  if (fromQuery?.trim()) return fromQuery.trim();
+  const hostname = window.location.hostname;
+  const base = SITES_BASE_DOMAIN;
+  if (hostname.endsWith(`.${base}`)) {
+    const sub = hostname.slice(0, -(base.length + 1));
+    if (sub) return sub;
+  }
+  return FALLBACK_DOMAIN;
+}
+
+/**
+ * Hook that returns the current storefront domain key (from ?domain= or subdomain).
+ * Updates after mount so SSR/first paint use fallback; then client resolves from URL.
+ */
+export function useStorefrontDomain(): string {
+  const [domain, setDomain] = useState(FALLBACK_DOMAIN);
+  useEffect(() => {
+    setDomain(getStorefrontDomainKey());
+  }, []);
+  return domain;
+}
 
 export function useStorefrontProfile() {
+  const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "profile", domain],
     queryFn: () =>
@@ -29,6 +65,7 @@ export function useStorefrontProducts(opts?: {
   sortBy?: string;
   sortOrder?: string;
 }) {
+  const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "products", domain, opts],
     queryFn: () =>
@@ -43,6 +80,7 @@ export function useStorefrontProducts(opts?: {
 }
 
 export function useStorefrontProduct(productId: string | null) {
+  const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "product", domain, productId],
     queryFn: () =>
@@ -55,6 +93,7 @@ export function useStorefrontProduct(productId: string | null) {
 }
 
 export function useStorefrontCategories() {
+  const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "categories", domain],
     queryFn: () =>
@@ -94,6 +133,7 @@ export function useOrderStatus(intentReference: string | null) {
 }
 
 export function useOrdersByEmail(email: string | null) {
+  const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "orders", domain, email],
     queryFn: () =>
@@ -106,6 +146,7 @@ export function useOrdersByEmail(email: string | null) {
 }
 
 export function buildCheckoutPayload(
+  domain: string,
   items: Array<{ productId: string; quantity: number }>,
   customer: UsedishaCheckoutCustomerDto,
   callbackUrl?: string,

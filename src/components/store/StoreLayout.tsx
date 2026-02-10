@@ -13,7 +13,7 @@ export function StoreLayout({ storeName, children }: StoreLayoutProps) {
   return (
     <div className="store-root min-h-screen flex flex-col bg-stone-50">
       <AppShell
-        header={{ height: 64 }}
+        header={{ height: 72 }}
         footer={{ height: 56 }}
         padding="md"
         classNames={{
