@@ -51,7 +51,8 @@ export function ProductModal({
       opened={opened}
       onClose={onClose}
       title={product?.name ?? "Product"}
-      size="lg"
+      size="md"
+      centered
       classNames={{
         title: "font-serif text-stone-800 text-lg",
         content: "rounded border border-stone-200",
@@ -74,6 +75,7 @@ export function ProductModal({
                 alt={product.name}
                 fit="contain"
                 h={280}
+                w={280}
                 fallbackSrc="https://placehold.co/600x280?text=No+image"
               />
             ) : (

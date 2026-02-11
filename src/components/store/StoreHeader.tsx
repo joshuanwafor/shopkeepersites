@@ -49,7 +49,7 @@ export function StoreHeader({ storeName }: { storeName: string }) {
               ${isCheckout ? "text-stone-900 bg-stone-100" : "text-stone-600 hover:text-stone-900 hover:bg-stone-50"}
             `}
           >
-            <ShoppingCart size={20} className="shrink-0" />
+            <ShoppingCart size={20}    color="black"/>
             <span className="hidden sm:inline">Cart</span>
             {totalItems > 0 && (
               <Badge
