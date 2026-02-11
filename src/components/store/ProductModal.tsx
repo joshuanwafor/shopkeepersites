@@ -15,13 +15,8 @@ import {
 import { useStorefrontProduct } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
 import { useState } from "react";
+import { formatPrice } from "@/hooks";
 
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(amount / 100);
-}
 
 export function ProductModal({
   productId,

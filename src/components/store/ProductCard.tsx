@@ -2,13 +2,8 @@
 
 import { Card, Image, Text, Badge, Group, Button, Box } from "@mantine/core";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
+import { formatPrice } from "@/hooks";
 
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(amount / 100);
-}
 
 export function ProductCard({
   product,

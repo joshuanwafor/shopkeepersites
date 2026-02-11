@@ -9,6 +9,7 @@ import {
   Stack,
   Group,
   TextInput,
+  Textarea,
   Paper,
   Image,
   Box,
@@ -45,14 +46,29 @@ export default function CheckoutPage() {
       email: "",
       fullName: "",
       phone: "",
+      address: "",
+      city: "",
+      state: "",
+      postalCode: "",
       customerNotes: "",
     },
     validate: {
       email: (v) => (!v ? "Email is required" : /^\S+@\S+$/.test(v) ? null : "Invalid email"),
+      address: (v) => (!v ? "Delivery address is required" : null),
+      city: (v) => (!v ? "City is required" : null),
+      state: (v) => (!v ? "State is required" : null),
     },
   });
 
   const handleSubmit = form.onSubmit(async (values) => {
+    // Build shipping address object
+    const shippingAddress = {
+      address: values.address,
+      city: values.city,
+      state: values.state,
+      postalCode: values.postalCode || undefined,
+    };
+
     const payload = buildCheckoutPayload(
       domain,
       items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
@@ -61,6 +77,7 @@ export default function CheckoutPage() {
         fullName: values.fullName || undefined,
         phone: values.phone || undefined,
       },
+      shippingAddress,
       typeof window !== "undefined" ? `${window.location.origin}/orders?success=1` : undefined,
       values.customerNotes || undefined
     );
@@ -170,9 +187,44 @@ export default function CheckoutPage() {
               classNames={{ input: "rounded border-stone-300" }}
               {...form.getInputProps("phone")}
             />
+
+            <Text fw={600} className="text-stone-800 font-serif mt-4">
+              Delivery details
+            </Text>
+            <Textarea
+              label="Delivery address"
+              placeholder="Street address, apartment, suite, etc."
+              required
+              minRows={2}
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("address")}
+            />
+            <Group grow>
+              <TextInput
+                label="City"
+                placeholder="City"
+                required
+                classNames={{ input: "rounded border-stone-300" }}
+                {...form.getInputProps("city")}
+              />
+              <TextInput
+                label="State"
+                placeholder="State"
+                required
+                classNames={{ input: "rounded border-stone-300" }}
+                {...form.getInputProps("state")}
+              />
+            </Group>
             <TextInput
-              label="Order notes (optional)"
-              placeholder="Delivery instructions, etc."
+              label="Postal code (optional)"
+              placeholder="Postal code"
+              classNames={{ input: "rounded border-stone-300" }}
+              {...form.getInputProps("postalCode")}
+            />
+            <Textarea
+              label="Additional notes (optional)"
+              placeholder="Delivery instructions, special requests, etc."
+              minRows={2}
               classNames={{ input: "rounded border-stone-300" }}
               {...form.getInputProps("customerNotes")}
             />

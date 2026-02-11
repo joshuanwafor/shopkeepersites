@@ -11,6 +11,7 @@ import type {
   UsedishaValidateCartDto,
   UsedishaCheckoutItemDto,
   UsedishaCheckoutCustomerDto,
+  Address,
 } from "@/sdk/usedisha-service";
 
 const FALLBACK_DOMAIN =
@@ -149,6 +150,7 @@ export function buildCheckoutPayload(
   domain: string,
   items: Array<{ productId: string; quantity: number }>,
   customer: UsedishaCheckoutCustomerDto,
+  shippingAddress?: Address,
   callbackUrl?: string,
   customerNotes?: string
 ): UsedishaInitiateCheckoutDto {
@@ -160,6 +162,7 @@ export function buildCheckoutPayload(
     domain,
     customer,
     items: dtoItems,
+    shippingAddress,
     callbackUrl,
     customerNotes,
   };

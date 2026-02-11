@@ -23,6 +23,48 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
+export interface Address {
+    /**
+     * Country name (e.g., Nigeria)
+     */
+    'country'?: string;
+    /**
+     * Country code (e.g., NG)
+     */
+    'countryCode'?: string;
+    /**
+     * State or region name (e.g., Lagos)
+     */
+    'state'?: string;
+    /**
+     * State or region code (e.g., LA)
+     */
+    'stateCode'?: string;
+    /**
+     * City name (e.g., Lagos)
+     */
+    'city'?: string;
+    /**
+     * Detailed address (e.g., 123 Main St)
+     */
+    'address'?: string;
+    /**
+     * Postal code (e.g., 12345)
+     */
+    'postalCode'?: string;
+    /**
+     * Latitude of the address location (decimal format)
+     */
+    'latitude'?: number;
+    /**
+     * Longitude of the address location (decimal format)
+     */
+    'longitude'?: number;
+    /**
+     * Additional notes or instructions for the address
+     */
+    'notes'?: string;
+}
 export interface CreateStorefrontReviewDto {
     /**
      * Customer full name
@@ -588,6 +630,10 @@ export interface UsedishaInitiateCheckoutDto {
      * Cart items
      */
     'items': Array<UsedishaCheckoutItemDto>;
+    /**
+     * Shipping address
+     */
+    'shippingAddress'?: Address;
     /**
      * Customer notes for the order
      */
