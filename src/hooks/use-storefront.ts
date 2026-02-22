@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   usedishaClientApi,
@@ -54,12 +53,16 @@ export function useStorefrontDomain(): string {
 
 /**
  * Returns the current URL query string (e.g. "?domain=devmode") so links can retain
- * params like domain when navigating.
+ * params like domain when navigating. Client-only (empty during SSR) to avoid
+ * useSearchParams() prerender requirement.
  */
 export function useStorefrontQueryString(): string {
-  const searchParams = useSearchParams();
-  const q = searchParams.toString();
-  return q ? `?${q}` : "";
+  const [queryString, setQueryString] = useState("");
+  useEffect(() => {
+    const q = typeof window !== "undefined" ? window.location.search : "";
+    setQueryString(q || "");
+  }, []);
+  return queryString;
 }
 
 export function useStorefrontProfile() {

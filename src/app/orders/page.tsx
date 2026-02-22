@@ -137,13 +137,16 @@ function OrdersContent() {
 
 export default function OrdersPage() {
   return (
-    <Suspense fallback={
-      <StoreLayout storeName="Store">
-        <Container size="sm" className="max-w-xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
-          <Skeleton height={200} className="rounded" />
-        </Container>
-      </StoreLayout>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-stone-50">
+          <Stack gap="md" className="max-w-xl w-full mx-auto px-4">
+            <Skeleton height={32} width={220} className="rounded" />
+            <Skeleton height={200} className="rounded" />
+          </Stack>
+        </div>
+      }
+    >
       <OrdersContent />
     </Suspense>
   );

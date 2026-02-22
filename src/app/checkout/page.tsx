@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import {
   Container,
@@ -14,6 +15,7 @@ import {
   Image,
   Box,
   Alert,
+  Skeleton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { StoreLayout } from "@/components/store/StoreLayout";
@@ -34,7 +36,7 @@ function formatPrice(amount: number) {
   }).format(amount / 100);
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const domain = useStorefrontDomain();
   const queryString = useStorefrontQueryString();
   const { data: profileRes } = useStorefrontProfile();
@@ -254,5 +256,23 @@ export default function CheckoutPage() {
         </form>
       </Container>
     </StoreLayout>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-stone-50">
+          <Stack gap="md" className="max-w-2xl w-full mx-auto px-4">
+            <Skeleton height={40} width={200} className="rounded" />
+            <Skeleton height={120} className="rounded" />
+            <Skeleton height={200} className="rounded" />
+          </Stack>
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }
