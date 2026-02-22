@@ -19,12 +19,14 @@ import { useSearchParams } from "next/navigation";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import {
   useStorefrontProfile,
+  useStorefrontQueryString,
   useOrdersByEmail,
   useOrderStatus,
 } from "@/hooks/use-storefront";
 
 function OrdersContent() {
   const searchParams = useSearchParams();
+  const queryString = useStorefrontQueryString();
   const success = searchParams.get("success") === "1";
   const intentRef = searchParams.get("intentReference");
 
@@ -125,7 +127,7 @@ function OrdersContent() {
           </Stack>
         )}
 
-        <Button component={Link} href="/" variant="outline" className="mt-10 border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
+        <Button component={Link} href={queryString ? `/${queryString}` : "/"} variant="outline" className="mt-10 border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
           Back to store
         </Button>
       </Container>

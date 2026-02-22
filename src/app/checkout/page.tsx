@@ -21,6 +21,7 @@ import { useCart } from "@/context/cart-context";
 import {
   useStorefrontProfile,
   useStorefrontDomain,
+  useStorefrontQueryString,
   useValidateCart,
   useInitiateCheckout,
   buildCheckoutPayload,
@@ -35,6 +36,7 @@ function formatPrice(amount: number) {
 
 export default function CheckoutPage() {
   const domain = useStorefrontDomain();
+  const queryString = useStorefrontQueryString();
   const { data: profileRes } = useStorefrontProfile();
   const profile = profileRes?.data;
   const { items, totalItems, totalAmount } = useCart();
@@ -78,7 +80,7 @@ export default function CheckoutPage() {
         phone: values.phone || undefined,
       },
       shippingAddress,
-      typeof window !== "undefined" ? `${window.location.origin}/orders?success=1` : undefined,
+      typeof window !== "undefined" ? `${window.location.origin}/orders?success=1${queryString ? `&${queryString.slice(1)}` : ""}` : undefined,
       values.customerNotes || undefined
     );
 
@@ -113,7 +115,7 @@ export default function CheckoutPage() {
               Your cart is empty
             </Title>
             <Text className="text-stone-600 mb-6">Add items from the store to checkout.</Text>
-            <Button component={Link} href="/" variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100">
+            <Button component={Link} href={queryString ? `/${queryString}` : "/"} variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100">
               Continue shopping
             </Button>
           </Paper>
@@ -244,7 +246,7 @@ export default function CheckoutPage() {
               >
                 Proceed to payment
               </Button>
-              <Button component={Link} href="/" variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
+              <Button component={Link} href={queryString ? `/${queryString}` : "/"} variant="outline" className="border-stone-300 text-stone-700 hover:bg-stone-100 rounded">
                 Continue shopping
               </Button>
             </Group>
