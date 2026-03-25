@@ -9,11 +9,11 @@
   --store-text: #1c1917;
   --store-muted: #78716c;
   --store-accent: #1e293b;
-}
-
-.store-root body {
+  --store-title-font: Georgia, Cambria, "Times New Roman", Times, serif;
+  --store-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background-color: var(--store-bg);
   color: var(--store-text);
+  font-family: var(--store-body-font);
 }
 
 .store-classic-paper {
@@ -24,9 +24,9 @@
 }
 
 .store-classic-title {
-  font-family: Georgia, "Times New Roman", Times, serif;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--store-title-font);
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--store-text);
 }
 

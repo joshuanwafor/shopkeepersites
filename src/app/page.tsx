@@ -1,44 +1,122 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Container,
   Title,
   Text,
-  SimpleGrid,
   Skeleton,
-  Center,
   Alert,
   Group,
   UnstyledButton,
   Paper,
+  Stack,
+  Button,
+  Divider,
 } from "@mantine/core";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import { StorefrontInfo } from "@/components/store/StorefrontInfo";
-import { ProductCard } from "@/components/store/ProductCard";
 import { ProductModal } from "@/components/store/ProductModal";
+import { formatPrice } from "@/hooks";
 import {
   useStorefrontProfile,
   useStorefrontProducts,
   useStorefrontCategories,
 } from "@/hooks/use-storefront";
+import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
 
 export default function Home() {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(undefined);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const { data: profileRes, isLoading: profileLoading, error: profileError } = useStorefrontProfile();
-  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts({
-    category: categoryFilter,
-  });
+  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts();
   const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
   const products = productsRes?.data?.products ?? [];
   const categories = categoriesRes?.data?.categories ?? [];
+  const menuSections = useMemo(() => {
+    const sections = categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      products: products.filter((product) => product.categoryIds?.includes(category.id)),
+    }));
+    const uncategorized = products.filter(
+      (product) => !product.categoryIds || product.categoryIds.length === 0
+    );
+    if (uncategorized.length > 0) {
+      sections.push({
+        id: "uncategorized",
+        name: "More items",
+        products: uncategorized,
+      });
+    }
+    return sections.filter((section) => section.products.length > 0);
+  }, [categories, products]);
+  const visibleSections = useMemo(() => {
+    if (!activeCategoryId) return menuSections;
+    return menuSections.filter((section) => section.id === activeCategoryId);
+  }, [activeCategoryId, menuSections]);
+  const totalItems = products.length;
+
+  useEffect(() => {
+    if (menuSections.length === 0) {
+      setActiveCategoryId(null);
+      return;
+    }
+    if (activeCategoryId && !menuSections.some((section) => section.id === activeCategoryId)) {
+      setActiveCategoryId(null);
+    }
+  }, [activeCategoryId, menuSections]);
+
+  const selectCategory = (sectionId: string | null) => {
+    setActiveCategoryId(sectionId);
+  };
+
+  const renderMenuItem = (product: StorefrontProductResponse) => (
+    <Paper
+      key={product.id}
+      p="md"
+      className="store-classic-paper border-l-2 border-l-stone-300 hover:shadow-sm transition-shadow"
+    >
+      <Stack gap={6}>
+        <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
+          <div className="min-w-0 flex-1">
+            <Text fw={600} className="text-stone-800 text-base leading-snug">
+              {product.name}
+            </Text>
+          </div>
+          <Text fw={700} className="text-stone-800 text-base shrink-0">
+            {formatPrice(product.amount)}
+          </Text>
+        </Group>
+        {(product.description || product.SKU) && (
+          <Text size="sm" className="text-stone-500 leading-relaxed">
+            {product.description || product.SKU}
+          </Text>
+        )}
+        <Group justify="space-between" align="center" className="pt-1">
+          {product.availability && (
+            <Text size="xs" className="uppercase tracking-wide text-stone-500">
+              {product.availability.replaceAll("_", " ")}
+            </Text>
+          )}
+          <Button
+            variant="subtle"
+            size="xs"
+            className="text-stone-700 hover:bg-stone-100 rounded ml-auto"
+            onClick={() => setSelectedProductId(product.id)}
+          >
+            View details
+          </Button>
+        </Group>
+      </Stack>
+    </Paper>
+  );
 
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
-      <Container size="xl" className="max-w-6xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
+      <Container size="lg" className="max-w-4xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
         {profileLoading && (
           <Skeleton height={40} width={200} className="mb-10 rounded" />
         )}
@@ -53,63 +131,93 @@ export default function Home() {
           </Alert>
         )}
 
-        <Group justify="space-between" align="flex-end" mb="6" wrap="wrap" gap="sm">
-          <Title order={2} className="store-classic-title text-xl text-stone-800">
-            Products
-          </Title>
-          {categories.length > 0 && (
-            <Group gap={4} wrap="wrap">
+        <Paper p="lg" className="store-classic-paper mb-6">
+          <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
+            <div>
+              <Title order={2} className="store-classic-title text-3xl text-stone-800">
+                Menu
+              </Title>
+              <Text size="sm" className="text-stone-500 mt-2">
+                Browse all items on a single page.
+              </Text>
+            </div>
+            <Group gap="xs" className="text-right">
+              <Text size="sm" className="text-stone-600">
+                {menuSections.length} sections
+              </Text>
+              <Text size="sm" className="text-stone-400">
+                /
+              </Text>
+              <Text size="sm" className="text-stone-600">
+                {totalItems} items
+              </Text>
+            </Group>
+          </Group>
+        </Paper>
+
+        {menuSections.length > 0 && (
+          <Paper p="sm" className="store-classic-paper mb-8 sticky top-20 z-10">
+            <Group gap={6} wrap="wrap">
               <UnstyledButton
-                onClick={() => setCategoryFilter(undefined)}
+                onClick={() => selectCategory(null)}
                 className={`
-                  px-3 py-1.5 rounded text-sm font-medium transition-colors
-                  ${categoryFilter == null ? "bg-stone-200 text-stone-800" : "text-stone-600 hover:bg-stone-100"}
+                  px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                  ${activeCategoryId == null ? "bg-stone-800 text-white" : "text-stone-700 hover:bg-stone-100"}
                 `}
               >
                 All
               </UnstyledButton>
-              {categories.map((cat) => (
+              {menuSections.map((section) => (
                 <UnstyledButton
-                  key={cat.id}
-                  onClick={() => setCategoryFilter(categoryFilter === cat.id ? undefined : cat.id)}
+                  key={section.id}
+                  onClick={() => selectCategory(section.id)}
                   className={`
-                    px-3 py-1.5 rounded text-sm font-medium transition-colors
-                    ${categoryFilter === cat.id ? "bg-stone-200 text-stone-800" : "text-stone-600 hover:bg-stone-100"}
+                    px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                    ${activeCategoryId === section.id ? "bg-stone-800 text-white" : "text-stone-700 hover:bg-stone-100"}
                   `}
                 >
-                  {cat.name}
+                  {section.name}
                 </UnstyledButton>
               ))}
             </Group>
-          )}
-        </Group>
+          </Paper>
+        )}
 
         {productsLoading && (
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
+          <Stack gap="sm">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} height={320} className="rounded" />
+              <Skeleton key={i} height={88} className="rounded" />
             ))}
-          </SimpleGrid>
+          </Stack>
         )}
         {!productsLoading && products.length === 0 && (
           <Paper p="xl" className="store-classic-paper">
-            <Center py="md">
-              <Text className="text-stone-500">
-                {categoryFilter ? "No products in this category." : "No products available yet."}
-              </Text>
-            </Center>
+            <Text className="text-stone-500">
+              No products available yet.
+            </Text>
           </Paper>
         )}
-        {!productsLoading && products.length > 0 && (
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onView={() => setSelectedProductId(product.id)}
-              />
+        {!productsLoading && visibleSections.length > 0 && (
+          <Stack gap="xl">
+            {visibleSections.map((section) => (
+              <section key={section.id} id={`menu-section-${section.id}`} className="scroll-mt-36">
+                <Paper p="lg" className="store-classic-paper">
+                  <Group justify="space-between" align="flex-end" mb="xs">
+                    <Title order={3} className="store-classic-title text-2xl text-stone-800">
+                      {section.name}
+                    </Title>
+                    <Text size="sm" className="text-stone-500">
+                      {section.products.length} item{section.products.length === 1 ? "" : "s"}
+                    </Text>
+                  </Group>
+                  <Divider color="#e7e5e4" mb="md" />
+                  <Stack gap="sm">
+                    {section.products.map((product) => renderMenuItem(product))}
+                  </Stack>
+                </Paper>
+              </section>
             ))}
-          </SimpleGrid>
+          </Stack>
         )}
       </Container>
       <ProductModal
