@@ -38,7 +38,7 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
 
   return (
     <div className="space-y-6 sm:space-y-7">
-      {cover && (
+      {/* {cover && (
         <Box className="-mx-4 sm:-mx-6 rounded-none overflow-hidden relative">
           <Image
             src={cover}
@@ -49,7 +49,7 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
           />
           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/35 via-stone-900/5 to-transparent pointer-events-none" />
         </Box>
-      )}
+      )} */}
 
       <div className="rounded-2xl border border-stone-200 bg-white/80 p-4 sm:p-6">
         <Group align="flex-start" gap="md" className="flex-nowrap">
@@ -67,7 +67,7 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
           {profile.caption && (
             <Text
               size="xs"
-              className="inline-block rounded-full border border-stone-200 px-2.5 py-1 text-stone-500 mb-2 uppercase tracking-wider"
+              className="inline-block rounded-full border border-stone-200 px-2.5 py-1 text-stone-500 mb-2 uppercase tracking-wider truncate max-w-[58vw] sm:max-w-none"
             >
               {profile.caption}
             </Text>

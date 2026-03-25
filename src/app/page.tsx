@@ -78,12 +78,12 @@ export default function Home() {
     <Paper
       key={product.id}
       p="md"
-      className="store-classic-paper border-l-2 border-l-stone-300 hover:shadow-sm transition-shadow"
+      className="store-classic-paper rounded-xl border border-stone-200/80 border-l-4 border-l-stone-300 hover:shadow-md hover:border-stone-300 transition-all"
     >
       <Stack gap={6}>
         <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
           <div className="min-w-0 flex-1">
-            <Text fw={600} className="text-stone-800 text-base leading-snug">
+            <Text fw={600} className="text-stone-800 text-base leading-snug tracking-tight">
               {product.name}
             </Text>
           </div>
@@ -98,14 +98,14 @@ export default function Home() {
         )}
         <Group justify="space-between" align="center" className="pt-1">
           {product.availability && (
-            <Text size="xs" className="uppercase tracking-wide text-stone-500">
+            <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
               {product.availability.replaceAll("_", " ")}
             </Text>
           )}
           <Button
             variant="subtle"
             size="xs"
-            className="text-stone-700 hover:bg-stone-100 rounded ml-auto"
+            className="text-stone-700 hover:bg-stone-100 rounded-md ml-auto"
             onClick={() => setSelectedProductId(product.id)}
           >
             View details
@@ -119,9 +119,9 @@ export default function Home() {
     <StoreLayout storeName={profile?.name ?? "Store"}>
       <Container size="lg" className="max-w-4xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
         {!profile && profileLoading && (
-          <Paper p="lg" className="store-classic-paper mb-8">
-            <Skeleton height={36} width={180} className="rounded mb-3" />
-            <Skeleton height={16} width="55%" className="rounded" />
+          <Paper p="lg" className="store-classic-paper rounded-2xl mb-8">
+            <Skeleton height={36} width={180} className="rounded-xl mb-3" />
+            <Skeleton height={16} width="55%" className="rounded-xl" />
           </Paper>
         )}
         {profile && !profileLoading && (
@@ -135,7 +135,7 @@ export default function Home() {
           </Alert>
         )}
 
-        <Paper p="lg" className="store-classic-paper mb-6">
+        <Paper p="lg" className="store-classic-paper rounded-2xl mb-6 border border-stone-200/80" radius="xl">
           <Group justify="space-between" align="flex-end" wrap="wrap" gap="md">
             <div>
               <Title order={2} className="store-classic-title text-3xl text-stone-800">
@@ -145,14 +145,14 @@ export default function Home() {
                 Browse all items on a single page.
               </Text>
             </div>
-            <Group gap="xs" className="text-right">
-              <Text size="sm" className="text-stone-600">
+            <Group gap={8} className="text-right">
+              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
                 {menuSections.length} sections
               </Text>
-              <Text size="sm" className="text-stone-400">
-                /
+              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
+                •
               </Text>
-              <Text size="sm" className="text-stone-600">
+              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
                 {totalItems} items
               </Text>
             </Group>
@@ -160,13 +160,17 @@ export default function Home() {
         </Paper>
 
         {menuSections.length > 0 && (
-          <Paper p="sm" className="store-classic-paper mb-8 sticky top-20 z-10 " >
+          <Paper
+            p="sm"
+            className="store-classic-paper rounded-2xl mb-8 sticky top-20 z-10 border border-stone-200/80 backdrop-blur supports-[backdrop-filter]:bg-white/85"
+            radius="xl"
+          >
             <Group gap={6} wrap="wrap">
               <UnstyledButton
                 onClick={() => selectCategory(null)}
                 className={`
                   px-3 py-1.5 rounded-full text-sm font-medium transition-colors
-                  ${activeCategoryId == null ? "bg-stone-800 text-white" : "text-stone-700 hover:bg-stone-100"}
+                  ${activeCategoryId == null ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                 `}
               >
                 All
@@ -177,7 +181,7 @@ export default function Home() {
                   onClick={() => selectCategory(section.id)}
                   className={`
                     px-3 py-1.5 rounded-full text-sm font-medium transition-colors
-                    ${activeCategoryId === section.id ? "bg-stone-800 text-white" : "text-stone-700 hover:bg-stone-100"}
+                    ${activeCategoryId === section.id ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                   `}
                 >
                   {section.name}
@@ -190,27 +194,27 @@ export default function Home() {
         {productsLoading && (
           <Stack gap="sm">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} height={88} className="rounded" />
+              <Skeleton key={i} height={88} className="rounded-xl" />
             ))}
           </Stack>
         )}
         {!productsLoading && products.length === 0 && (
-          <Paper p="xl" className="store-classic-paper">
+          <Paper p="xl" className="store-classic-paper rounded-2xl border border-stone-200/80 text-center">
             <Text className="text-stone-500">
               No products available yet.
             </Text>
           </Paper>
         )}
         {!productsLoading && visibleSections.length > 0 && (
-          <Stack gap="xl">
+          <Stack gap="lg">
             {visibleSections.map((section) => (
               <section key={section.id} id={`menu-section-${section.id}`} className="scroll-mt-36">
-                <Paper p="lg" className="store-classic-paper">
+                <Paper p="lg" className="store-classic-paper rounded-2xl border border-stone-200/80">
                   <Group justify="space-between" align="flex-end" mb="xs">
-                    <Title order={3} className="store-classic-title text-2xl text-stone-800">
+                    <Title order={3} className="store-classic-title text-2xl text-stone-800 tracking-tight">
                       {section.name}
                     </Title>
-                    <Text size="sm" className="text-stone-500">
+                    <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
                       {section.products.length} item{section.products.length === 1 ? "" : "s"}
                     </Text>
                   </Group>
