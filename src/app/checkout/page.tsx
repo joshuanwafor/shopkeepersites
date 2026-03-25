@@ -16,6 +16,7 @@ import {
   Box,
   Alert,
   Skeleton,
+  ActionIcon,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { StoreLayout } from "@/components/store/StoreLayout";
@@ -33,7 +34,7 @@ function formatPrice(amount: number) {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: "NGN",
-  }).format(amount / 100);
+  }).format(amount );
 }
 
 function CheckoutContent() {
@@ -41,7 +42,7 @@ function CheckoutContent() {
   const queryString = useStorefrontQueryString();
   const { data: profileRes } = useStorefrontProfile();
   const profile = profileRes?.data;
-  const { items, totalItems, totalAmount } = useCart();
+  const { items, totalItems, totalAmount, updateQuantity, removeItem } = useCart();
   const validateCart = useValidateCart();
   const initiateCheckout = useInitiateCheckout();
 
@@ -151,14 +152,49 @@ function CheckoutContent() {
                         <Text size="sm" fw={500} className="text-stone-800">
                           {item.product.name}
                         </Text>
-                        <Text size="xs" className="text-stone-500">
-                          {item.quantity} × {formatPrice(item.product.amount)}
-                        </Text>
+                        <Group gap={8} mt={4}>
+                          <ActionIcon
+                            variant="subtle"
+                            color="gray"
+                            radius="sm"
+                            className="border border-stone-300 text-stone-700 hover:bg-stone-100"
+                            aria-label={`Decrease quantity of ${item.product.name}`}
+                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          >
+                            -
+                          </ActionIcon>
+                          <Text size="sm" fw={600} className="text-stone-700 min-w-4 text-center">
+                            {item.quantity}
+                          </Text>
+                          <ActionIcon
+                            variant="subtle"
+                            color="gray"
+                            radius="sm"
+                            className="border border-stone-300 text-stone-700 hover:bg-stone-100"
+                            aria-label={`Increase quantity of ${item.product.name}`}
+                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          >
+                            +
+                          </ActionIcon>
+                          <Text size="xs" className="text-stone-500 ml-1">
+                            × {formatPrice(item.product.amount)}
+                          </Text>
+                        </Group>
                       </div>
                     </Group>
-                    <Text fw={600} className="text-stone-700">
-                      {formatPrice(item.product.amount * item.quantity)}
-                    </Text>
+                    <Stack gap={4} align="flex-end">
+                      <Text fw={600} className="text-stone-700">
+                        {formatPrice(item.product.amount * item.quantity)}
+                      </Text>
+                      <Button
+                        variant="subtle"
+                        size="compact-xs"
+                        className="text-stone-500 hover:bg-stone-100"
+                        onClick={() => removeItem(item.product.id)}
+                      >
+                        Remove
+                      </Button>
+                    </Stack>
                   </Group>
                 ))}
               </Stack>
