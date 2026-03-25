@@ -51,6 +51,7 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
         </Box>
       )} */}
 
+
       <div className="rounded-2xl border border-stone-200 bg-white/80 p-4 sm:p-6">
         <Group align="flex-start" gap="md" className="flex-nowrap">
           {logo && (
