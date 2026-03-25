@@ -58,6 +58,7 @@ export default function Home() {
     return menuSections.filter((section) => section.id === activeCategoryId);
   }, [activeCategoryId, menuSections]);
   const totalItems = products.length;
+  const hasStoreError = !!(profileError || productsError);
 
   useEffect(() => {
     if (menuSections.length === 0) {
@@ -117,15 +118,18 @@ export default function Home() {
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
       <Container size="lg" className="max-w-4xl mx-auto py-8 sm:py-10 px-4 sm:px-6">
-        {profileLoading && (
-          <Skeleton height={40} width={200} className="mb-10 rounded" />
+        {!profile && profileLoading && (
+          <Paper p="lg" className="store-classic-paper mb-8">
+            <Skeleton height={36} width={180} className="rounded mb-3" />
+            <Skeleton height={16} width="55%" className="rounded" />
+          </Paper>
         )}
         {profile && !profileLoading && (
           <header className="mb-10 pb-8 border-b border-stone-200">
             <StorefrontInfo profile={profile} />
           </header>
         )}
-        {(profileError || productsError) && (
+        {hasStoreError && (
           <Alert color="red" title="Error" className="rounded border border-red-200">
             Could not load store. Please try again later.
           </Alert>
@@ -156,7 +160,7 @@ export default function Home() {
         </Paper>
 
         {menuSections.length > 0 && (
-          <Paper p="sm" className="store-classic-paper mb-8 sticky top-20 z-10">
+          <Paper p="sm" className="store-classic-paper mb-8 sticky top-20 z-10 " >
             <Group gap={6} wrap="wrap">
               <UnstyledButton
                 onClick={() => selectCategory(null)}

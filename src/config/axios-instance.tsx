@@ -21,7 +21,11 @@ export const setGlobalNavigate = (navigate: (path: string) => void) => {
   globalNavigate = navigate;
 };
 
-export const appAxiosInstance = axios.create();
+export const appAxiosInstance = axios.create({
+  // Prevent indefinite pending requests that keep query loading states stuck.
+  baseURL: process.env.NEXT_PUBLIC_CORE_HOST || undefined,
+  timeout: 15000,
+});
 
 // Add a response interceptor
 appAxiosInstance.interceptors.response.use(

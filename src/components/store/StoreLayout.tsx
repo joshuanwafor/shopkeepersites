@@ -12,15 +12,14 @@ type StoreLayoutProps = {
 export function StoreLayout({ storeName, children }: StoreLayoutProps) {
   return (
     <div className="store-root min-h-screen flex flex-col bg-stone-50">
+      <StoreHeader storeName={storeName} />
       <AppShell
-        header={{ height: 72 }}
         footer={{ height: 56 }}
         padding="md"
         classNames={{
-          main: "flex-1 bg-stone-50",
+          main: "flex-1 bg-stone-50 pb-24 sm:pb-0",
         }}
       >
-        <StoreHeader storeName={storeName} />
         <AppShellMain className="flex-1">{children}</AppShellMain>
         <StoreFooter />
       </AppShell>

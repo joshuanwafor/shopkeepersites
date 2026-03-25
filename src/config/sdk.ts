@@ -14,4 +14,4 @@ export const usedishaClientApi = new UsedishaClientApi(
 );
 
 export const STOREFRONT_DOMAIN =
-  process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "mydomain";
+  process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "devmode";
