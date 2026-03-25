@@ -209,7 +209,7 @@ export default function Home() {
           <Stack gap="lg">
             {visibleSections.map((section) => (
               <section key={section.id} id={`menu-section-${section.id}`} className="scroll-mt-36">
-                <Paper p="lg" className="store-classic-paper rounded-2xl border border-stone-200/80">
+                <Paper p="lg" className="store-classic-paper  border border-stone-200/80" radius="xl">
                   <Group justify="space-between" align="flex-end" mb="xs">
                     <Title order={3} className="store-classic-title text-2xl text-stone-800 tracking-tight">
                       {section.name}
@@ -218,7 +218,7 @@ export default function Home() {
                       {section.products.length} item{section.products.length === 1 ? "" : "s"}
                     </Text>
                   </Group>
-                  <Divider color="#e7e5e4" mb="md" />
+                  {/* <Divider color="#e7e5e4" mb="md" /> */}
                   <Stack gap="sm">
                     {section.products.map((product) => renderMenuItem(product))}
                   </Stack>
