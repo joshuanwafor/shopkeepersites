@@ -38,6 +38,7 @@ type StoreProfile = {
   caption?: string;
   coverPhoto?: string;
   logo?: string;
+  storeUrl?: string;
   theme?: { coverImageUrl?: string };
 };
 
@@ -65,6 +66,7 @@ async function getStoreProfile(domain: string): Promise<StoreProfile> {
 export async function generateMetadata(): Promise<Metadata> {
   const headerList = await headers();
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+  const proto = headerList.get("x-forwarded-proto") ?? "https";
   const domain = resolveStorefrontDomain(host);
   const profile = await getStoreProfile(domain);
 
@@ -81,6 +83,22 @@ export async function generateMetadata(): Promise<Metadata> {
       ? `Browse products and order online from ${profile.name}.`
       : DEFAULT_SITE_DESCRIPTION);
 
+  const requestOrigin = (() => {
+    if (host) {
+      try {
+        return new URL(`${proto}://${host}`).toString();
+      } catch {
+        // Fall through to store/SITE_URL.
+      }
+    }
+    return undefined;
+  })();
+  const preferredBaseUrl = (() => {
+    if (requestOrigin) return requestOrigin;
+    if (profile.storeUrl) return profile.storeUrl;
+    return SITE_URL;
+  })();
+
   // Mirror the same cover-photo logic used by `StorefrontInfo` so previews match UI.
   const coverCandidate =
     profile.coverPhoto ?? profile.logo ?? profile.theme?.coverImageUrl ?? DEFAULT_META_IMAGE;
@@ -91,19 +109,29 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const absoluteCoverUrl = (() => {
     if (!coverUrl) return undefined;
+    if (coverUrl.startsWith("//")) {
+      return `https:${coverUrl}`;
+    }
     if (coverUrl.startsWith("http://") || coverUrl.startsWith("https://")) {
       return coverUrl;
     }
     try {
-      return new URL(coverUrl, SITE_URL).toString();
+      return new URL(coverUrl, preferredBaseUrl).toString();
     } catch {
       return undefined;
     }
   })();
   const metaImageUrl = absoluteCoverUrl ?? DEFAULT_META_IMAGE;
+  const absolutePageUrl = (() => {
+    try {
+      return new URL("/", preferredBaseUrl).toString();
+    } catch {
+      return SITE_URL;
+    }
+  })();
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(preferredBaseUrl),
     title: {
       default: storeName,
       template: `%s | ${storeName}`,
@@ -121,7 +149,7 @@ export async function generateMetadata(): Promise<Metadata> {
       domain,
     ],
     alternates: {
-      canonical: "/",
+      canonical: absolutePageUrl,
     },
     robots: {
       index: true,
@@ -136,7 +164,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       type: "website",
-      url: "/",
+      url: absolutePageUrl,
       title: storeName,
       description,
       siteName: storeName,
