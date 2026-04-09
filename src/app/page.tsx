@@ -75,6 +75,14 @@ export default function Home() {
   };
 
   const renderMenuItem = (product: StorefrontProductResponse) => (
+    (() => {
+      const isInStock =
+        (product.stockQuantity ?? 0) > 0 && product.availability !== "out_of_stock";
+      const availabilityLabel = isInStock
+        ? "In stock"
+        : "Out of stock";
+
+      return (
     <Paper
       key={product.id}
       p={0}
@@ -100,9 +108,13 @@ export default function Home() {
         {product.availability && (
           <Text
             size="10px"
-            className="absolute top-2 right-2 uppercase tracking-[0.12em] bg-white/90 text-stone-600 px-2 py-1 rounded-full border border-stone-200"
+            className={`absolute top-2 right-2 uppercase tracking-[0.12em] px-2 py-1 rounded-full border ${
+              isInStock
+                ? "bg-white/90 text-stone-600 border-stone-200"
+                : "bg-rose-50/95 text-rose-700 border-rose-200"
+            }`}
           >
-            {product.availability.replaceAll("_", " ")}
+            {availabilityLabel}
           </Text>
         )}
       </div>
@@ -139,6 +151,8 @@ export default function Home() {
         </Group>
       </Stack>
     </Paper>
+      );
+    })()
   );
 
   return (

@@ -18,6 +18,7 @@ const SITE_URL =
 const DEFAULT_SITE_NAME = "Shopkeeper POS Store";
 const DEFAULT_SITE_DESCRIPTION =
   "Browse products and order online from your Shopkeeper POS storefront.";
+const DEFAULT_META_IMAGE = "https://cdn.bigmerchant.ng/defaults/store-cover.png";
 const CORE_HOST = process.env.NEXT_PUBLIC_CORE_HOST ?? "";
 const FALLBACK_DOMAIN = process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "demo";
 const SITES_BASE_DOMAIN =
@@ -31,7 +32,16 @@ function resolveStorefrontDomain(hostHeader: string | null): string {
   return subdomain || FALLBACK_DOMAIN;
 }
 
-async function getStoreProfile(domain: string): Promise<{ name?: string }> {
+type StoreProfile = {
+  name?: string;
+  description?: string;
+  caption?: string;
+  coverPhoto?: string;
+  logo?: string;
+  theme?: { coverImageUrl?: string };
+};
+
+async function getStoreProfile(domain: string): Promise<StoreProfile> {
   if (!CORE_HOST) return {};
   try {
     const response = await fetch(
@@ -59,14 +69,21 @@ export async function generateMetadata(): Promise<Metadata> {
   const profile = await getStoreProfile(domain);
 
   const storeName = profile.name?.trim() || DEFAULT_SITE_NAME;
+  const normalizeText = (value?: string): string | undefined => {
+    if (!value) return undefined;
+    const cleaned = value.replace(/\s+/g, " ").trim();
+    return cleaned.length > 0 ? cleaned : undefined;
+  };
   const description =
-    profile.name?.trim()
+    normalizeText(profile.description) ??
+    normalizeText(profile.caption) ??
+    (profile.name?.trim()
       ? `Browse products and order online from ${profile.name}.`
-      : DEFAULT_SITE_DESCRIPTION;
+      : DEFAULT_SITE_DESCRIPTION);
 
   // Mirror the same cover-photo logic used by `StorefrontInfo` so previews match UI.
   const coverCandidate =
-    (profile as any)?.coverPhoto ?? (profile as any)?.theme?.coverImageUrl;
+    profile.coverPhoto ?? profile.logo ?? profile.theme?.coverImageUrl ?? DEFAULT_META_IMAGE;
   const coverUrl =
     typeof coverCandidate === "string" && coverCandidate.trim()
       ? coverCandidate.trim()
@@ -83,6 +100,7 @@ export async function generateMetadata(): Promise<Metadata> {
       return undefined;
     }
   })();
+  const metaImageUrl = absoluteCoverUrl ?? DEFAULT_META_IMAGE;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -123,20 +141,20 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       siteName: storeName,
       locale: "en_US",
-      images: absoluteCoverUrl
-        ? [
-            {
-              url: absoluteCoverUrl,
-              alt: storeName,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: metaImageUrl,
+          width: 1200,
+          height: 630,
+          alt: storeName,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: storeName,
       description,
-      images: absoluteCoverUrl ? [absoluteCoverUrl] : undefined,
+      images: [metaImageUrl],
     },
   };
 }
