@@ -18,7 +18,7 @@ const SITE_URL =
 const DEFAULT_SITE_NAME = "Shopkeeper POS Store";
 const DEFAULT_SITE_DESCRIPTION =
   "Browse products and order online from your Shopkeeper POS storefront.";
-const DEFAULT_META_IMAGE = "https://cdn.bigmerchant.ng/defaults/store-cover.png";
+const DEFAULT_META_IMAGE = "https://placehold.co/1200x630/png?text=Shopkeeper+Store";
 const CORE_HOST = process.env.NEXT_PUBLIC_CORE_HOST ?? "";
 const FALLBACK_DOMAIN = process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "demo";
 const SITES_BASE_DOMAIN =
@@ -100,12 +100,22 @@ export async function generateMetadata(): Promise<Metadata> {
   })();
 
   // Mirror the same cover-photo logic used by `StorefrontInfo` so previews match UI.
-  const coverCandidate =
-    profile.coverPhoto ?? profile.logo ?? profile.theme?.coverImageUrl ?? DEFAULT_META_IMAGE;
-  const coverUrl =
-    typeof coverCandidate === "string" && coverCandidate.trim()
-      ? coverCandidate.trim()
-      : undefined;
+  const normalizeUrl = (value?: string): string | undefined => {
+    if (!value) return undefined;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  };
+  const isKnownInvalidDefaultCover = (value?: string): boolean =>
+    !!value && value.includes("/defaults/store-cover.png");
+  const coverCandidate = !isKnownInvalidDefaultCover(profile.coverPhoto)
+    ? normalizeUrl(profile.coverPhoto)
+    : undefined;
+  const imageCandidate =
+    normalizeUrl(profile.logo) ??
+    coverCandidate ??
+    normalizeUrl(profile.theme?.coverImageUrl) ??
+    DEFAULT_META_IMAGE;
+  const coverUrl = imageCandidate;
 
   const absoluteCoverUrl = (() => {
     if (!coverUrl) return undefined;
