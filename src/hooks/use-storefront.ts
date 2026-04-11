@@ -6,12 +6,13 @@ import {
   usedishaClientApi,
   usedishaCheckoutApi,
 } from "@/config/sdk";
-import type {
-  UsedishaInitiateCheckoutDto,
-  UsedishaValidateCartDto,
-  UsedishaCheckoutItemDto,
-  UsedishaCheckoutCustomerDto,
-  Address,
+import {
+  UsedishaInitiateCheckoutDtoDeliveryMethodEnum,
+  type UsedishaInitiateCheckoutDto,
+  type UsedishaValidateCartDto,
+  type UsedishaCheckoutItemDto,
+  type UsedishaCheckoutCustomerDto,
+  type Address,
 } from "@/sdk/usedisha-service";
 
 const FALLBACK_DOMAIN =
@@ -177,6 +178,7 @@ export function buildCheckoutPayload(
     customer,
     items: dtoItems,
     shippingAddress,
+    deliveryMethod: UsedishaInitiateCheckoutDtoDeliveryMethodEnum.Express,
     callbackUrl,
     customerNotes,
   };

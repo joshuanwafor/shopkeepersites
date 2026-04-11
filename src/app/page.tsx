@@ -25,7 +25,13 @@ import {
   useStorefrontCategories,
 } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
-import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
+import type {
+  StorefrontCategoryResponse,
+  StorefrontProductResponse,
+} from "@/sdk/usedisha-service";
+
+const EMPTY_PRODUCTS: StorefrontProductResponse[] = [];
+const EMPTY_CATEGORIES: StorefrontCategoryResponse[] = [];
 
 function HomeContent() {
   const searchParams = useSearchParams();
@@ -41,8 +47,8 @@ function HomeContent() {
   const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
-  const products = productsRes?.data?.products ?? [];
-  const categories = categoriesRes?.data?.categories ?? [];
+  const products = productsRes?.data?.products ?? EMPTY_PRODUCTS;
+  const categories = categoriesRes?.data?.categories ?? EMPTY_CATEGORIES;
   const menuSections = useMemo(() => {
     const sections = categories.map((category) => ({
       id: category.id,
