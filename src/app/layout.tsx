@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { headers } from "next/headers";
 import {
   ColorSchemeScript,
@@ -9,6 +10,7 @@ import { Notifications } from "@mantine/notifications";
 import { Providers } from "./providers";
 import theme from "./theme";
 import "./globals.css";
+import { ProductSearchBar } from "@/components/store/ProductSearchBar";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -210,6 +212,16 @@ export default function RootLayout({
       <body className="antialiased bg-stone-50 text-stone-800">
         <MantineProvider theme={theme}>
           <Notifications />
+          <Suspense
+            fallback={
+              <div
+                className="sticky top-0 z-30 h-12 border-b border-stone-200 bg-stone-50"
+                aria-hidden
+              />
+            }
+          >
+            <ProductSearchBar />
+          </Suspense>
           <Providers>{children}</Providers>
         </MantineProvider>
       </body>

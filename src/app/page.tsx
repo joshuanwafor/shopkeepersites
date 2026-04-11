@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Container,
   Title,
@@ -25,11 +26,16 @@ import {
 } from "@/hooks/use-storefront";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("q")?.trim() || undefined;
+
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const { data: profileRes, isLoading: profileLoading, error: profileError } = useStorefrontProfile();
-  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts();
+  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts(
+    searchQuery ? { search: searchQuery } : undefined
+  );
   const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
@@ -165,7 +171,7 @@ export default function Home() {
           </Paper>
         )}
         {profile && !profileLoading && (
-          <header className="mb-8 sm:mb-10 pb-6 sm:pb-8 border-b border-stone-200">
+          <header className="mb-6 sm:mb-8">
             <StorefrontInfo profile={profile} />
           </header>
         )}
@@ -175,63 +181,69 @@ export default function Home() {
           </Alert>
         )}
 
-        <Paper p="md" className="store-classic-paper rounded-2xl mb-5 sm:mb-6 border border-stone-200/80 sm:p-lg" radius="xl">
-          <Group justify="space-between" align="flex-end" wrap="wrap" gap="sm">
-            <div>
-              <Title order={2} className="store-classic-title text-2xl sm:text-3xl text-stone-800">
-                Menu
-              </Title>
-              <Text size="sm" className="text-stone-500 mt-1.5 sm:mt-2">
-                Browse all items on a single page.
-              </Text>
-            </div>
-            <Group gap={6} className="text-left sm:text-right">
-              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                {menuSections.length} sections
-              </Text>
-              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
-                •
-              </Text>
-              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                {totalItems} items
-              </Text>
+        <Paper
+          p={0}
+          className="store-classic-paper rounded-2xl mb-6 sm:mb-8 border border-stone-200/80 overflow-hidden"
+          radius="xl"
+        >
+          <div className="p-4 sm:p-6 sm:pb-4">
+            <Group justify="space-between" align="flex-end" wrap="wrap" gap="sm">
+              <div>
+                <Title order={2} className="store-classic-title text-2xl sm:text-3xl text-stone-800">
+                  Menu
+                </Title>
+                <Text size="sm" className="text-stone-500 mt-1.5 sm:mt-2">
+                  {searchQuery
+                    ? `Showing results for “${searchQuery}”.`
+                    : "Browse all items on a single page."}
+                </Text>
+              </div>
+              <Group gap={6} className="text-left sm:text-right">
+                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
+                  {menuSections.length} sections
+                </Text>
+                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
+                  •
+                </Text>
+                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
+                  {totalItems} items
+                </Text>
+              </Group>
             </Group>
-          </Group>
-        </Paper>
+          </div>
 
-        {menuSections.length > 0 && (
-          <Paper
-            p="sm"
-            className="store-classic-paper rounded-2xl mb-6 sm:mb-8 sticky top-16 sm:top-20 z-10 border border-stone-200/80 backdrop-blur supports-[backdrop-filter]:bg-white/85"
-            radius="xl"
-          >
-            <div className="-mx-1 px-1 overflow-x-auto">
-              <Group gap={6} wrap="nowrap" className="w-max min-w-full pb-0.5 sm:flex-wrap sm:w-auto">
-              <UnstyledButton
-                onClick={() => selectCategory(null)}
-                className={`
+          {menuSections.length > 0 && (
+            <div
+              className="border-t border-stone-200 bg-stone-50/40 px-2 py-2 sm:px-4 sticky top-[7.25rem] sm:top-[7.5rem] z-10 backdrop-blur supports-[backdrop-filter]:bg-white/85"
+            >
+              <div className="-mx-1 overflow-x-auto">
+                <Group gap={6} wrap="nowrap" className="w-max min-w-full pb-0.5 sm:flex-wrap sm:w-auto px-1">
+                  <UnstyledButton
+                    onClick={() => selectCategory(null)}
+                    className={`
                   px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
                   ${activeCategoryId == null ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                 `}
-              >
-                All
-              </UnstyledButton>
-              {menuSections.map((section) => (
-                <UnstyledButton
-                  key={section.id}
-                  onClick={() => selectCategory(section.id)}
-                  className={`
+                  >
+                    All
+                  </UnstyledButton>
+                  {menuSections.map((section) => (
+                    <UnstyledButton
+                      key={section.id}
+                      onClick={() => selectCategory(section.id)}
+                      className={`
                     px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
                     ${activeCategoryId === section.id ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                   `}
-                >
-                  {section.name}
-                </UnstyledButton>
-              ))}
-              </Group>
+                    >
+                      {section.name}
+                    </UnstyledButton>
+                  ))}
+                </Group>
+              </div>
             </div>
-          </Paper>
-        )}
+          )}
+        </Paper>
 
         {productsLoading && (
           <Stack gap="sm">
@@ -243,7 +255,9 @@ export default function Home() {
         {!productsLoading && products.length === 0 && (
           <Paper p="xl" className="store-classic-paper rounded-2xl border border-stone-200/80 text-center">
             <Text className="text-stone-500">
-              No products available yet.
+              {searchQuery
+                ? `No products match “${searchQuery}”. Try a different search.`
+                : "No products available yet."}
             </Text>
           </Paper>
         )}
@@ -276,5 +290,25 @@ export default function Home() {
         onClose={() => setSelectedProductId(null)}
       />
     </StoreLayout>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense
+      fallback={
+        <StoreLayout storeName="Store">
+          <Container size="lg" className="max-w-4xl mx-auto py-6 sm:py-10 px-3 sm:px-6">
+            <Stack gap="sm">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} height={88} className="rounded-xl" />
+              ))}
+            </Stack>
+          </Container>
+        </StoreLayout>
+      }
+    >
+      <HomeContent />
+    </Suspense>
   );
 }
