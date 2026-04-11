@@ -65,6 +65,12 @@ export interface Address {
      */
     'notes'?: string;
 }
+export interface CancelOrderDto {
+    /**
+     * Optional reason for cancellation
+     */
+    'reason'?: string;
+}
 export interface CreateStorefrontReviewDto {
     /**
      * Customer full name
@@ -117,10 +123,311 @@ export interface CreateUsedishaDto {
      */
     'caption'?: string;
     /**
+     * Full text of the terms and conditions for this storefront (plain text; editable via update)
+     */
+    'termsAndConditions'?: string;
+    /**
+     * Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update)
+     */
+    'policyDocument'?: string;
+    /**
+     * Delivery methods this storefront supports at checkout
+     */
+    'supportedDeliveryMethods'?: Array<CreateUsedishaDtoSupportedDeliveryMethodsEnum>;
+    /**
+     * Payment methods this storefront supports at checkout
+     */
+    'supportedPaymentMethods'?: Array<CreateUsedishaDtoSupportedPaymentMethodsEnum>;
+    /**
      * Legal name of business
      */
     'legalName'?: string;
 }
+
+export const CreateUsedishaDtoSupportedDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type CreateUsedishaDtoSupportedDeliveryMethodsEnum = typeof CreateUsedishaDtoSupportedDeliveryMethodsEnum[keyof typeof CreateUsedishaDtoSupportedDeliveryMethodsEnum];
+export const CreateUsedishaDtoSupportedPaymentMethodsEnum = {
+    Cash: 'cash',
+    PayOnDelivery: 'pay_on_delivery',
+    BankTransfer: 'bank_transfer',
+    Paystack: 'paystack',
+    Wallet: 'wallet'
+} as const;
+
+export type CreateUsedishaDtoSupportedPaymentMethodsEnum = typeof CreateUsedishaDtoSupportedPaymentMethodsEnum[keyof typeof CreateUsedishaDtoSupportedPaymentMethodsEnum];
+
+export interface EstimateOrderFeesDto {
+    /**
+     * Cart items to estimate fees for
+     */
+    'items': Array<UsedishaCheckoutItemDto>;
+    /**
+     * How the order will be fulfilled
+     */
+    'deliveryMethod': EstimateOrderFeesDtoDeliveryMethodEnum;
+    /**
+     * Customer longitude — required for EXPRESS delivery fee calculation
+     */
+    'userLng'?: number;
+    /**
+     * Customer latitude — required for EXPRESS delivery fee calculation
+     */
+    'userLat'?: number;
+}
+
+export const EstimateOrderFeesDtoDeliveryMethodEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type EstimateOrderFeesDtoDeliveryMethodEnum = typeof EstimateOrderFeesDtoDeliveryMethodEnum[keyof typeof EstimateOrderFeesDtoDeliveryMethodEnum];
+
+export interface FeeBreakdownResponse {
+    'deliveryFeeNote': string;
+    'serviceFeeNote': string;
+    'discountNote': string;
+}
+export interface OrderFeeEstimateResponse {
+    /**
+     * Cart sub-total (items only)
+     */
+    'subTotal': number;
+    /**
+     * Delivery fee in NGN (0 for PICKUP or free-delivery threshold met)
+     */
+    'deliveryFee': number;
+    /**
+     * Platform service fee in NGN
+     */
+    'serviceFee': number;
+    /**
+     * Discount amount in NGN
+     */
+    'discountAmount': number;
+    /**
+     * Grand total the customer will pay
+     */
+    'totalAmount': number;
+    /**
+     * Straight-line distance from customer to store in km (EXPRESS only)
+     */
+    'distanceKm'?: number | null;
+    /**
+     * Whether free-delivery threshold was met
+     */
+    'isFreeDelivery': boolean;
+    /**
+     * Human-readable notes for each fee line
+     */
+    'breakdown': FeeBreakdownResponse;
+}
+export interface OrderItemResponse {
+    'itemName': string;
+    'sku': string;
+    'quantity': number;
+    'unitPrice': number;
+    'lineTotal': number;
+    'photoUrl'?: string;
+}
+export interface OrderResponse {
+    'id': string;
+    'orderNumber': string;
+    'status': OrderResponseStatusEnum;
+    'paymentStatus': OrderResponsePaymentStatusEnum;
+    'fulfillmentStatus': OrderResponseFulfillmentStatusEnum;
+    'subTotal': number;
+    'totalAmount': number;
+    'discount'?: object;
+    'shipping'?: OrderShippingResponse;
+    'delivery'?: object;
+    'items': Array<OrderItemResponse>;
+    'payments': Array<object>;
+    'notes'?: string;
+    'customerNotes'?: string;
+    'createdAt': string;
+    'updatedAt': string;
+}
+
+export const OrderResponseStatusEnum = {
+    Pending: 'pending',
+    Confirmed: 'confirmed',
+    Processing: 'processing',
+    ReadyForShipment: 'ready_for_shipment',
+    Shipped: 'shipped',
+    OutForDelivery: 'out_for_delivery',
+    Delivered: 'delivered',
+    Completed: 'completed',
+    Cancelled: 'cancelled',
+    Refunded: 'refunded',
+    OnHold: 'on_hold',
+    Failed: 'failed'
+} as const;
+
+export type OrderResponseStatusEnum = typeof OrderResponseStatusEnum[keyof typeof OrderResponseStatusEnum];
+export const OrderResponsePaymentStatusEnum = {
+    Unpaid: 'unpaid',
+    PartiallyPaid: 'partially_paid',
+    Paid: 'paid',
+    Refunded: 'refunded',
+    PartiallyRefunded: 'partially_refunded',
+    Cancelled: 'cancelled'
+} as const;
+
+export type OrderResponsePaymentStatusEnum = typeof OrderResponsePaymentStatusEnum[keyof typeof OrderResponsePaymentStatusEnum];
+export const OrderResponseFulfillmentStatusEnum = {
+    Unfulfilled: 'unfulfilled',
+    PartiallyFulfilled: 'partially_fulfilled',
+    Fulfilled: 'fulfilled',
+    Returned: 'returned'
+} as const;
+
+export type OrderResponseFulfillmentStatusEnum = typeof OrderResponseFulfillmentStatusEnum[keyof typeof OrderResponseFulfillmentStatusEnum];
+
+export interface OrderShippingResponse {
+    'method'?: string;
+    'address'?: string;
+    'trackingNumber'?: string;
+    'trackingUrl'?: string;
+    'estimatedDeliveryDate'?: string;
+    'actualDeliveryDate'?: string;
+}
+export interface PaginatedOrdersResponse {
+    'items': Array<OrderResponse>;
+    'total': number;
+    'page': number;
+    'limit': number;
+}
+export interface PaginatedShopmenuStoresResponse {
+    'items': Array<ShopmenuStoreResponse>;
+    'total': number;
+    'page': number;
+    'limit': number;
+}
+export interface ShopmenuStoreResponse {
+    /**
+     * Unique identifier for the storefront
+     */
+    'id': string;
+    /**
+     * Store name
+     */
+    'name': string;
+    /**
+     * Store domain
+     */
+    'domain': string;
+    /**
+     * Store description
+     */
+    'description'?: string;
+    /**
+     * Store tagline or caption
+     */
+    'caption'?: string;
+    /**
+     * Full text of the terms and conditions
+     */
+    'termsAndConditions'?: string;
+    /**
+     * Full text of the store policy document (e.g. privacy or store policy)
+     */
+    'policyDocument'?: string;
+    /**
+     * Delivery methods supported by this storefront
+     */
+    'supportedDeliveryMethods'?: Array<ShopmenuStoreResponseSupportedDeliveryMethodsEnum>;
+    /**
+     * Payment methods supported by this storefront
+     */
+    'supportedPaymentMethods'?: Array<ShopmenuStoreResponseSupportedPaymentMethodsEnum>;
+    /**
+     * Theme settings for the storefront
+     */
+    'theme': UDThemeSettings;
+    /**
+     * Social media links
+     */
+    'socialMedia'?: UDSocialMediaLinks;
+    /**
+     * Store configuration settings
+     */
+    'config'?: UsedishaConfig;
+    /**
+     * Store logo
+     */
+    'logo'?: string;
+    /**
+     * Store cover photo
+     */
+    'coverPhoto'?: string;
+    /**
+     * Legal name of the business
+     */
+    'legalName'?: string;
+    /**
+     * Store favicon emoji or URL
+     */
+    'favicon'?: string;
+    /**
+     * Store launch date
+     */
+    'launchDate'?: string;
+    /**
+     * Weekly operating hours
+     */
+    'operatingHours'?: UsedishaOperatingHours;
+    /**
+     * Full store URL
+     */
+    'storeUrl': string;
+    /**
+     * Shopmenu categories this store belongs to
+     */
+    'categories'?: Array<ShopmenuStoreResponseCategoriesEnum>;
+    /**
+     * Physical street address of the store
+     */
+    'address'?: UsedishaAddress;
+    /**
+     * GeoJSON Point location of the store [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+}
+
+export const ShopmenuStoreResponseSupportedDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type ShopmenuStoreResponseSupportedDeliveryMethodsEnum = typeof ShopmenuStoreResponseSupportedDeliveryMethodsEnum[keyof typeof ShopmenuStoreResponseSupportedDeliveryMethodsEnum];
+export const ShopmenuStoreResponseSupportedPaymentMethodsEnum = {
+    Cash: 'cash',
+    PayOnDelivery: 'pay_on_delivery',
+    BankTransfer: 'bank_transfer',
+    Paystack: 'paystack',
+    Wallet: 'wallet'
+} as const;
+
+export type ShopmenuStoreResponseSupportedPaymentMethodsEnum = typeof ShopmenuStoreResponseSupportedPaymentMethodsEnum[keyof typeof ShopmenuStoreResponseSupportedPaymentMethodsEnum];
+export const ShopmenuStoreResponseCategoriesEnum = {
+    Pharmacy: 'pharmacy',
+    Supermarket: 'supermarket',
+    Restaurant: 'restaurant',
+    Grocery: 'grocery',
+    Bakery: 'bakery',
+    Butcher: 'butcher',
+    FruitsAndVegetables: 'fruits_and_vegetables',
+    Beverages: 'beverages',
+    SnacksAndConfectionery: 'snacks_and_confectionery',
+    HouseholdSupplies: 'household_supplies'
+} as const;
+
+export type ShopmenuStoreResponseCategoriesEnum = typeof ShopmenuStoreResponseCategoriesEnum[keyof typeof ShopmenuStoreResponseCategoriesEnum];
+
 export interface StorefrontCategoriesResponse {
     /**
      * Array of categories
@@ -239,6 +546,22 @@ export interface StorefrontProfileResponse {
      */
     'caption'?: string;
     /**
+     * Full text of the terms and conditions
+     */
+    'termsAndConditions'?: string;
+    /**
+     * Full text of the store policy document (e.g. privacy or store policy)
+     */
+    'policyDocument'?: string;
+    /**
+     * Delivery methods supported by this storefront
+     */
+    'supportedDeliveryMethods'?: Array<StorefrontProfileResponseSupportedDeliveryMethodsEnum>;
+    /**
+     * Payment methods supported by this storefront
+     */
+    'supportedPaymentMethods'?: Array<StorefrontProfileResponseSupportedPaymentMethodsEnum>;
+    /**
      * Theme settings for the storefront
      */
     'theme': UDThemeSettings;
@@ -271,10 +594,31 @@ export interface StorefrontProfileResponse {
      */
     'launchDate'?: string;
     /**
+     * Weekly operating hours
+     */
+    'operatingHours'?: UsedishaOperatingHours;
+    /**
      * Full store URL
      */
     'storeUrl': string;
 }
+
+export const StorefrontProfileResponseSupportedDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type StorefrontProfileResponseSupportedDeliveryMethodsEnum = typeof StorefrontProfileResponseSupportedDeliveryMethodsEnum[keyof typeof StorefrontProfileResponseSupportedDeliveryMethodsEnum];
+export const StorefrontProfileResponseSupportedPaymentMethodsEnum = {
+    Cash: 'cash',
+    PayOnDelivery: 'pay_on_delivery',
+    BankTransfer: 'bank_transfer',
+    Paystack: 'paystack',
+    Wallet: 'wallet'
+} as const;
+
+export type StorefrontProfileResponseSupportedPaymentMethodsEnum = typeof StorefrontProfileResponseSupportedPaymentMethodsEnum[keyof typeof StorefrontProfileResponseSupportedPaymentMethodsEnum];
+
 export interface UDSocialMediaLinks {
     /**
      * WhatsApp number
@@ -341,6 +685,10 @@ export interface UpdateUsedishaDto {
      */
     'name'?: string;
     /**
+     * The storefront domain (must be unique)
+     */
+    'domain'?: string;
+    /**
      * The custom domain for the storefront
      */
     'customDomain'?: string;
@@ -356,6 +704,22 @@ export interface UpdateUsedishaDto {
      * A short, catchy tagline for the store
      */
     'caption'?: string;
+    /**
+     * Full text of the terms and conditions for this storefront (plain text; editable via update)
+     */
+    'termsAndConditions'?: string;
+    /**
+     * Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update)
+     */
+    'policyDocument'?: string;
+    /**
+     * Delivery methods this storefront supports at checkout
+     */
+    'supportedDeliveryMethods'?: Array<UpdateUsedishaDtoSupportedDeliveryMethodsEnum>;
+    /**
+     * Payment methods this storefront supports at checkout
+     */
+    'supportedPaymentMethods'?: Array<UpdateUsedishaDtoSupportedPaymentMethodsEnum>;
     /**
      * Theme settings
      */
@@ -380,6 +744,14 @@ export interface UpdateUsedishaDto {
      * Date the store went live
      */
     'launchDate'?: string;
+    /**
+     * Physical street address of the store
+     */
+    'address'?: UsedishaAddress;
+    /**
+     * Weekly operating hours (local times in timeZone)
+     */
+    'operatingHours'?: UsedishaOperatingHours;
 }
 
 export const UpdateUsedishaDtoStatusEnum = {
@@ -391,6 +763,21 @@ export const UpdateUsedishaDtoStatusEnum = {
 } as const;
 
 export type UpdateUsedishaDtoStatusEnum = typeof UpdateUsedishaDtoStatusEnum[keyof typeof UpdateUsedishaDtoStatusEnum];
+export const UpdateUsedishaDtoSupportedDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type UpdateUsedishaDtoSupportedDeliveryMethodsEnum = typeof UpdateUsedishaDtoSupportedDeliveryMethodsEnum[keyof typeof UpdateUsedishaDtoSupportedDeliveryMethodsEnum];
+export const UpdateUsedishaDtoSupportedPaymentMethodsEnum = {
+    Cash: 'cash',
+    PayOnDelivery: 'pay_on_delivery',
+    BankTransfer: 'bank_transfer',
+    Paystack: 'paystack',
+    Wallet: 'wallet'
+} as const;
+
+export type UpdateUsedishaDtoSupportedPaymentMethodsEnum = typeof UpdateUsedishaDtoSupportedPaymentMethodsEnum[keyof typeof UpdateUsedishaDtoSupportedPaymentMethodsEnum];
 
 export interface Usedisha {
     /**
@@ -424,7 +811,7 @@ export interface Usedisha {
     /**
      * The storefront approval status
      */
-    'approvalStatus'?: string;
+    'approvalStatus'?: UsedishaApprovalStatusEnum;
     /**
      * A detailed store description
      */
@@ -433,6 +820,22 @@ export interface Usedisha {
      * A short, catchy tagline for the store
      */
     'caption'?: string;
+    /**
+     * Full text of the terms and conditions for this storefront (plain text; editable via update)
+     */
+    'termsAndConditions'?: string;
+    /**
+     * Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update)
+     */
+    'policyDocument'?: string;
+    /**
+     * Delivery methods this storefront supports at checkout
+     */
+    'supportedDeliveryMethods'?: Array<UsedishaSupportedDeliveryMethodsEnum>;
+    /**
+     * Payment methods this storefront supports at checkout
+     */
+    'supportedPaymentMethods'?: Array<UsedishaSupportedPaymentMethodsEnum>;
     /**
      * Theme settings
      */
@@ -466,6 +869,18 @@ export interface Usedisha {
      */
     'launchDate'?: string;
     /**
+     * Physical location of the store as a GeoJSON Point [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+    /**
+     * Physical street address of the store
+     */
+    'address'?: UsedishaAddress;
+    /**
+     * Weekly operating hours (local times in timeZone)
+     */
+    'operatingHours'?: UsedishaOperatingHours;
+    /**
      * Metadata for tracking, custom scripts, etc.
      */
     'metadata'?: object;
@@ -496,7 +911,55 @@ export const UsedishaStatusEnum = {
 } as const;
 
 export type UsedishaStatusEnum = typeof UsedishaStatusEnum[keyof typeof UsedishaStatusEnum];
+export const UsedishaApprovalStatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
 
+export type UsedishaApprovalStatusEnum = typeof UsedishaApprovalStatusEnum[keyof typeof UsedishaApprovalStatusEnum];
+export const UsedishaSupportedDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type UsedishaSupportedDeliveryMethodsEnum = typeof UsedishaSupportedDeliveryMethodsEnum[keyof typeof UsedishaSupportedDeliveryMethodsEnum];
+export const UsedishaSupportedPaymentMethodsEnum = {
+    Cash: 'cash',
+    PayOnDelivery: 'pay_on_delivery',
+    BankTransfer: 'bank_transfer',
+    Paystack: 'paystack',
+    Wallet: 'wallet'
+} as const;
+
+export type UsedishaSupportedPaymentMethodsEnum = typeof UsedishaSupportedPaymentMethodsEnum[keyof typeof UsedishaSupportedPaymentMethodsEnum];
+
+export interface UsedishaAddress {
+    /**
+     * Street address line 1
+     */
+    'addressLine1': string;
+    /**
+     * Apartment, floor, suite, etc.
+     */
+    'addressLine2'?: string;
+    /**
+     * City
+     */
+    'city': string;
+    /**
+     * State / province
+     */
+    'state'?: string;
+    /**
+     * Country
+     */
+    'country'?: string;
+    /**
+     * Postal / ZIP code
+     */
+    'postalCode'?: string;
+}
 export interface UsedishaAdminControllerCheckDomainAvailabilityV1200Response {
     'available'?: boolean;
     'message'?: string;
@@ -587,7 +1050,7 @@ export interface UsedishaCheckoutResponseDto {
 }
 export interface UsedishaCheckoutSummaryDto {
     /**
-     * Subtotal before tax and discounts
+     * Subtotal before fees and discounts
      */
     'subTotal': number;
     /**
@@ -599,15 +1062,19 @@ export interface UsedishaCheckoutSummaryDto {
      */
     'discountAmount'?: number;
     /**
-     * Shipping amount
+     * Delivery fee (0 for PICKUP)
      */
-    'shippingAmount'?: number;
+    'deliveryFee': number;
     /**
-     * Total amount
+     * Platform service fee
+     */
+    'serviceFee': number;
+    /**
+     * Total amount charged to the customer
      */
     'totalAmount': number;
     /**
-     * Number of items
+     * Number of items in the cart
      */
     'itemCount': number;
 }
@@ -616,6 +1083,40 @@ export interface UsedishaConfig {
      * Products per page in catalog
      */
     'productsPerPage'?: number;
+    /**
+     * Whether this store is listed on the Shopmenu discovery page
+     */
+    'listOnShopmenu'?: boolean;
+    /**
+     * Shopmenu categories this store belongs to
+     */
+    'shopmenuCategories'?: Array<UsedishaConfigShopmenuCategoriesEnum>;
+}
+
+export const UsedishaConfigShopmenuCategoriesEnum = {
+    Pharmacy: 'pharmacy',
+    Supermarket: 'supermarket',
+    Restaurant: 'restaurant',
+    Grocery: 'grocery',
+    Bakery: 'bakery',
+    Butcher: 'butcher',
+    FruitsAndVegetables: 'fruits_and_vegetables',
+    Beverages: 'beverages',
+    SnacksAndConfectionery: 'snacks_and_confectionery',
+    HouseholdSupplies: 'household_supplies'
+} as const;
+
+export type UsedishaConfigShopmenuCategoriesEnum = typeof UsedishaConfigShopmenuCategoriesEnum[keyof typeof UsedishaConfigShopmenuCategoriesEnum];
+
+export interface UsedishaDayOperatingHours {
+    /**
+     * When true, the store is closed for the whole day
+     */
+    'closed': boolean;
+    /**
+     * Open windows for this day (ignored when closed is true)
+     */
+    'slots'?: Array<UsedishaTimeSlot>;
 }
 export interface UsedishaInitiateCheckoutDto {
     /**
@@ -639,9 +1140,52 @@ export interface UsedishaInitiateCheckoutDto {
      */
     'customerNotes'?: string;
     /**
+     * How the order will be fulfilled. PICKUP = customer collects in store (no delivery fee). EXPRESS = rider delivers to customer address.
+     */
+    'deliveryMethod': UsedishaInitiateCheckoutDtoDeliveryMethodEnum;
+    /**
+     * Customer longitude — required for EXPRESS to calculate the delivery fee
+     */
+    'userLng'?: number;
+    /**
+     * Customer latitude — required for EXPRESS to calculate the delivery fee
+     */
+    'userLat'?: number;
+    /**
      * Payment callback URL after successful payment
      */
     'callbackUrl'?: string;
+}
+
+export const UsedishaInitiateCheckoutDtoDeliveryMethodEnum = {
+    Pickup: 'pickup',
+    Express: 'express'
+} as const;
+
+export type UsedishaInitiateCheckoutDtoDeliveryMethodEnum = typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum[keyof typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum];
+
+export interface UsedishaLocation {
+    /**
+     * GeoJSON type — always \"Point\"
+     */
+    'type': string;
+    /**
+     * GeoJSON coordinates [longitude, latitude]
+     */
+    'coordinates': Array<number>;
+}
+export interface UsedishaOperatingHours {
+    /**
+     * IANA time zone used to interpret open/close times
+     */
+    'timeZone'?: string;
+    'monday'?: UsedishaDayOperatingHours;
+    'tuesday'?: UsedishaDayOperatingHours;
+    'wednesday'?: UsedishaDayOperatingHours;
+    'thursday'?: UsedishaDayOperatingHours;
+    'friday'?: UsedishaDayOperatingHours;
+    'saturday'?: UsedishaDayOperatingHours;
+    'sunday'?: UsedishaDayOperatingHours;
 }
 export interface UsedishaOrderStatusResponseDto {
     /**
@@ -668,6 +1212,52 @@ export interface UsedishaOrderStatusResponseDto {
      * Failure reason (if failed)
      */
     'failureReason'?: string;
+}
+export interface UsedishaStoreOverviewResponseDto {
+    'overview': UsedishaStoreOverviewTotalsDto;
+    'thisMonth': UsedishaStoreOverviewThisMonthDto;
+}
+export interface UsedishaStoreOverviewThisMonthDto {
+    /**
+     * Revenue growth vs previous calendar month (%). Null when the previous month had no revenue (no baseline).
+     */
+    'salesGrowthPercent': number | null;
+    /**
+     * Orders created in the current calendar month
+     */
+    'newOrders': number;
+    /**
+     * Storefront page views this month. Returns 0 until analytics are wired.
+     */
+    'pageViews': number;
+}
+export interface UsedishaStoreOverviewTotalsDto {
+    /**
+     * Orders received (all time, Usedisha branch)
+     */
+    'totalOrders': number;
+    /**
+     * Sum of order totals (all time)
+     */
+    'totalRevenue': number;
+    /**
+     * Products with usedisha context on the connected branch
+     */
+    'productsListed': number;
+    /**
+     * Lifetime storefront visits. Returns 0 until server-side view tracking exists.
+     */
+    'storeViews': number;
+}
+export interface UsedishaTimeSlot {
+    /**
+     * Opening time in 24-hour notation (HH:mm)
+     */
+    'open': string;
+    /**
+     * Closing time in 24-hour notation (HH:mm)
+     */
+    'close': string;
 }
 export interface UsedishaValidateCartDto {
     /**
@@ -809,6 +1399,44 @@ export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration
             };
         },
         /**
+         * Lifetime totals (orders, revenue, products listed) and current calendar month stats (revenue growth vs prior month, new orders). Store/page views return 0 until server-side tracking is implemented.
+         * @summary Store overview dashboard metrics
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerGetStoreOverviewV1: async (businessId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerGetStoreOverviewV1', 'businessId', businessId)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/store-overview`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -883,6 +1511,92 @@ export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(usedishaConfig, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update usedisha handle/domain
+         * @param {string} businessId Business ID
+         * @param {object} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateDomainV1: async (businessId: string, body: object, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateDomainV1', 'businessId', businessId)
+            // verify required parameter 'body' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateDomainV1', 'body', body)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/domain`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update store coordinates
+         * @param {string} businessId Business ID
+         * @param {UsedishaLocation} usedishaLocation 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateLocationV1: async (businessId: string, usedishaLocation: UsedishaLocation, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateLocationV1', 'businessId', businessId)
+            // verify required parameter 'usedishaLocation' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateLocationV1', 'usedishaLocation', usedishaLocation)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/location`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usedishaLocation, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1069,6 +1783,19 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Lifetime totals (orders, revenue, products listed) and current calendar month stats (revenue growth vs prior month, new orders). Store/page views return 0 until server-side tracking is implemented.
+         * @summary Store overview dashboard metrics
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerGetStoreOverviewV1(businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaStoreOverviewResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerGetStoreOverviewV1(businessId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerGetStoreOverviewV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -1093,6 +1820,34 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateConfigV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update usedisha handle/domain
+         * @param {string} businessId Business ID
+         * @param {object} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerUpdateDomainV1(businessId: string, body: object, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateDomainV1(businessId, body, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateDomainV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update store coordinates
+         * @param {string} businessId Business ID
+         * @param {UsedishaLocation} usedishaLocation 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerUpdateLocationV1(businessId: string, usedishaLocation: UsedishaLocation, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateLocationV1(businessId, usedishaLocation, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateLocationV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -1179,6 +1934,16 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
             return localVarFp.usedishaAdminControllerDeleteUsedishaV1(businessId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Lifetime totals (orders, revenue, products listed) and current calendar month stats (revenue growth vs prior month, new orders). Store/page views return 0 until server-side tracking is implemented.
+         * @summary Store overview dashboard metrics
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerGetStoreOverviewV1(businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaStoreOverviewResponseDto> {
+            return localVarFp.usedishaAdminControllerGetStoreOverviewV1(businessId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -1198,6 +1963,28 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
          */
         usedishaAdminControllerUpdateConfigV1(businessId: string, usedishaConfig: UsedishaConfig, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
             return localVarFp.usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update usedisha handle/domain
+         * @param {string} businessId Business ID
+         * @param {object} body 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateDomainV1(businessId: string, body: object, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerUpdateDomainV1(businessId, body, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update store coordinates
+         * @param {string} businessId Business ID
+         * @param {UsedishaLocation} usedishaLocation 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateLocationV1(businessId: string, usedishaLocation: UsedishaLocation, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerUpdateLocationV1(businessId, usedishaLocation, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1275,6 +2062,17 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
     }
 
     /**
+     * Lifetime totals (orders, revenue, products listed) and current calendar month stats (revenue growth vs prior month, new orders). Store/page views return 0 until server-side tracking is implemented.
+     * @summary Store overview dashboard metrics
+     * @param {string} businessId Business ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerGetStoreOverviewV1(businessId: string, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerGetStoreOverviewV1(businessId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 
      * @summary Get usedisha profile for business
      * @param {string} businessId Business ID
@@ -1295,6 +2093,30 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
      */
     public usedishaAdminControllerUpdateConfigV1(businessId: string, usedishaConfig: UsedishaConfig, options?: RawAxiosRequestConfig) {
         return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update usedisha handle/domain
+     * @param {string} businessId Business ID
+     * @param {object} body 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerUpdateDomainV1(businessId: string, body: object, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateDomainV1(businessId, body, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update store coordinates
+     * @param {string} businessId Business ID
+     * @param {UsedishaLocation} usedishaLocation 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerUpdateLocationV1(businessId: string, usedishaLocation: UsedishaLocation, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateLocationV1(businessId, usedishaLocation, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1759,6 +2581,40 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
+         * Returns the public profile of an active storefront by its MongoDB ID.
+         * @summary Get storefront profile by ID
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStorefrontByIdV1: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaClientControllerGetStorefrontByIdV1', 'id', id)
+            const localVarPath = `/v1/usedisha/usedisha/store/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary Get storefront categories
          * @param {string} domain Storefront domain
@@ -2111,6 +2967,71 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * @summary List Shopmenu-listed stores
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
+         * @param {string} [search] Full-text search on store name / description
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {number} [lng] Longitude for proximity search
+         * @param {number} [lat] Latitude for proximity search
+         * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStoresByCategoryV1: async (category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/shopmenu/stores`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (category !== undefined) {
+                localVarQueryParameter['category'] = category;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (lng !== undefined) {
+                localVarQueryParameter['lng'] = lng;
+            }
+
+            if (lat !== undefined) {
+                localVarQueryParameter['lat'] = lat;
+            }
+
+            if (radiusKm !== undefined) {
+                localVarQueryParameter['radiusKm'] = radiusKm;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2159,6 +3080,19 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontAverageRatingV1(domain, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontAverageRatingV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns the public profile of an active storefront by its MongoDB ID.
+         * @summary Get storefront profile by ID
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientControllerGetStorefrontByIdV1(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShopmenuStoreResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontByIdV1(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontByIdV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2289,6 +3223,25 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontReviewsV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * @summary List Shopmenu-listed stores
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
+         * @param {string} [search] Full-text search on store name / description
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {number} [lng] Longitude for proximity search
+         * @param {number} [lat] Latitude for proximity search
+         * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedShopmenuStoresResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStoresByCategoryV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -2329,6 +3282,16 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          */
         usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.usedishaClientControllerGetStorefrontAverageRatingV1(domain, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns the public profile of an active storefront by its MongoDB ID.
+         * @summary Get storefront profile by ID
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStorefrontByIdV1(id: string, options?: RawAxiosRequestConfig): AxiosPromise<ShopmenuStoreResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontByIdV1(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2431,6 +3394,22 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
         usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.usedishaClientControllerGetStorefrontReviewsV1(domain, limit, options).then((request) => request(axios, basePath));
         },
+        /**
+         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * @summary List Shopmenu-listed stores
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
+         * @param {string} [search] Full-text search on store name / description
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {number} [lng] Longitude for proximity search
+         * @param {number} [lat] Latitude for proximity search
+         * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedShopmenuStoresResponse> {
+            return localVarFp.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options).then((request) => request(axios, basePath));
+        },
     };
 };
 
@@ -2471,6 +3450,17 @@ export class UsedishaClientApi extends BaseAPI {
      */
     public usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig) {
         return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontAverageRatingV1(domain, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns the public profile of an active storefront by its MongoDB ID.
+     * @summary Get storefront profile by ID
+     * @param {string} id Storefront MongoDB ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientControllerGetStorefrontByIdV1(id: string, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontByIdV1(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2582,7 +3572,689 @@ export class UsedishaClientApi extends BaseAPI {
     public usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig) {
         return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontReviewsV1(domain, limit, options).then((request) => request(this.axios, this.basePath));
     }
+
+    /**
+     * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+     * @summary List Shopmenu-listed stores
+     * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
+     * @param {string} [search] Full-text search on store name / description
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {number} [lng] Longitude for proximity search
+     * @param {number} [lat] Latitude for proximity search
+     * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options).then((request) => request(this.axios, this.basePath));
+    }
 }
 
+export const UsedishaClientControllerGetStoresByCategoryV1CategoryEnum = {
+    Pharmacy: 'pharmacy',
+    Supermarket: 'supermarket',
+    Restaurant: 'restaurant',
+    Grocery: 'grocery',
+    Bakery: 'bakery',
+    Butcher: 'butcher',
+    FruitsAndVegetables: 'fruits_and_vegetables',
+    Beverages: 'beverages',
+    SnacksAndConfectionery: 'snacks_and_confectionery',
+    HouseholdSupplies: 'household_supplies'
+} as const;
+export type UsedishaClientControllerGetStoresByCategoryV1CategoryEnum = typeof UsedishaClientControllerGetStoresByCategoryV1CategoryEnum[keyof typeof UsedishaClientControllerGetStoresByCategoryV1CategoryEnum];
+
+
+/**
+ * UsedishaCustomerOrdersApi - axios parameter creator
+ */
+export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * @summary Cancel an order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {CancelOrderDto} cancelOrderDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerCancelMyOrderV1: async (domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'domain', domain)
+            // verify required parameter 'orderId' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'orderId', orderId)
+            // verify required parameter 'cancelOrderDto' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'cancelOrderDto', cancelOrderDto)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/{orderId}/cancel`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)))
+                .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(cancelOrderDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
+         * @summary Checkout — place an order
+         * @param {string} domain Storefront domain
+         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerCheckoutV1: async (domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerCheckoutV1', 'domain', domain)
+            // verify required parameter 'usedishaInitiateCheckoutDto' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerCheckoutV1', 'usedishaInitiateCheckoutDto', usedishaInitiateCheckoutDto)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/checkout`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usedishaInitiateCheckoutDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
+         * @summary Estimate checkout fees
+         * @param {string} domain Storefront domain
+         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerEstimateFeesV1: async (domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerEstimateFeesV1', 'domain', domain)
+            // verify required parameter 'estimateOrderFeesDto' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerEstimateFeesV1', 'estimateOrderFeesDto', estimateOrderFeesDto)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/estimate-fees`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(estimateOrderFeesDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
+         * @summary Get a single order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerGetMyOrderV1: async (domain: string, orderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerGetMyOrderV1', 'domain', domain)
+            // verify required parameter 'orderId' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerGetMyOrderV1', 'orderId', orderId)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/{orderId}`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)))
+                .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
+         * @summary List my orders
+         * @param {string} domain Storefront domain
+         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerListMyOrdersV1: async (domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientCustomerControllerListMyOrdersV1', 'domain', domain)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns one customer order by ID for the authenticated customer.
+         * @summary Get my order detail
+         * @param {string} orderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrdersControllerGetMyOrderV1: async (orderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'orderId' is not null or undefined
+            assertParamExists('usedishaCustomerOrdersControllerGetMyOrderV1', 'orderId', orderId)
+            const localVarPath = `/v1/usedisha/usedisha/customer/orders/{orderId}`
+                .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
+         * @summary List my orders (optional domain)
+         * @param {string} [domain] Optional storefront domain filter
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrdersControllerListMyOrdersV1: async (domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/customer/orders`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (domain !== undefined) {
+                localVarQueryParameter['domain'] = domain;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaCustomerOrdersApi - functional programming interface
+ */
+export const UsedishaCustomerOrdersApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaCustomerOrdersApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * @summary Cancel an order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {CancelOrderDto} cancelOrderDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerCancelMyOrderV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
+         * @summary Checkout — place an order
+         * @param {string} domain Storefront domain
+         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaCheckoutResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerCheckoutV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
+         * @summary Estimate checkout fees
+         * @param {string} domain Storefront domain
+         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderFeeEstimateResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerEstimateFeesV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
+         * @summary Get a single order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerGetMyOrderV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
+         * @summary List my orders
+         * @param {string} domain Storefront domain
+         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrdersResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerListMyOrdersV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns one customer order by ID for the authenticated customer.
+         * @summary Get my order detail
+         * @param {string} orderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrdersControllerGetMyOrderV1(orderId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrdersControllerGetMyOrderV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
+         * @summary List my orders (optional domain)
+         * @param {string} [domain] Optional storefront domain filter
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrdersControllerListMyOrdersV1(domain, status, page, limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrdersControllerListMyOrdersV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaCustomerOrdersApi - factory interface
+ */
+export const UsedishaCustomerOrdersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaCustomerOrdersApiFp(configuration)
+    return {
+        /**
+         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * @summary Cancel an order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {CancelOrderDto} cancelOrderDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
+            return localVarFp.usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
+         * @summary Checkout — place an order
+         * @param {string} domain Storefront domain
+         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaCheckoutResponseDto> {
+            return localVarFp.usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
+         * @summary Estimate checkout fees
+         * @param {string} domain Storefront domain
+         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig): AxiosPromise<OrderFeeEstimateResponse> {
+            return localVarFp.usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
+         * @summary Get a single order
+         * @param {string} domain Storefront domain
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
+            return localVarFp.usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
+         * @summary List my orders
+         * @param {string} domain Storefront domain
+         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedOrdersResponse> {
+            return localVarFp.usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns one customer order by ID for the authenticated customer.
+         * @summary Get my order detail
+         * @param {string} orderId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaCustomerOrdersControllerGetMyOrderV1(orderId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
+         * @summary List my orders (optional domain)
+         * @param {string} [domain] Optional storefront domain filter
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * @param {number} [page] Page number (1-based)
+         * @param {number} [limit] Number of results per page
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaCustomerOrdersControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaCustomerOrdersApi - object-oriented interface
+ */
+export class UsedishaCustomerOrdersApi extends BaseAPI {
+    /**
+     * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+     * @summary Cancel an order
+     * @param {string} domain Storefront domain
+     * @param {string} orderId MongoDB order ID
+     * @param {CancelOrderDto} cancelOrderDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
+     * @summary Checkout — place an order
+     * @param {string} domain Storefront domain
+     * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
+     * @summary Estimate checkout fees
+     * @param {string} domain Storefront domain
+     * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
+     * @summary Get a single order
+     * @param {string} domain Storefront domain
+     * @param {string} orderId MongoDB order ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
+     * @summary List my orders
+     * @param {string} domain Storefront domain
+     * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+     * @param {number} [page] Page number (1-based)
+     * @param {number} [limit] Number of results per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns one customer order by ID for the authenticated customer.
+     * @summary Get my order detail
+     * @param {string} orderId 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaCustomerOrdersControllerGetMyOrderV1(orderId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
+     * @summary List my orders (optional domain)
+     * @param {string} [domain] Optional storefront domain filter
+     * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+     * @param {number} [page] Page number (1-based)
+     * @param {number} [limit] Number of results per page
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaCustomerOrdersControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+export const UsedishaClientCustomerControllerListMyOrdersV1StatusEnum = {
+    Pending: 'pending',
+    Confirmed: 'confirmed',
+    Processing: 'processing',
+    ReadyForShipment: 'ready_for_shipment',
+    Shipped: 'shipped',
+    OutForDelivery: 'out_for_delivery',
+    Delivered: 'delivered',
+    Completed: 'completed',
+    Cancelled: 'cancelled',
+    Refunded: 'refunded',
+    OnHold: 'on_hold',
+    Failed: 'failed'
+} as const;
+export type UsedishaClientCustomerControllerListMyOrdersV1StatusEnum = typeof UsedishaClientCustomerControllerListMyOrdersV1StatusEnum[keyof typeof UsedishaClientCustomerControllerListMyOrdersV1StatusEnum];
+export const UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum = {
+    Pending: 'pending',
+    Confirmed: 'confirmed',
+    Processing: 'processing',
+    ReadyForShipment: 'ready_for_shipment',
+    Shipped: 'shipped',
+    OutForDelivery: 'out_for_delivery',
+    Delivered: 'delivered',
+    Completed: 'completed',
+    Cancelled: 'cancelled',
+    Refunded: 'refunded',
+    OnHold: 'on_hold',
+    Failed: 'failed'
+} as const;
+export type UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum = typeof UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum[keyof typeof UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum];
 
 

@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Text, Group, Anchor, Box, Image, Paper, UnstyledButton, Title } from "@mantine/core";
+import {
+  Text,
+  Group,
+  Anchor,
+  Box,
+  Image,
+  Paper,
+  UnstyledButton,
+  Title,
+  ScrollArea,
+} from "@mantine/core";
 import type { StorefrontProfileResponse } from "@/sdk/usedisha-service";
 
 const SOCIAL_LABELS: Record<string, string> = {
@@ -14,12 +24,85 @@ const SOCIAL_LABELS: Record<string, string> = {
   tiktok: "TikTok",
 };
 
+export type StoreInfoTab = "store" | "about" | "terms" | "policy";
+
 function socialHref(key: string, value: string): string {
   if (key === "whatsapp") {
     const num = value.replace(/\D/g, "");
     return `https://wa.me/${num.startsWith("234") ? num : `234${num}`}`;
   }
   return value.startsWith("http") ? value : `https://${value}`;
+}
+
+function isProbablyHtml(s: string) {
+  return /<[a-z][\s\S]*>/i.test(s.trim());
+}
+
+/** Strips `<script>` / `<style>` blocks before injecting HTML. */
+function stripScriptsAndStyles(html: string): string {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "");
+}
+
+/** Uses `<body>` inner HTML when the string is a full document; otherwise uses the fragment as-is. */
+function extractRenderableHtml(html: string): string {
+  const t = html.trim();
+  const bodyMatch = t.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+  if (bodyMatch) return bodyMatch[1].trim();
+  return t;
+}
+
+function LegalDocumentPanel({ title, body }: { title: string; body: string }) {
+  const trimmed = body.trim();
+  const looksLikeBareUrl =
+    /^https?:\/\//i.test(trimmed) &&
+    !trimmed.includes("\n") &&
+    trimmed.length < 2000 &&
+    !isProbablyHtml(trimmed);
+
+  if (looksLikeBareUrl) {
+    return (
+      <Box>
+        <Text size="sm" className="text-stone-500 mb-3">
+          {title}
+        </Text>
+        <Anchor href={trimmed} target="_blank" rel="noopener noreferrer" size="sm" className="font-medium">
+          Open link
+        </Anchor>
+      </Box>
+    );
+  }
+
+  if (isProbablyHtml(trimmed)) {
+    const safe = stripScriptsAndStyles(extractRenderableHtml(trimmed));
+    return (
+      <Box>
+        <Text size="sm" fw={600} className="text-stone-800 mb-2">
+          {title}
+        </Text>
+        <ScrollArea mah={420} type="hover" offsetScrollbars className="max-h-[min(50vh,420px)]">
+          <div
+            className="text-sm text-stone-700 pr-2"
+            dangerouslySetInnerHTML={{ __html: safe }}
+          />
+        </ScrollArea>
+      </Box>
+    );
+  }
+
+  return (
+    <Box>
+      <Text size="sm" fw={600} className="text-stone-800 mb-2">
+        {title}
+      </Text>
+      <ScrollArea mah={360} type="hover" offsetScrollbars className="max-h-[min(360px,50vh)]">
+        <Text size="sm" className="text-stone-700 leading-relaxed whitespace-pre-wrap pr-2">
+          {trimmed}
+        </Text>
+      </ScrollArea>
+    </Box>
+  );
 }
 
 function StoreIntro({
@@ -110,6 +193,13 @@ function AboutContact({ profile }: { profile: StorefrontProfileResponse }) {
   );
 }
 
+function tabButtonClass(active: boolean) {
+  return `
+    px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
+    ${active ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
+  `;
+}
+
 export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse }) {
   const logo = profile.logo ?? profile.theme?.logoUrl;
   const social = profile.socialMedia;
@@ -118,7 +208,19 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
   const hasStoreUrl = !!profile.storeUrl;
   const hasAbout = hasLegal || hasSocial || hasStoreUrl;
 
-  const [activeTab, setActiveTab] = useState<"store" | "about">("store");
+  const terms = profile.termsAndConditions?.trim();
+  const policy = profile.policyDocument?.trim();
+  const hasTerms = !!terms;
+  const hasPolicy = !!policy;
+
+  const showTabs = hasAbout || hasTerms || hasPolicy;
+
+  const [activeTab, setActiveTab] = useState<StoreInfoTab>("store");
+
+  const metaParts: string[] = ["store"];
+  if (hasAbout) metaParts.push("about");
+  if (hasTerms) metaParts.push("terms");
+  if (hasPolicy) metaParts.push("policy");
 
   return (
     <Paper
@@ -133,77 +235,77 @@ export function StorefrontInfo({ profile }: { profile: StorefrontProfileResponse
               Store
             </Title>
             <Text size="sm" className="text-stone-500 mt-1.5 sm:mt-2">
-              {hasAbout
-                ? "Profile, story, and contact — pick a tab below."
+              {showTabs
+                ? "Profile, legal info, and policies — pick a tab below."
                 : "Your storefront profile and story."}
             </Text>
           </div>
-          <Group gap={6} className="text-left sm:text-right">
-            {hasAbout ? (
-              <>
-                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                  store
-                </Text>
-                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
-                  •
-                </Text>
-                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                  about
-                </Text>
-              </>
-            ) : (
-              <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                profile
-              </Text>
-            )}
-          </Group>
+          <Text size="xs" className="text-left sm:text-right uppercase tracking-[0.12em] text-stone-500 max-w-[min(100%,280px)] sm:max-w-none leading-relaxed">
+            {showTabs ? metaParts.join(" · ") : "profile"}
+          </Text>
         </Group>
       </div>
 
-      {hasAbout && (
+      {showTabs && (
         <div className="border-t border-stone-200 bg-stone-50/40 px-2 py-2 sm:px-4">
           <div className="-mx-1 overflow-x-auto">
             <Group gap={6} wrap="nowrap" className="w-max min-w-full pb-0.5 sm:flex-wrap sm:w-auto px-1">
               <UnstyledButton
                 type="button"
                 onClick={() => setActiveTab("store")}
-                className={`
-                  px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-                  ${activeTab === "store" ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
-                `}
+                className={tabButtonClass(activeTab === "store")}
               >
                 Store
               </UnstyledButton>
-              <UnstyledButton
-                type="button"
-                onClick={() => setActiveTab("about")}
-                className={`
-                  px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-                  ${activeTab === "about" ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
-                `}
-              >
-                About & contact
-              </UnstyledButton>
+              {hasAbout && (
+                <UnstyledButton
+                  type="button"
+                  onClick={() => setActiveTab("about")}
+                  className={tabButtonClass(activeTab === "about")}
+                >
+                  About & contact
+                </UnstyledButton>
+              )}
+              {hasTerms && (
+                <UnstyledButton
+                  type="button"
+                  onClick={() => setActiveTab("terms")}
+                  className={tabButtonClass(activeTab === "terms")}
+                >
+                  Terms
+                </UnstyledButton>
+              )}
+              {hasPolicy && (
+                <UnstyledButton
+                  type="button"
+                  onClick={() => setActiveTab("policy")}
+                  className={tabButtonClass(activeTab === "policy")}
+                >
+                  Policy
+                </UnstyledButton>
+              )}
             </Group>
           </div>
         </div>
       )}
 
       <div className="border-t border-stone-200 p-4 sm:p-6 bg-white/80">
-        {hasAbout ? (
-          activeTab === "store" ? (
-            <StoreIntro profile={profile} logo={logo} />
-          ) : (
-            <Box>
-              <Text size="sm" className="text-stone-500 mb-4">
-                Store links, legal details, and social channels.
-              </Text>
-              <AboutContact profile={profile} />
-            </Box>
-          )
-        ) : (
+        {!showTabs ? (
           <StoreIntro profile={profile} logo={logo} />
-        )}
+        ) : activeTab === "store" ? (
+          <StoreIntro profile={profile} logo={logo} />
+        ) : activeTab === "about" ? (
+          <Box>
+            <Text size="sm" className="text-stone-500 mb-4">
+              Store links, legal details, and social channels.
+            </Text>
+            <AboutContact profile={profile} />
+          </Box>
+        ) : activeTab === "terms" && terms ? (
+          <LegalDocumentPanel title="Terms and conditions" body={terms} />
+        ) : activeTab === "policy" && policy ? (
+          <LegalDocumentPanel title="Store policy" body={policy} />
+        ) : null}
       </div>
     </Paper>
   );

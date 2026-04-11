@@ -7,8 +7,11 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaAdminControllerCheckDomainAvailabilityV1**](#usedishaadmincontrollercheckdomainavailabilityv1) | **GET** /v1/usedisha/{businessId}/usedisha/check-domain/{domain} | Check if domain is available|
 |[**usedishaAdminControllerCreateUsedishaV1**](#usedishaadmincontrollercreateusedishav1) | **POST** /v1/usedisha/{businessId}/usedisha | Create usedisha profile for business|
 |[**usedishaAdminControllerDeleteUsedishaV1**](#usedishaadmincontrollerdeleteusedishav1) | **DELETE** /v1/usedisha/{businessId}/usedisha | Delete/deactivate usedisha profile|
+|[**usedishaAdminControllerGetStoreOverviewV1**](#usedishaadmincontrollergetstoreoverviewv1) | **GET** /v1/usedisha/{businessId}/usedisha/store-overview | Store overview dashboard metrics|
 |[**usedishaAdminControllerGetUsedishaV1**](#usedishaadmincontrollergetusedishav1) | **GET** /v1/usedisha/{businessId}/usedisha | Get usedisha profile for business|
 |[**usedishaAdminControllerUpdateConfigV1**](#usedishaadmincontrollerupdateconfigv1) | **PUT** /v1/usedisha/{businessId}/usedisha/config | Update usedisha configuration|
+|[**usedishaAdminControllerUpdateDomainV1**](#usedishaadmincontrollerupdatedomainv1) | **PUT** /v1/usedisha/{businessId}/usedisha/domain | Update usedisha handle/domain|
+|[**usedishaAdminControllerUpdateLocationV1**](#usedishaadmincontrollerupdatelocationv1) | **PUT** /v1/usedisha/{businessId}/usedisha/location | Update store coordinates|
 |[**usedishaAdminControllerUpdateSocialMediaV1**](#usedishaadmincontrollerupdatesocialmediav1) | **PUT** /v1/usedisha/{businessId}/usedisha/social-media | Update usedisha social media links|
 |[**usedishaAdminControllerUpdateThemeV1**](#usedishaadmincontrollerupdatethemev1) | **PUT** /v1/usedisha/{businessId}/usedisha/theme | Update usedisha theme settings|
 |[**usedishaAdminControllerUpdateUsedishaV1**](#usedishaadmincontrollerupdateusedishav1) | **PUT** /v1/usedisha/{businessId}/usedisha | Update usedisha profile for business|
@@ -172,6 +175,57 @@ const { status, data } = await apiInstance.usedishaAdminControllerDeleteUsedisha
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **usedishaAdminControllerGetStoreOverviewV1**
+> UsedishaStoreOverviewResponseDto usedishaAdminControllerGetStoreOverviewV1()
+
+Lifetime totals (orders, revenue, products listed) and current calendar month stats (revenue growth vs prior month, new orders). Store/page views return 0 until server-side tracking is implemented.
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+
+const { status, data } = await apiInstance.usedishaAdminControllerGetStoreOverviewV1(
+    businessId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**UsedishaStoreOverviewResponseDto**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Store overview for the Usedisha profile on this business |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **usedishaAdminControllerGetUsedishaV1**
 > Usedisha usedishaAdminControllerGetUsedishaV1()
 
@@ -274,6 +328,115 @@ const { status, data } = await apiInstance.usedishaAdminControllerUpdateConfigV1
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Configuration updated successfully |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminControllerUpdateDomainV1**
+> Usedisha usedishaAdminControllerUpdateDomainV1(body)
+
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+let body: object; //
+
+const { status, data } = await apiInstance.usedishaAdminControllerUpdateDomainV1(
+    businessId,
+    body
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **body** | **object**|  | |
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**Usedisha**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Domain updated successfully |  -  |
+|**400** | Domain is invalid or already taken |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminControllerUpdateLocationV1**
+> Usedisha usedishaAdminControllerUpdateLocationV1(usedishaLocation)
+
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration,
+    UsedishaLocation
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+let usedishaLocation: UsedishaLocation; //
+
+const { status, data } = await apiInstance.usedishaAdminControllerUpdateLocationV1(
+    businessId,
+    usedishaLocation
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **usedishaLocation** | **UsedishaLocation**|  | |
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**Usedisha**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Location updated successfully |  -  |
+|**404** | Usedisha profile not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

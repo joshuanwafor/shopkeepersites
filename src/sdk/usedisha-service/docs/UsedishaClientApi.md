@@ -7,6 +7,7 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaClientControllerCreateStorefrontReviewV1**](#usedishaclientcontrollercreatestorefrontreviewv1) | **POST** /v1/usedisha/usedisha/{domain}/reviews | Submit a review for the storefront|
 |[**usedishaClientControllerGetOrdersByEmailV1**](#usedishaclientcontrollergetordersbyemailv1) | **GET** /v1/usedisha/usedisha/{domain}/orders | Get orders for a customer by email (no login)|
 |[**usedishaClientControllerGetStorefrontAverageRatingV1**](#usedishaclientcontrollergetstorefrontaverageratingv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews/average-rating | Get average rating for the storefront|
+|[**usedishaClientControllerGetStorefrontByIdV1**](#usedishaclientcontrollergetstorefrontbyidv1) | **GET** /v1/usedisha/usedisha/store/{id} | Get storefront profile by ID|
 |[**usedishaClientControllerGetStorefrontCategoriesV1**](#usedishaclientcontrollergetstorefrontcategoriesv1) | **GET** /v1/usedisha/usedisha/{domain}/categories | Get storefront categories|
 |[**usedishaClientControllerGetStorefrontCategoryV1**](#usedishaclientcontrollergetstorefrontcategoryv1) | **GET** /v1/usedisha/usedisha/{domain}/categories/{categoryId} | Get single category details|
 |[**usedishaClientControllerGetStorefrontProductV1**](#usedishaclientcontrollergetstorefrontproductv1) | **GET** /v1/usedisha/usedisha/{domain}/products/{productId} | Get single product details|
@@ -16,6 +17,7 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaClientControllerGetStorefrontReviewReplyV1**](#usedishaclientcontrollergetstorefrontreviewreplyv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews/{reviewId}/reply | Get reply for a storefront review|
 |[**usedishaClientControllerGetStorefrontReviewV1**](#usedishaclientcontrollergetstorefrontreviewv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews/{reviewId} | Get a single storefront review|
 |[**usedishaClientControllerGetStorefrontReviewsV1**](#usedishaclientcontrollergetstorefrontreviewsv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews | Get approved reviews for the storefront|
+|[**usedishaClientControllerGetStoresByCategoryV1**](#usedishaclientcontrollergetstoresbycategoryv1) | **GET** /v1/usedisha/usedisha/shopmenu/stores | List Shopmenu-listed stores|
 
 # **usedishaClientControllerCreateStorefrontReviewV1**
 > usedishaClientControllerCreateStorefrontReviewV1(createStorefrontReviewDto)
@@ -174,6 +176,58 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Average rating |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaClientControllerGetStorefrontByIdV1**
+> ShopmenuStoreResponse usedishaClientControllerGetStorefrontByIdV1()
+
+Returns the public profile of an active storefront by its MongoDB ID.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let id: string; //Storefront MongoDB ID (default to undefined)
+
+const { status, data } = await apiInstance.usedishaClientControllerGetStorefrontByIdV1(
+    id
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **id** | [**string**] | Storefront MongoDB ID | defaults to undefined|
+
+
+### Return type
+
+**ShopmenuStoreResponse**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Storefront profile |  -  |
+|**404** | Storefront not found or inactive |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -663,6 +717,75 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Approved reviews |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaClientControllerGetStoresByCategoryV1**
+> PaginatedShopmenuStoresResponse usedishaClientControllerGetStoresByCategoryV1()
+
+Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let category: 'pharmacy' | 'supermarket' | 'restaurant' | 'grocery' | 'bakery' | 'butcher' | 'fruits_and_vegetables' | 'beverages' | 'snacks_and_confectionery' | 'household_supplies'; //Filter by business category (optional) (default to undefined)
+let search: string; //Full-text search on store name / description (optional) (default to undefined)
+let page: number; // (optional) (default to 1)
+let limit: number; // (optional) (default to 20)
+let lng: number; //Longitude for proximity search (optional) (default to undefined)
+let lat: number; //Latitude for proximity search (optional) (default to undefined)
+let radiusKm: number; //Search radius in kilometres (default 10, max 100) (optional) (default to 10)
+
+const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCategoryV1(
+    category,
+    search,
+    page,
+    limit,
+    lng,
+    lat,
+    radiusKm
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **category** | [**&#39;pharmacy&#39; | &#39;supermarket&#39; | &#39;restaurant&#39; | &#39;grocery&#39; | &#39;bakery&#39; | &#39;butcher&#39; | &#39;fruits_and_vegetables&#39; | &#39;beverages&#39; | &#39;snacks_and_confectionery&#39; | &#39;household_supplies&#39;**]**Array<&#39;pharmacy&#39; &#124; &#39;supermarket&#39; &#124; &#39;restaurant&#39; &#124; &#39;grocery&#39; &#124; &#39;bakery&#39; &#124; &#39;butcher&#39; &#124; &#39;fruits_and_vegetables&#39; &#124; &#39;beverages&#39; &#124; &#39;snacks_and_confectionery&#39; &#124; &#39;household_supplies&#39;>** | Filter by business category | (optional) defaults to undefined|
+| **search** | [**string**] | Full-text search on store name / description | (optional) defaults to undefined|
+| **page** | [**number**] |  | (optional) defaults to 1|
+| **limit** | [**number**] |  | (optional) defaults to 20|
+| **lng** | [**number**] | Longitude for proximity search | (optional) defaults to undefined|
+| **lat** | [**number**] | Latitude for proximity search | (optional) defaults to undefined|
+| **radiusKm** | [**number**] | Search radius in kilometres (default 10, max 100) | (optional) defaults to 10|
+
+
+### Return type
+
+**PaginatedShopmenuStoresResponse**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Paginated list of Shopmenu stores |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

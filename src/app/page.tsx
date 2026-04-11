@@ -24,11 +24,13 @@ import {
   useStorefrontProducts,
   useStorefrontCategories,
 } from "@/hooks/use-storefront";
+import { useCart } from "@/context/cart-context";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
 
 function HomeContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q")?.trim() || undefined;
+  const { addItem } = useCart();
 
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
@@ -145,11 +147,21 @@ function HomeContent() {
             placeholder
           </Text>
         )}
-        <Group justify="flex-end" align="center" className="pt-1">
+        <Group justify="stretch" align="center" className="pt-1 gap-2" grow>
           <Button
-            variant="light"
             size="xs"
-            className="bg-stone-800 text-white hover:bg-stone-700 rounded-md"
+            className="flex-1 bg-stone-800 text-white hover:bg-stone-700 rounded-md font-medium"
+            disabled={!isInStock}
+            onClick={() => {
+              if (isInStock) addItem(product, 1);
+            }}
+          >
+            Add to cart
+          </Button>
+          <Button
+            variant="default"
+            size="xs"
+            className="flex-1 border-stone-300 text-stone-800 hover:bg-stone-100 rounded-md"
             onClick={() => setSelectedProductId(product.id)}
           >
             View details

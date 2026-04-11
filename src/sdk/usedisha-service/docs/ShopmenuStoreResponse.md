@@ -1,4 +1,4 @@
-# StorefrontProfileResponse
+# ShopmenuStoreResponse
 
 
 ## Properties
@@ -24,13 +24,16 @@ Name | Type | Description | Notes
 **launchDate** | **string** | Store launch date | [optional] [default to undefined]
 **operatingHours** | [**UsedishaOperatingHours**](UsedishaOperatingHours.md) | Weekly operating hours | [optional] [default to undefined]
 **storeUrl** | **string** | Full store URL | [default to undefined]
+**categories** | **Array&lt;string&gt;** | Shopmenu categories this store belongs to | [optional] [default to undefined]
+**address** | [**UsedishaAddress**](UsedishaAddress.md) | Physical street address of the store | [optional] [default to undefined]
+**location** | [**UsedishaLocation**](UsedishaLocation.md) | GeoJSON Point location of the store [longitude, latitude] | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { StorefrontProfileResponse } from './api';
+import { ShopmenuStoreResponse } from './api';
 
-const instance: StorefrontProfileResponse = {
+const instance: ShopmenuStoreResponse = {
     id,
     name,
     domain,
@@ -50,6 +53,9 @@ const instance: StorefrontProfileResponse = {
     launchDate,
     operatingHours,
     storeUrl,
+    categories,
+    address,
+    location,
 };
 ```
 

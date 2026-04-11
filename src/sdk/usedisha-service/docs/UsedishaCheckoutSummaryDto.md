@@ -5,12 +5,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**subTotal** | **number** | Subtotal before tax and discounts | [default to undefined]
+**subTotal** | **number** | Subtotal before fees and discounts | [default to undefined]
 **taxAmount** | **number** | Tax amount | [optional] [default to undefined]
 **discountAmount** | **number** | Discount amount | [optional] [default to undefined]
-**shippingAmount** | **number** | Shipping amount | [optional] [default to undefined]
-**totalAmount** | **number** | Total amount | [default to undefined]
-**itemCount** | **number** | Number of items | [default to undefined]
+**deliveryFee** | **number** | Delivery fee (0 for PICKUP) | [default to undefined]
+**serviceFee** | **number** | Platform service fee | [default to undefined]
+**totalAmount** | **number** | Total amount charged to the customer | [default to undefined]
+**itemCount** | **number** | Number of items in the cart | [default to undefined]
 
 ## Example
 
@@ -21,7 +22,8 @@ const instance: UsedishaCheckoutSummaryDto = {
     subTotal,
     taxAmount,
     discountAmount,
-    shippingAmount,
+    deliveryFee,
+    serviceFee,
     totalAmount,
     itemCount,
 };

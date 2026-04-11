@@ -11,6 +11,10 @@ Name | Type | Description | Notes
 **domain** | **string** | The storefront domain (must be unique) | [default to undefined]
 **description** | **string** | A detailed store description | [optional] [default to undefined]
 **caption** | **string** | A short, catchy tagline for the store | [optional] [default to undefined]
+**termsAndConditions** | **string** | Full text of the terms and conditions for this storefront (plain text; editable via update) | [optional] [default to undefined]
+**policyDocument** | **string** | Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update) | [optional] [default to undefined]
+**supportedDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods this storefront supports at checkout | [optional] [default to undefined]
+**supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods this storefront supports at checkout | [optional] [default to undefined]
 **legalName** | **string** | Legal name of business | [optional] [default to undefined]
 
 ## Example
@@ -25,6 +29,10 @@ const instance: CreateUsedishaDto = {
     domain,
     description,
     caption,
+    termsAndConditions,
+    policyDocument,
+    supportedDeliveryMethods,
+    supportedPaymentMethods,
     legalName,
 };
 ```
