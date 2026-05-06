@@ -164,7 +164,7 @@ function AboutContact({ profile }: { profile: StorefrontProfileResponse }) {
       )}
       {hasStoreUrl && (
         <Anchor
-          href={profile.storeUrl}
+          href={window.location.origin}
           target="_blank"
           rel="noopener noreferrer"
           size="sm"

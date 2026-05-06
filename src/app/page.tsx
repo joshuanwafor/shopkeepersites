@@ -45,7 +45,6 @@ function HomeContent() {
     searchQuery ? { search: searchQuery } : undefined
   );
   const { data: categoriesRes } = useStorefrontCategories();
-
   const profile = profileRes?.data;
   const products = productsRes?.data?.products ?? EMPTY_PRODUCTS;
   const categories = categoriesRes?.data?.categories ?? EMPTY_CATEGORIES;
