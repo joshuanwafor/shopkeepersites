@@ -1,19 +1,19 @@
-# UsedishaAdminControllerDeleteUsedishaV1200Response
+# DeleteAckResponse
 
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**success** | **boolean** |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
+**success** | **boolean** |  | [default to undefined]
+**message** | **string** |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import { UsedishaAdminControllerDeleteUsedishaV1200Response } from './api';
+import { DeleteAckResponse } from './api';
 
-const instance: UsedishaAdminControllerDeleteUsedishaV1200Response = {
+const instance: DeleteAckResponse = {
     success,
     message,
 };

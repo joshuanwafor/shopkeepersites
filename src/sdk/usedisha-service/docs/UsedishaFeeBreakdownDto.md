@@ -1,4 +1,4 @@
-# FeeBreakdownResponse
+# UsedishaFeeBreakdownDto
 
 
 ## Properties
@@ -12,9 +12,9 @@ Name | Type | Description | Notes
 ## Example
 
 ```typescript
-import { FeeBreakdownResponse } from './api';
+import { UsedishaFeeBreakdownDto } from './api';
 
-const instance: FeeBreakdownResponse = {
+const instance: UsedishaFeeBreakdownDto = {
     deliveryFeeNote,
     serviceFeeNote,
     discountNote,

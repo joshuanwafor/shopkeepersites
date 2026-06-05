@@ -65,12 +65,146 @@ export interface Address {
      */
     'notes'?: string;
 }
+export interface AdminSetApprovalDto {
+    /**
+     * New approval status
+     */
+    'approvalStatus'?: AdminSetApprovalDtoApprovalStatusEnum;
+    /**
+     * Optional note explaining the decision
+     */
+    'reason'?: string;
+}
+
+export const AdminSetApprovalDtoApprovalStatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+
+export type AdminSetApprovalDtoApprovalStatusEnum = typeof AdminSetApprovalDtoApprovalStatusEnum[keyof typeof AdminSetApprovalDtoApprovalStatusEnum];
+
+export interface AdminSetStatusDto {
+    /**
+     * New storefront status
+     */
+    'status'?: AdminSetStatusDtoStatusEnum;
+    /**
+     * Optional note explaining the decision
+     */
+    'reason'?: string;
+}
+
+export const AdminSetStatusDtoStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive',
+    PendingApproval: 'pending_approval',
+    Suspended: 'suspended',
+    Deleted: 'deleted'
+} as const;
+
+export type AdminSetStatusDtoStatusEnum = typeof AdminSetStatusDtoStatusEnum[keyof typeof AdminSetStatusDtoStatusEnum];
+
+export interface AdminUpdateMarketplaceDto {
+    /**
+     * Minimum cart value required for checkout
+     */
+    'minimumOrderAmount'?: number;
+    /**
+     * Estimated delivery time display string
+     */
+    'estimatedDeliveryTime'?: string;
+    /**
+     * Price tier
+     */
+    'priceRange'?: AdminUpdateMarketplaceDtoPriceRangeEnum;
+    /**
+     * Freeform discovery keywords
+     */
+    'tags'?: Array<string>;
+    /**
+     * Promoted/featured listing flag
+     */
+    'featured'?: boolean;
+}
+
+export const AdminUpdateMarketplaceDtoPriceRangeEnum = {
+    Budget: 'budget',
+    Mid: 'mid',
+    Premium: 'premium'
+} as const;
+
+export type AdminUpdateMarketplaceDtoPriceRangeEnum = typeof AdminUpdateMarketplaceDtoPriceRangeEnum[keyof typeof AdminUpdateMarketplaceDtoPriceRangeEnum];
+
 export interface CancelOrderDto {
     /**
      * Optional reason for cancellation
      */
     'reason'?: string;
 }
+export interface CreateMarketDto {
+    /**
+     * Market name
+     */
+    'name': string;
+    /**
+     * URL-friendly unique slug
+     */
+    'slug': string;
+    /**
+     * Market classification
+     */
+    'type'?: CreateMarketDtoTypeEnum;
+    /**
+     * Country
+     */
+    'country': string;
+    /**
+     * State / province
+     */
+    'state': string;
+    /**
+     * City
+     */
+    'city': string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
+    /**
+     * Market centroid as a GeoJSON Point [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+    /**
+     * Market description
+     */
+    'description'?: string;
+    /**
+     * Market logo URL
+     */
+    'logo'?: string;
+    /**
+     * Market cover photo URL
+     */
+    'coverPhoto'?: string;
+    /**
+     * Promoted/featured market
+     */
+    'featured'?: boolean;
+}
+
+export const CreateMarketDtoTypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
+} as const;
+
+export type CreateMarketDtoTypeEnum = typeof CreateMarketDtoTypeEnum[keyof typeof CreateMarketDtoTypeEnum];
+
 export interface CreateStorefrontReviewDto {
     /**
      * Customer full name
@@ -97,6 +231,59 @@ export interface CreateStorefrontReviewDto {
      */
     'orderId'?: string;
 }
+export interface CreateStorefrontReviewResponse {
+    'id': string;
+    'status': string;
+    'message': string;
+    'createdAt': string;
+}
+export interface CreateUsedishaBranchDto {
+    /**
+     * Branch ID reference
+     */
+    'branchId': object;
+    /**
+     * Branch display name
+     */
+    'name': string;
+    'status': CreateUsedishaBranchDtoStatusEnum;
+    /**
+     * Branch contact phone number
+     */
+    'phone'?: string;
+    /**
+     * Delivery radius in kilometres
+     */
+    'deliveryRadius'?: number;
+    /**
+     * GeoJSON Point [longitude, latitude]
+     */
+    'location': UsedishaLocation;
+    /**
+     * Country
+     */
+    'country': string;
+    /**
+     * State / province
+     */
+    'state': string;
+    /**
+     * City
+     */
+    'city': string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
+}
+
+export const CreateUsedishaBranchDtoStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type CreateUsedishaBranchDtoStatusEnum = typeof CreateUsedishaBranchDtoStatusEnum[keyof typeof CreateUsedishaBranchDtoStatusEnum];
+
 export interface CreateUsedishaDto {
     /**
      * Store name
@@ -131,10 +318,6 @@ export interface CreateUsedishaDto {
      */
     'policyDocument'?: string;
     /**
-     * Delivery methods this storefront supports at checkout
-     */
-    'supportedDeliveryMethods'?: Array<CreateUsedishaDtoSupportedDeliveryMethodsEnum>;
-    /**
      * Payment methods this storefront supports at checkout
      */
     'supportedPaymentMethods'?: Array<CreateUsedishaDtoSupportedPaymentMethodsEnum>;
@@ -144,12 +327,6 @@ export interface CreateUsedishaDto {
     'legalName'?: string;
 }
 
-export const CreateUsedishaDtoSupportedDeliveryMethodsEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
-} as const;
-
-export type CreateUsedishaDtoSupportedDeliveryMethodsEnum = typeof CreateUsedishaDtoSupportedDeliveryMethodsEnum[keyof typeof CreateUsedishaDtoSupportedDeliveryMethodsEnum];
 export const CreateUsedishaDtoSupportedPaymentMethodsEnum = {
     Cash: 'cash',
     PayOnDelivery: 'pay_on_delivery',
@@ -160,70 +337,185 @@ export const CreateUsedishaDtoSupportedPaymentMethodsEnum = {
 
 export type CreateUsedishaDtoSupportedPaymentMethodsEnum = typeof CreateUsedishaDtoSupportedPaymentMethodsEnum[keyof typeof CreateUsedishaDtoSupportedPaymentMethodsEnum];
 
-export interface EstimateOrderFeesDto {
+export interface DeleteAckResponse {
+    'success': boolean;
+    'message': string;
+}
+export interface DomainAvailabilityResponse {
+    'available': boolean;
+    'message': string;
+}
+export interface Market {
     /**
-     * Cart items to estimate fees for
+     * Unique identifier (generated)
      */
-    'items': Array<UsedishaCheckoutItemDto>;
+    'id': string;
     /**
-     * How the order will be fulfilled
+     * Market name
      */
-    'deliveryMethod': EstimateOrderFeesDtoDeliveryMethodEnum;
+    'name': string;
     /**
-     * Customer longitude — required for EXPRESS delivery fee calculation
+     * URL-friendly unique slug
      */
-    'userLng'?: number;
+    'slug': string;
     /**
-     * Customer latitude — required for EXPRESS delivery fee calculation
+     * Market classification
      */
-    'userLat'?: number;
+    'type'?: MarketTypeEnum;
+    /**
+     * Country
+     */
+    'country': string;
+    /**
+     * State / province
+     */
+    'state': string;
+    /**
+     * City
+     */
+    'city': string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
+    /**
+     * Market centroid as a GeoJSON Point [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+    /**
+     * Market description
+     */
+    'description'?: string;
+    /**
+     * Market logo URL
+     */
+    'logo'?: string;
+    /**
+     * Market cover photo URL
+     */
+    'coverPhoto'?: string;
+    'status': MarketStatusEnum;
+    /**
+     * Promoted/featured market
+     */
+    'featured'?: boolean;
+    /**
+     * Number of approved stores in this market
+     */
+    'storeCount'?: number;
+    /**
+     * ID of the admin who created the market
+     */
+    'createdBy'?: string;
+    /**
+     * ID of the admin who last updated the market
+     */
+    'updatedBy'?: string;
+    'createdAt'?: string;
+    'updatedAt'?: string;
 }
 
-export const EstimateOrderFeesDtoDeliveryMethodEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
+export const MarketTypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
 } as const;
 
-export type EstimateOrderFeesDtoDeliveryMethodEnum = typeof EstimateOrderFeesDtoDeliveryMethodEnum[keyof typeof EstimateOrderFeesDtoDeliveryMethodEnum];
+export type MarketTypeEnum = typeof MarketTypeEnum[keyof typeof MarketTypeEnum];
+export const MarketStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
 
-export interface FeeBreakdownResponse {
-    'deliveryFeeNote': string;
-    'serviceFeeNote': string;
-    'discountNote': string;
+export type MarketStatusEnum = typeof MarketStatusEnum[keyof typeof MarketStatusEnum];
+
+export interface MarketActionResponse {
+    'success': boolean;
 }
-export interface OrderFeeEstimateResponse {
+export interface MarketMembershipResponse {
+    'id': string;
+    'marketId': string;
+    'usedishaId': string;
+    'businessId': string;
+    'branchId': string;
+    'status': MarketMembershipResponseStatusEnum;
+    'requestedAt'?: string;
+    'reviewedAt'?: string;
+    'rejectionReason'?: string;
+    'createdAt': string;
     /**
-     * Cart sub-total (items only)
+     * Embedded market detail
      */
-    'subTotal': number;
+    'market'?: MarketSummaryDto;
     /**
-     * Delivery fee in NGN (0 for PICKUP or free-delivery threshold met)
+     * Embedded storefront detail
      */
-    'deliveryFee': number;
+    'store'?: MembershipStoreSummaryDto;
     /**
-     * Platform service fee in NGN
+     * Embedded branch detail
      */
-    'serviceFee': number;
+    'branch'?: MembershipBranchSummaryDto;
+}
+
+export const MarketMembershipResponseStatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+
+export type MarketMembershipResponseStatusEnum = typeof MarketMembershipResponseStatusEnum[keyof typeof MarketMembershipResponseStatusEnum];
+
+export interface MarketStoreResponse {
     /**
-     * Discount amount in NGN
+     * Membership id
      */
-    'discountAmount': number;
+    'membershipId': string;
     /**
-     * Grand total the customer will pay
+     * Storefront card
      */
-    'totalAmount': number;
+    'store': ShopmenuStoreResponse;
     /**
-     * Straight-line distance from customer to store in km (EXPRESS only)
+     * The branch trading in this market
      */
-    'distanceKm'?: number | null;
-    /**
-     * Whether free-delivery threshold was met
-     */
-    'isFreeDelivery': boolean;
-    /**
-     * Human-readable notes for each fee line
-     */
-    'breakdown': FeeBreakdownResponse;
+    'branch': UsedishaBranchResponse;
+}
+export interface MarketSummaryDto {
+    'id': string;
+    'name': string;
+    'slug': string;
+    'state': string;
+    'city': string;
+    'type'?: MarketSummaryDtoTypeEnum;
+    'logo'?: string;
+}
+
+export const MarketSummaryDtoTypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
+} as const;
+
+export type MarketSummaryDtoTypeEnum = typeof MarketSummaryDtoTypeEnum[keyof typeof MarketSummaryDtoTypeEnum];
+
+export interface MembershipBranchSummaryDto {
+    'branchId': string;
+    'name'?: string;
+    'city'?: string;
+    'state'?: string;
+}
+export interface MembershipStoreSummaryDto {
+    'id': string;
+    'name': string;
+    'domain': string;
+    'logo'?: string;
 }
 export interface OrderItemResponse {
     'itemName': string;
@@ -295,6 +587,37 @@ export interface OrderShippingResponse {
     'estimatedDeliveryDate'?: string;
     'actualDeliveryDate'?: string;
 }
+export interface PaginatedMarketStoresResponse {
+    'items': Array<MarketStoreResponse>;
+    'total': number;
+    'page': number;
+    'limit': number;
+}
+export interface PaginatedMarketsResponse {
+    /**
+     * Markets for this page
+     */
+    'data': Array<Market>;
+    /**
+     * Total matching markets
+     */
+    'count': number;
+    'page': number;
+    'limit': number;
+    'hasNextPage': boolean;
+    'hasPreviousPage': boolean;
+    'nextPage': number | null;
+    'previousPage': number | null;
+    'totalPages': number;
+    'currentPage': number;
+    'totalCount': number;
+}
+export interface PaginatedMembershipsResponse {
+    'items': Array<MarketMembershipResponse>;
+    'total': number;
+    'page': number;
+    'limit': number;
+}
 export interface PaginatedOrdersResponse {
     'items': Array<OrderResponse>;
     'total': number;
@@ -307,6 +630,113 @@ export interface PaginatedShopmenuStoresResponse {
     'page': number;
     'limit': number;
 }
+export interface PaginatedStorefrontProductsResponse {
+    /**
+     * Products for this page
+     */
+    'products': Array<StorefrontProductResponse>;
+    /**
+     * Total products matching the filter
+     */
+    'total': number;
+    /**
+     * Current page (1-based)
+     */
+    'page': number;
+    /**
+     * Page size
+     */
+    'limit': number;
+}
+export interface PaginatedStorefrontsResponse {
+    /**
+     * Storefronts for this page
+     */
+    'data': Array<Usedisha>;
+    'count': number;
+    'page': number;
+    'limit': number;
+    'hasNextPage': boolean;
+    'hasPreviousPage': boolean;
+    'nextPage': number | null;
+    'previousPage': number | null;
+    'totalPages': number;
+    'currentPage': number;
+    'totalCount': number;
+}
+export interface ReportStoreVisitDto {
+    /**
+     * Stable session id from the storefront (localStorage). Used to group pageviews into sessions.
+     */
+    'sessionId'?: string;
+    /**
+     * Optional persistent visitor id from the storefront app
+     */
+    'visitorId'?: string;
+    /**
+     * Page path visited
+     */
+    'path'?: string;
+    'referrer'?: string;
+    'language'?: string;
+    'timezone'?: string;
+    'location'?: ReportVisitLocationDto;
+    'device'?: ReportVisitDeviceDto;
+    'utm'?: ReportVisitUtmDto;
+    /**
+     * Any extra analytics fields from the storefront app
+     */
+    'extra'?: { [key: string]: any; };
+}
+export interface ReportVisitDeviceDto {
+    'type'?: string;
+    'browser'?: string;
+    'os'?: string;
+    'platform'?: string;
+    'screenWidth'?: number;
+    'screenHeight'?: number;
+    'viewportWidth'?: number;
+}
+export interface ReportVisitLocationDto {
+    'city'?: string;
+    'state'?: string;
+    'country'?: string;
+    'address'?: string;
+}
+export interface ReportVisitUtmDto {
+    'source'?: string;
+    'medium'?: string;
+    'campaign'?: string;
+}
+export interface RequestMarketListingDto {
+    /**
+     * Market to list the branch in
+     */
+    'marketId': string;
+    /**
+     * Branch (must belong to the caller business storefront)
+     */
+    'branchId': string;
+}
+export interface ReviewMembershipDto {
+    /**
+     * Decision — approved or rejected
+     */
+    'status': ReviewMembershipDtoStatusEnum;
+    /**
+     * Reason (recommended when rejecting)
+     */
+    'reason'?: string;
+}
+
+export const ReviewMembershipDtoStatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+
+export type ReviewMembershipDtoStatusEnum = typeof ReviewMembershipDtoStatusEnum[keyof typeof ReviewMembershipDtoStatusEnum];
+
 export interface ShopmenuStoreResponse {
     /**
      * Unique identifier for the storefront
@@ -337,9 +767,9 @@ export interface ShopmenuStoreResponse {
      */
     'policyDocument'?: string;
     /**
-     * Delivery methods supported by this storefront
+     * Delivery configuration — supported methods and businessDelivery pricing
      */
-    'supportedDeliveryMethods'?: Array<ShopmenuStoreResponseSupportedDeliveryMethodsEnum>;
+    'deliveryConfig'?: UsedishaDeliveryConfig;
     /**
      * Payment methods supported by this storefront
      */
@@ -381,6 +811,32 @@ export interface ShopmenuStoreResponse {
      */
     'operatingHours'?: UsedishaOperatingHours;
     /**
+     * All physical branches for the branch picker
+     */
+    'branches'?: Array<UsedishaBranchResponse>;
+    /**
+     * Aggregated average rating (0–5)
+     */
+    'averageRating'?: number;
+    /**
+     * Total number of reviews
+     */
+    'reviewCount'?: number;
+    /**
+     * Minimum cart value for checkout
+     */
+    'minimumOrderAmount'?: number;
+    /**
+     * Estimated delivery time
+     */
+    'estimatedDeliveryTime'?: string;
+    'priceRange'?: ShopmenuStoreResponsePriceRangeEnum;
+    'tags'?: Array<string>;
+    /**
+     * Featured/promoted listing
+     */
+    'featured'?: boolean;
+    /**
      * Full store URL
      */
     'storeUrl': string;
@@ -388,22 +844,8 @@ export interface ShopmenuStoreResponse {
      * Shopmenu categories this store belongs to
      */
     'categories'?: Array<ShopmenuStoreResponseCategoriesEnum>;
-    /**
-     * Physical street address of the store
-     */
-    'address'?: UsedishaAddress;
-    /**
-     * GeoJSON Point location of the store [longitude, latitude]
-     */
-    'location'?: UsedishaLocation;
 }
 
-export const ShopmenuStoreResponseSupportedDeliveryMethodsEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
-} as const;
-
-export type ShopmenuStoreResponseSupportedDeliveryMethodsEnum = typeof ShopmenuStoreResponseSupportedDeliveryMethodsEnum[keyof typeof ShopmenuStoreResponseSupportedDeliveryMethodsEnum];
 export const ShopmenuStoreResponseSupportedPaymentMethodsEnum = {
     Cash: 'cash',
     PayOnDelivery: 'pay_on_delivery',
@@ -413,6 +855,13 @@ export const ShopmenuStoreResponseSupportedPaymentMethodsEnum = {
 } as const;
 
 export type ShopmenuStoreResponseSupportedPaymentMethodsEnum = typeof ShopmenuStoreResponseSupportedPaymentMethodsEnum[keyof typeof ShopmenuStoreResponseSupportedPaymentMethodsEnum];
+export const ShopmenuStoreResponsePriceRangeEnum = {
+    Budget: 'budget',
+    Mid: 'mid',
+    Premium: 'premium'
+} as const;
+
+export type ShopmenuStoreResponsePriceRangeEnum = typeof ShopmenuStoreResponsePriceRangeEnum[keyof typeof ShopmenuStoreResponsePriceRangeEnum];
 export const ShopmenuStoreResponseCategoriesEnum = {
     Pharmacy: 'pharmacy',
     Supermarket: 'supermarket',
@@ -428,6 +877,139 @@ export const ShopmenuStoreResponseCategoriesEnum = {
 
 export type ShopmenuStoreResponseCategoriesEnum = typeof ShopmenuStoreResponseCategoriesEnum[keyof typeof ShopmenuStoreResponseCategoriesEnum];
 
+export interface StoreVisitHistoryItemDto {
+    'id': string;
+    'storeId': string;
+    'visitedAt': string;
+    'sessionId'?: string;
+    'visitorId'?: string;
+    'countedAsStoreView'?: boolean;
+    'domain'?: string;
+    'path'?: string;
+    'ip'?: string;
+    'city'?: string;
+    'state'?: string;
+    'country'?: string;
+    'address'?: string;
+    'referrer'?: string;
+    'userAgent'?: string;
+    'deviceType'?: string;
+    'platform'?: string;
+    'browser'?: string;
+    'os'?: string;
+    'acceptLanguage'?: string;
+    'language'?: string;
+    'timezone'?: string;
+    'screenWidth'?: number;
+    'screenHeight'?: number;
+    'viewportWidth'?: number;
+    'location'?: { [key: string]: any; };
+    'device'?: { [key: string]: any; };
+    'utm'?: { [key: string]: any; };
+    'details'?: { [key: string]: any; };
+}
+export interface StoreVisitHistoryResponseDto {
+    'storeId': string;
+    'stats': StoreVisitStatsDto;
+    /**
+     * Aggregated visit trends and breakdowns for the selected period
+     */
+    'patterns': StoreVisitPatternsDto;
+    /**
+     * Recent individual visits for drill-down
+     */
+    'items': Array<StoreVisitHistoryItemDto>;
+    'nextToken'?: string;
+}
+export interface StoreVisitPatternsDto {
+    'period': object;
+    'summary': StoreVisitPatternsSummaryDto;
+    /**
+     * Daily view trend
+     */
+    'timeline': Array<VisitTimelinePointDto>;
+    'byHour': Array<VisitPatternBucketDto>;
+    'countries': Array<VisitPatternBucketDto>;
+    'cities': Array<VisitPatternBucketDto>;
+    'referrers': Array<VisitPatternBucketDto>;
+    'paths': Array<VisitPatternBucketDto>;
+    'devices': Array<VisitPatternBucketDto>;
+    'browsers': Array<VisitPatternBucketDto>;
+    'utmSources': Array<VisitPatternBucketDto>;
+}
+export interface StoreVisitPatternsSummaryDto {
+    'totalPageviews': number;
+    'uniqueVisitors': number;
+    'uniqueSessions': number;
+    'avgPageviewsPerDay': number;
+    'peakDay'?: string;
+    /**
+     * UTC hour 0–23 with most traffic
+     */
+    'peakHour'?: number;
+}
+export interface StoreVisitRecordedResponse {
+    'recorded': boolean;
+    /**
+     * Storefront ID
+     */
+    'storeId': string;
+}
+export interface StoreVisitStatsDto {
+    /**
+     * Unique store views today (session-based)
+     */
+    'daily': number;
+    'monthly': number;
+    'allTime': number;
+}
+export interface StorefrontAverageRatingResponse {
+    'domain': string;
+    'averageRating': number;
+}
+export interface StorefrontBranchItemResponse {
+    /**
+     * Branch ID reference
+     */
+    'branchId': string;
+    /**
+     * Branch display name
+     */
+    'name': string;
+    'status': StorefrontBranchItemResponseStatusEnum;
+    'phone'?: string;
+    /**
+     * Delivery radius in km
+     */
+    'deliveryRadius'?: number;
+    /**
+     * GeoJSON Point
+     */
+    'location': UsedishaLocation;
+    'country': string;
+    'state': string;
+    'city': string;
+    'lga'?: string;
+    /**
+     * Distance from supplied lat/lng in km
+     */
+    'distanceKm'?: number;
+}
+
+export const StorefrontBranchItemResponseStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type StorefrontBranchItemResponseStatusEnum = typeof StorefrontBranchItemResponseStatusEnum[keyof typeof StorefrontBranchItemResponseStatusEnum];
+
+export interface StorefrontBranchesResponse {
+    /**
+     * Storefront domain
+     */
+    'domain': string;
+    'branches': Array<StorefrontBranchItemResponse>;
+}
 export interface StorefrontCategoriesResponse {
     /**
      * Array of categories
@@ -518,12 +1100,6 @@ export interface StorefrontProductResponse {
      */
     'updatedAt': string;
 }
-export interface StorefrontProductsResponse {
-    /**
-     * Array of products
-     */
-    'products': Array<StorefrontProductResponse>;
-}
 export interface StorefrontProfileResponse {
     /**
      * Unique identifier for the storefront
@@ -554,9 +1130,9 @@ export interface StorefrontProfileResponse {
      */
     'policyDocument'?: string;
     /**
-     * Delivery methods supported by this storefront
+     * Delivery configuration — supported methods and businessDelivery pricing
      */
-    'supportedDeliveryMethods'?: Array<StorefrontProfileResponseSupportedDeliveryMethodsEnum>;
+    'deliveryConfig'?: UsedishaDeliveryConfig;
     /**
      * Payment methods supported by this storefront
      */
@@ -598,17 +1174,37 @@ export interface StorefrontProfileResponse {
      */
     'operatingHours'?: UsedishaOperatingHours;
     /**
+     * All physical branches for the branch picker
+     */
+    'branches'?: Array<UsedishaBranchResponse>;
+    /**
+     * Aggregated average rating (0–5)
+     */
+    'averageRating'?: number;
+    /**
+     * Total number of reviews
+     */
+    'reviewCount'?: number;
+    /**
+     * Minimum cart value for checkout
+     */
+    'minimumOrderAmount'?: number;
+    /**
+     * Estimated delivery time
+     */
+    'estimatedDeliveryTime'?: string;
+    'priceRange'?: StorefrontProfileResponsePriceRangeEnum;
+    'tags'?: Array<string>;
+    /**
+     * Featured/promoted listing
+     */
+    'featured'?: boolean;
+    /**
      * Full store URL
      */
     'storeUrl': string;
 }
 
-export const StorefrontProfileResponseSupportedDeliveryMethodsEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
-} as const;
-
-export type StorefrontProfileResponseSupportedDeliveryMethodsEnum = typeof StorefrontProfileResponseSupportedDeliveryMethodsEnum[keyof typeof StorefrontProfileResponseSupportedDeliveryMethodsEnum];
 export const StorefrontProfileResponseSupportedPaymentMethodsEnum = {
     Cash: 'cash',
     PayOnDelivery: 'pay_on_delivery',
@@ -618,7 +1214,49 @@ export const StorefrontProfileResponseSupportedPaymentMethodsEnum = {
 } as const;
 
 export type StorefrontProfileResponseSupportedPaymentMethodsEnum = typeof StorefrontProfileResponseSupportedPaymentMethodsEnum[keyof typeof StorefrontProfileResponseSupportedPaymentMethodsEnum];
+export const StorefrontProfileResponsePriceRangeEnum = {
+    Budget: 'budget',
+    Mid: 'mid',
+    Premium: 'premium'
+} as const;
 
+export type StorefrontProfileResponsePriceRangeEnum = typeof StorefrontProfileResponsePriceRangeEnum[keyof typeof StorefrontProfileResponsePriceRangeEnum];
+
+export interface StorefrontReviewCountResponse {
+    'domain': string;
+    'count': number;
+}
+export interface StorefrontReviewItemDto {
+    'id': string;
+    'rating'?: number;
+    'title'?: string;
+    'content'?: string;
+    'customerName'?: string;
+    'verified'?: boolean;
+    'status'?: string;
+    'createdAt': string;
+    'updatedAt'?: string;
+    'reply'?: StorefrontReviewReplyDto | null;
+}
+export interface StorefrontReviewReplyDto {
+    'id'?: string;
+    'content'?: string;
+    'createdBy'?: string;
+    'createdAt'?: string;
+    'updatedAt'?: string;
+}
+export interface StorefrontReviewReplyResponse {
+    'domain': string;
+    'reviewId': string;
+    'reply'?: StorefrontReviewReplyDto | null;
+}
+export interface StorefrontReviewsResponse {
+    /**
+     * Storefront domain
+     */
+    'domain': string;
+    'reviews': Array<StorefrontReviewItemDto>;
+}
 export interface UDSocialMediaLinks {
     /**
      * WhatsApp number
@@ -679,6 +1317,138 @@ export interface UDThemeSettings {
      */
     'coverImageUrl'?: string;
 }
+export interface UpdateMarketDto {
+    /**
+     * Market name
+     */
+    'name'?: string;
+    /**
+     * URL-friendly unique slug
+     */
+    'slug'?: string;
+    /**
+     * Market classification
+     */
+    'type'?: UpdateMarketDtoTypeEnum;
+    /**
+     * Country
+     */
+    'country'?: string;
+    /**
+     * State / province
+     */
+    'state'?: string;
+    /**
+     * City
+     */
+    'city'?: string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
+    /**
+     * Market centroid as a GeoJSON Point [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+    /**
+     * Market description
+     */
+    'description'?: string;
+    /**
+     * Market logo URL
+     */
+    'logo'?: string;
+    /**
+     * Market cover photo URL
+     */
+    'coverPhoto'?: string;
+    'status'?: UpdateMarketDtoStatusEnum;
+    /**
+     * Promoted/featured market
+     */
+    'featured'?: boolean;
+}
+
+export const UpdateMarketDtoTypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
+} as const;
+
+export type UpdateMarketDtoTypeEnum = typeof UpdateMarketDtoTypeEnum[keyof typeof UpdateMarketDtoTypeEnum];
+export const UpdateMarketDtoStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type UpdateMarketDtoStatusEnum = typeof UpdateMarketDtoStatusEnum[keyof typeof UpdateMarketDtoStatusEnum];
+
+export interface UpdateUsedishaBranchDto {
+    /**
+     * Branch display name
+     */
+    'name'?: string;
+    'status'?: UpdateUsedishaBranchDtoStatusEnum;
+    /**
+     * Branch contact phone number
+     */
+    'phone'?: string;
+    /**
+     * Delivery radius in kilometres
+     */
+    'deliveryRadius'?: number;
+    /**
+     * GeoJSON Point [longitude, latitude]
+     */
+    'location'?: UsedishaLocation;
+    /**
+     * Country
+     */
+    'country'?: string;
+    /**
+     * State / province
+     */
+    'state'?: string;
+    /**
+     * City
+     */
+    'city'?: string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
+}
+
+export const UpdateUsedishaBranchDtoStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type UpdateUsedishaBranchDtoStatusEnum = typeof UpdateUsedishaBranchDtoStatusEnum[keyof typeof UpdateUsedishaBranchDtoStatusEnum];
+
+export interface UpdateUsedishaDeliveryConfigDto {
+    /**
+     * Delivery methods this storefront offers at checkout
+     */
+    'supportedMethods': Array<UpdateUsedishaDeliveryConfigDtoSupportedMethodsEnum>;
+    /**
+     * Business-delivery pricing (required when `businessDelivery` is supported)
+     */
+    'businessDelivery'?: UsedishaBusinessDeliverySettings;
+}
+
+export const UpdateUsedishaDeliveryConfigDtoSupportedMethodsEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery'
+} as const;
+
+export type UpdateUsedishaDeliveryConfigDtoSupportedMethodsEnum = typeof UpdateUsedishaDeliveryConfigDtoSupportedMethodsEnum[keyof typeof UpdateUsedishaDeliveryConfigDtoSupportedMethodsEnum];
+
 export interface UpdateUsedishaDto {
     /**
      * Store name
@@ -712,10 +1482,6 @@ export interface UpdateUsedishaDto {
      * Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update)
      */
     'policyDocument'?: string;
-    /**
-     * Delivery methods this storefront supports at checkout
-     */
-    'supportedDeliveryMethods'?: Array<UpdateUsedishaDtoSupportedDeliveryMethodsEnum>;
     /**
      * Payment methods this storefront supports at checkout
      */
@@ -752,6 +1518,26 @@ export interface UpdateUsedishaDto {
      * Weekly operating hours (local times in timeZone)
      */
     'operatingHours'?: UsedishaOperatingHours;
+    /**
+     * Minimum cart value required for checkout
+     */
+    'minimumOrderAmount'?: number;
+    /**
+     * Estimated delivery time display string
+     */
+    'estimatedDeliveryTime'?: string;
+    /**
+     * Price tier
+     */
+    'priceRange'?: UpdateUsedishaDtoPriceRangeEnum;
+    /**
+     * Freeform discovery keywords
+     */
+    'tags'?: Array<string>;
+    /**
+     * Promoted/featured listing flag
+     */
+    'featured'?: boolean;
 }
 
 export const UpdateUsedishaDtoStatusEnum = {
@@ -763,12 +1549,6 @@ export const UpdateUsedishaDtoStatusEnum = {
 } as const;
 
 export type UpdateUsedishaDtoStatusEnum = typeof UpdateUsedishaDtoStatusEnum[keyof typeof UpdateUsedishaDtoStatusEnum];
-export const UpdateUsedishaDtoSupportedDeliveryMethodsEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
-} as const;
-
-export type UpdateUsedishaDtoSupportedDeliveryMethodsEnum = typeof UpdateUsedishaDtoSupportedDeliveryMethodsEnum[keyof typeof UpdateUsedishaDtoSupportedDeliveryMethodsEnum];
 export const UpdateUsedishaDtoSupportedPaymentMethodsEnum = {
     Cash: 'cash',
     PayOnDelivery: 'pay_on_delivery',
@@ -778,6 +1558,13 @@ export const UpdateUsedishaDtoSupportedPaymentMethodsEnum = {
 } as const;
 
 export type UpdateUsedishaDtoSupportedPaymentMethodsEnum = typeof UpdateUsedishaDtoSupportedPaymentMethodsEnum[keyof typeof UpdateUsedishaDtoSupportedPaymentMethodsEnum];
+export const UpdateUsedishaDtoPriceRangeEnum = {
+    Budget: 'budget',
+    Mid: 'mid',
+    Premium: 'premium'
+} as const;
+
+export type UpdateUsedishaDtoPriceRangeEnum = typeof UpdateUsedishaDtoPriceRangeEnum[keyof typeof UpdateUsedishaDtoPriceRangeEnum];
 
 export interface Usedisha {
     /**
@@ -829,9 +1616,9 @@ export interface Usedisha {
      */
     'policyDocument'?: string;
     /**
-     * Delivery methods this storefront supports at checkout
+     * Delivery configuration — supported methods and businessDelivery pricing
      */
-    'supportedDeliveryMethods'?: Array<UsedishaSupportedDeliveryMethodsEnum>;
+    'deliveryConfig'?: UsedishaDeliveryConfig;
     /**
      * Payment methods this storefront supports at checkout
      */
@@ -881,6 +1668,38 @@ export interface Usedisha {
      */
     'operatingHours'?: UsedishaOperatingHours;
     /**
+     * All physical branches of this storefront, used for marketplace discovery and the branch picker
+     */
+    'branches'?: Array<UsedishaBranch>;
+    /**
+     * Aggregated average rating (0–5)
+     */
+    'averageRating'?: number;
+    /**
+     * Total number of reviews
+     */
+    'reviewCount'?: number;
+    /**
+     * Minimum cart value required for checkout
+     */
+    'minimumOrderAmount'?: number;
+    /**
+     * Estimated delivery time display string
+     */
+    'estimatedDeliveryTime'?: string;
+    /**
+     * Price tier
+     */
+    'priceRange'?: UsedishaPriceRangeEnum;
+    /**
+     * Freeform discovery keywords
+     */
+    'tags'?: Array<string>;
+    /**
+     * Promoted/featured listing flag
+     */
+    'featured'?: boolean;
+    /**
      * Metadata for tracking, custom scripts, etc.
      */
     'metadata'?: object;
@@ -918,12 +1737,6 @@ export const UsedishaApprovalStatusEnum = {
 } as const;
 
 export type UsedishaApprovalStatusEnum = typeof UsedishaApprovalStatusEnum[keyof typeof UsedishaApprovalStatusEnum];
-export const UsedishaSupportedDeliveryMethodsEnum = {
-    Pickup: 'pickup',
-    Express: 'express'
-} as const;
-
-export type UsedishaSupportedDeliveryMethodsEnum = typeof UsedishaSupportedDeliveryMethodsEnum[keyof typeof UsedishaSupportedDeliveryMethodsEnum];
 export const UsedishaSupportedPaymentMethodsEnum = {
     Cash: 'cash',
     PayOnDelivery: 'pay_on_delivery',
@@ -933,6 +1746,13 @@ export const UsedishaSupportedPaymentMethodsEnum = {
 } as const;
 
 export type UsedishaSupportedPaymentMethodsEnum = typeof UsedishaSupportedPaymentMethodsEnum[keyof typeof UsedishaSupportedPaymentMethodsEnum];
+export const UsedishaPriceRangeEnum = {
+    Budget: 'budget',
+    Mid: 'mid',
+    Premium: 'premium'
+} as const;
+
+export type UsedishaPriceRangeEnum = typeof UsedishaPriceRangeEnum[keyof typeof UsedishaPriceRangeEnum];
 
 export interface UsedishaAddress {
     /**
@@ -960,13 +1780,101 @@ export interface UsedishaAddress {
      */
     'postalCode'?: string;
 }
-export interface UsedishaAdminControllerCheckDomainAvailabilityV1200Response {
-    'available'?: boolean;
-    'message'?: string;
+export interface UsedishaBranch {
+    /**
+     * Branch ID reference
+     */
+    'branchId': object;
+    /**
+     * Branch display name
+     */
+    'name': string;
+    'status': UsedishaBranchStatusEnum;
+    /**
+     * Branch contact phone number
+     */
+    'phone'?: string;
+    /**
+     * Delivery radius in kilometres
+     */
+    'deliveryRadius'?: number;
+    /**
+     * GeoJSON Point [longitude, latitude]
+     */
+    'location': UsedishaLocation;
+    /**
+     * Country
+     */
+    'country': string;
+    /**
+     * State / province
+     */
+    'state': string;
+    /**
+     * City
+     */
+    'city': string;
+    /**
+     * Local Government Area
+     */
+    'lga'?: string;
 }
-export interface UsedishaAdminControllerDeleteUsedishaV1200Response {
-    'success'?: boolean;
-    'message'?: string;
+
+export const UsedishaBranchStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type UsedishaBranchStatusEnum = typeof UsedishaBranchStatusEnum[keyof typeof UsedishaBranchStatusEnum];
+
+export interface UsedishaBranchResponse {
+    /**
+     * Branch document _id
+     */
+    'id': string;
+    /**
+     * Branch ID reference
+     */
+    'branchId': string;
+    /**
+     * Branch display name
+     */
+    'name': string;
+    'status': UsedishaBranchResponseStatusEnum;
+    /**
+     * Branch contact phone number
+     */
+    'phone'?: string;
+    /**
+     * Delivery radius in kilometres
+     */
+    'deliveryRadius'?: number;
+    /**
+     * GeoJSON Point
+     */
+    'location': UsedishaLocation;
+    'country': string;
+    'state': string;
+    'city': string;
+    'lga'?: string;
+}
+
+export const UsedishaBranchResponseStatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+
+export type UsedishaBranchResponseStatusEnum = typeof UsedishaBranchResponseStatusEnum[keyof typeof UsedishaBranchResponseStatusEnum];
+
+export interface UsedishaBusinessDeliverySettings {
+    /**
+     * Flat delivery fee charged by the business (NGN)
+     */
+    'fee': number;
+    /**
+     * Cart sub-total at/above which delivery is free. 0 (default) = never free.
+     */
+    'freeDeliveryThreshold'?: number;
 }
 export interface UsedishaCartValidationResponseDto {
     /**
@@ -1118,15 +2026,131 @@ export interface UsedishaDayOperatingHours {
      */
     'slots'?: Array<UsedishaTimeSlot>;
 }
+export interface UsedishaDeliveryConfig {
+    /**
+     * Delivery methods this storefront offers at checkout
+     */
+    'supportedMethods': Array<UsedishaDeliveryConfigSupportedMethodsEnum>;
+    /**
+     * Business-delivery pricing (required when `businessDelivery` is supported)
+     */
+    'businessDelivery'?: UsedishaBusinessDeliverySettings;
+}
+
+export const UsedishaDeliveryConfigSupportedMethodsEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery'
+} as const;
+
+export type UsedishaDeliveryConfigSupportedMethodsEnum = typeof UsedishaDeliveryConfigSupportedMethodsEnum[keyof typeof UsedishaDeliveryConfigSupportedMethodsEnum];
+
+export interface UsedishaDeliveryQuoteDto {
+    'method': UsedishaDeliveryQuoteDtoMethodEnum;
+    /**
+     * Delivery provider name (platformDelivery only)
+     */
+    'provider'?: string;
+    /**
+     * Provider quote reference, persisted for later dispatch
+     */
+    'quoteReference'?: string;
+    /**
+     * Estimated delivery time
+     */
+    'estimatedDeliveryTime'?: string;
+    /**
+     * Whether platform delivery is available for this route
+     */
+    'available': boolean;
+}
+
+export const UsedishaDeliveryQuoteDtoMethodEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery'
+} as const;
+
+export type UsedishaDeliveryQuoteDtoMethodEnum = typeof UsedishaDeliveryQuoteDtoMethodEnum[keyof typeof UsedishaDeliveryQuoteDtoMethodEnum];
+
+export interface UsedishaEstimateFeesDto {
+    /**
+     * Usedisha store domain
+     */
+    'domain': string;
+    /**
+     * Branch to price against. Defaults to the storefront default branch when omitted.
+     */
+    'branchId'?: string;
+    /**
+     * Cart items to estimate fees for
+     */
+    'items': Array<UsedishaCheckoutItemDto>;
+    /**
+     * How the order will be fulfilled
+     */
+    'deliveryMethod': UsedishaEstimateFeesDtoDeliveryMethodEnum;
+    /**
+     * Customer longitude — required for platformDelivery fee quoting
+     */
+    'userLng'?: number;
+    /**
+     * Customer latitude — required for EXPRESS delivery fee calculation
+     */
+    'userLat'?: number;
+}
+
+export const UsedishaEstimateFeesDtoDeliveryMethodEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery'
+} as const;
+
+export type UsedishaEstimateFeesDtoDeliveryMethodEnum = typeof UsedishaEstimateFeesDtoDeliveryMethodEnum[keyof typeof UsedishaEstimateFeesDtoDeliveryMethodEnum];
+
+export interface UsedishaFeeBreakdownDto {
+    'deliveryFeeNote': string;
+    'serviceFeeNote': string;
+    'discountNote': string;
+}
+export interface UsedishaGuestOrderSummaryDto {
+    'id': string;
+    'orderNumber': string;
+    'status': string;
+    'paymentStatus': string;
+    'fulfillmentStatus': string;
+    'totalAmount': number;
+    'itemCount': number;
+    'createdAt': string;
+    'updatedAt': string;
+}
+export interface UsedishaGuestOrdersResponseDto {
+    /**
+     * Storefront domain
+     */
+    'domain': string;
+    /**
+     * Customer email queried
+     */
+    'email': string;
+    /**
+     * Matching orders
+     */
+    'orders': Array<UsedishaGuestOrderSummaryDto>;
+}
 export interface UsedishaInitiateCheckoutDto {
     /**
      * Usedisha store domain
      */
     'domain': string;
     /**
-     * Customer (email required)
+     * Branch to order from. Defaults to the storefront default branch when omitted.
      */
-    'customer': UsedishaCheckoutCustomerDto;
+    'branchId'?: string;
+    /**
+     * Customer details (email required). Optional for authenticated shoppers — identity is then sourced from the JWT. Required for guest checkout.
+     */
+    'customer'?: UsedishaCheckoutCustomerDto;
     /**
      * Cart items
      */
@@ -1140,11 +2164,11 @@ export interface UsedishaInitiateCheckoutDto {
      */
     'customerNotes'?: string;
     /**
-     * How the order will be fulfilled. PICKUP = customer collects in store (no delivery fee). EXPRESS = rider delivers to customer address.
+     * How the order will be fulfilled. `pickup` = collect in store (free). `platformDelivery` = platform arranges delivery (fee quoted by provider). `businessDelivery` = business delivers (merchant flat fee).
      */
     'deliveryMethod': UsedishaInitiateCheckoutDtoDeliveryMethodEnum;
     /**
-     * Customer longitude — required for EXPRESS to calculate the delivery fee
+     * Customer longitude — required for platformDelivery to quote the delivery fee
      */
     'userLng'?: number;
     /**
@@ -1159,7 +2183,8 @@ export interface UsedishaInitiateCheckoutDto {
 
 export const UsedishaInitiateCheckoutDtoDeliveryMethodEnum = {
     Pickup: 'pickup',
-    Express: 'express'
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery'
 } as const;
 
 export type UsedishaInitiateCheckoutDtoDeliveryMethodEnum = typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum[keyof typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum];
@@ -1187,6 +2212,114 @@ export interface UsedishaOperatingHours {
     'saturday'?: UsedishaDayOperatingHours;
     'sunday'?: UsedishaDayOperatingHours;
 }
+export interface UsedishaOrderFeeEstimateResponseDto {
+    /**
+     * Cart sub-total (items only)
+     */
+    'subTotal': number;
+    /**
+     * Delivery fee in NGN (0 for PICKUP / free-delivery threshold)
+     */
+    'deliveryFee': number;
+    /**
+     * Platform service fee in NGN
+     */
+    'serviceFee': number;
+    /**
+     * Discount amount in NGN
+     */
+    'discountAmount': number;
+    /**
+     * Grand total the customer will pay
+     */
+    'totalAmount': number;
+    /**
+     * Straight-line distance from customer to store in km (EXPRESS only)
+     */
+    'distanceKm'?: number | null;
+    /**
+     * Whether the free-delivery threshold was met
+     */
+    'isFreeDelivery': boolean;
+    /**
+     * Human-readable notes for each fee line
+     */
+    'breakdown': UsedishaFeeBreakdownDto;
+    /**
+     * Delivery quote details (provider + reference for platformDelivery)
+     */
+    'delivery'?: UsedishaDeliveryQuoteDto;
+}
+export interface UsedishaOrderIntentDetailResponseDto {
+    /**
+     * Order intent ID
+     */
+    'id': string;
+    /**
+     * Order intent reference
+     */
+    'intentReference': string;
+    /**
+     * Intent status
+     */
+    'status': string;
+    /**
+     * Total amount
+     */
+    'totalAmount': number;
+    /**
+     * Sub-total
+     */
+    'subTotal': number;
+    /**
+     * Tax amount
+     */
+    'taxAmount'?: number;
+    /**
+     * Discount amount
+     */
+    'discountAmount'?: number;
+    /**
+     * Shipping/delivery amount
+     */
+    'shippingAmount'?: number;
+    /**
+     * Order items
+     */
+    'items': Array<object>;
+    /**
+     * Customer snapshot
+     */
+    'customer'?: object;
+    /**
+     * Shipping snapshot
+     */
+    'shipping'?: object;
+    /**
+     * Payment reference
+     */
+    'paymentReference'?: string;
+    /**
+     * Payment authorization URL
+     */
+    'paymentAuthorizationUrl'?: string;
+    /**
+     * Expiry time
+     */
+    'expiresAt'?: string;
+    /**
+     * Order ID (once created)
+     */
+    'orderId'?: string;
+    /**
+     * Order number (once created)
+     */
+    'orderNumber'?: string;
+    /**
+     * Creation time
+     */
+    'createdAt': string;
+}
 export interface UsedishaOrderStatusResponseDto {
     /**
      * Order intent reference
@@ -1212,6 +2345,28 @@ export interface UsedishaOrderStatusResponseDto {
      * Failure reason (if failed)
      */
     'failureReason'?: string;
+}
+export interface UsedishaPlatformOverviewResponseDto {
+    /**
+     * Total storefronts
+     */
+    'total': number;
+    /**
+     * Featured storefronts
+     */
+    'featured': number;
+    /**
+     * Counts keyed by storefront status
+     */
+    'byStatus': object;
+    /**
+     * Counts keyed by approval status
+     */
+    'byApprovalStatus': object;
+    /**
+     * Counts keyed by Shopmenu category
+     */
+    'byCategory': object;
 }
 export interface UsedishaStoreOverviewResponseDto {
     'overview': UsedishaStoreOverviewTotalsDto;
@@ -1265,9 +2420,24 @@ export interface UsedishaValidateCartDto {
      */
     'domain': string;
     /**
+     * Branch to shop from. Defaults to the storefront default branch when omitted.
+     */
+    'branchId'?: string;
+    /**
      * Cart items
      */
     'items': Array<UsedishaCheckoutItemDto>;
+}
+export interface VisitPatternBucketDto {
+    'label': string;
+    'count': number;
+    'percent': number;
+}
+export interface VisitTimelinePointDto {
+    'date': string;
+    'views': number;
+    'uniqueVisitors': number;
+    'uniqueSessions': number;
 }
 
 /**
@@ -1275,6 +2445,49 @@ export interface UsedishaValidateCartDto {
  */
 export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * Registers a physical branch on this storefront for marketplace discovery. The branch must belong to the same business.
+         * @summary Add a branch to the storefront
+         * @param {string} businessId Business ID
+         * @param {CreateUsedishaBranchDto} createUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerAddBranchV1: async (businessId: string, createUsedishaBranchDto: CreateUsedishaBranchDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerAddBranchV1', 'businessId', businessId)
+            // verify required parameter 'createUsedishaBranchDto' is not null or undefined
+            assertParamExists('usedishaAdminControllerAddBranchV1', 'createUsedishaBranchDto', createUsedishaBranchDto)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/branches`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createUsedishaBranchDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @summary Check if domain is available
@@ -1437,6 +2650,69 @@ export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration
             };
         },
         /**
+         * Session-aware view stats, daily timeline, peak hours, and breakdowns by country, referrer, path, and device for this business\'s storefront, plus a paginated recent-visit log.
+         * @summary Store visit history, trends, and traffic patterns
+         * @param {string} businessId Business ID
+         * @param {number} [days] Number of days to analyse for patterns (1–90)
+         * @param {number} [limit] Recent visits page size
+         * @param {string} [nextToken] Pagination cursor for recent visits
+         * @param {string} [startTime] Filter visits on or after this ISO timestamp
+         * @param {string} [endTime] Filter visits on or before this ISO timestamp
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerGetStoreVisitHistoryV1: async (businessId: string, days?: number, limit?: number, nextToken?: string, startTime?: string, endTime?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerGetStoreVisitHistoryV1', 'businessId', businessId)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/visit-history`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (days !== undefined) {
+                localVarQueryParameter['days'] = days;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (nextToken !== undefined) {
+                localVarQueryParameter['nextToken'] = nextToken;
+            }
+
+            if (startTime !== undefined) {
+                localVarQueryParameter['startTime'] = startTime;
+            }
+
+            if (endTime !== undefined) {
+                localVarQueryParameter['endTime'] = endTime;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -1468,6 +2744,95 @@ export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Remove a branch from the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerRemoveBranchV1: async (branchId: string, businessId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'branchId' is not null or undefined
+            assertParamExists('usedishaAdminControllerRemoveBranchV1', 'branchId', branchId)
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerRemoveBranchV1', 'businessId', businessId)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/branches/{branchId}`
+                .replace(`{${"branchId"}}`, encodeURIComponent(String(branchId)))
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update a branch entry on the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaBranchDto} updateUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateBranchV1: async (branchId: string, businessId: string, updateUsedishaBranchDto: UpdateUsedishaBranchDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'branchId' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateBranchV1', 'branchId', branchId)
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateBranchV1', 'businessId', businessId)
+            // verify required parameter 'updateUsedishaBranchDto' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateBranchV1', 'updateUsedishaBranchDto', updateUsedishaBranchDto)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/branches/{branchId}`
+                .replace(`{${"branchId"}}`, encodeURIComponent(String(branchId)))
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateUsedishaBranchDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1511,6 +2876,49 @@ export const BusinessAdminUsedishaApiAxiosParamCreator = function (configuration
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(usedishaConfig, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery flat-fee pricing. `businessDelivery.fee` is required when businessDelivery is supported.
+         * @summary Update delivery configuration
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaDeliveryConfigDto} updateUsedishaDeliveryConfigDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateDeliveryConfigV1: async (businessId: string, updateUsedishaDeliveryConfigDto: UpdateUsedishaDeliveryConfigDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateDeliveryConfigV1', 'businessId', businessId)
+            // verify required parameter 'updateUsedishaDeliveryConfigDto' is not null or undefined
+            assertParamExists('usedishaAdminControllerUpdateDeliveryConfigV1', 'updateUsedishaDeliveryConfigDto', updateUsedishaDeliveryConfigDto)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/delivery-config`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateUsedishaDeliveryConfigDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1742,6 +3150,20 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
     const localVarAxiosParamCreator = BusinessAdminUsedishaApiAxiosParamCreator(configuration)
     return {
         /**
+         * Registers a physical branch on this storefront for marketplace discovery. The branch must belong to the same business.
+         * @summary Add a branch to the storefront
+         * @param {string} businessId Business ID
+         * @param {CreateUsedishaBranchDto} createUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerAddBranchV1(businessId: string, createUsedishaBranchDto: CreateUsedishaBranchDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerAddBranchV1(businessId, createUsedishaBranchDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerAddBranchV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @summary Check if domain is available
          * @param {string} domain 
@@ -1749,7 +3171,7 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaAdminControllerCheckDomainAvailabilityV1(domain: string, businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaAdminControllerCheckDomainAvailabilityV1200Response>> {
+        async usedishaAdminControllerCheckDomainAvailabilityV1(domain: string, businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DomainAvailabilityResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerCheckDomainAvailabilityV1(domain, businessId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerCheckDomainAvailabilityV1']?.[localVarOperationServerIndex]?.url;
@@ -1776,7 +3198,7 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaAdminControllerDeleteUsedishaV1(businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaAdminControllerDeleteUsedishaV1200Response>> {
+        async usedishaAdminControllerDeleteUsedishaV1(businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteAckResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerDeleteUsedishaV1(businessId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerDeleteUsedishaV1']?.[localVarOperationServerIndex]?.url;
@@ -1796,6 +3218,24 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Session-aware view stats, daily timeline, peak hours, and breakdowns by country, referrer, path, and device for this business\'s storefront, plus a paginated recent-visit log.
+         * @summary Store visit history, trends, and traffic patterns
+         * @param {string} businessId Business ID
+         * @param {number} [days] Number of days to analyse for patterns (1–90)
+         * @param {number} [limit] Recent visits page size
+         * @param {string} [nextToken] Pagination cursor for recent visits
+         * @param {string} [startTime] Filter visits on or after this ISO timestamp
+         * @param {string} [endTime] Filter visits on or before this ISO timestamp
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerGetStoreVisitHistoryV1(businessId: string, days?: number, limit?: number, nextToken?: string, startTime?: string, endTime?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StoreVisitHistoryResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerGetStoreVisitHistoryV1(businessId, days, limit, nextToken, startTime, endTime, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerGetStoreVisitHistoryV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -1810,6 +3250,35 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
         },
         /**
          * 
+         * @summary Remove a branch from the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerRemoveBranchV1(branchId: string, businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerRemoveBranchV1(branchId, businessId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerRemoveBranchV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update a branch entry on the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaBranchDto} updateUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerUpdateBranchV1(branchId: string, businessId: string, updateUsedishaBranchDto: UpdateUsedishaBranchDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateBranchV1(branchId, businessId, updateUsedishaBranchDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateBranchV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update usedisha configuration
          * @param {string} businessId Business ID
          * @param {UsedishaConfig} usedishaConfig 
@@ -1820,6 +3289,20 @@ export const BusinessAdminUsedishaApiFp = function(configuration?: Configuration
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateConfigV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery flat-fee pricing. `businessDelivery.fee` is required when businessDelivery is supported.
+         * @summary Update delivery configuration
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaDeliveryConfigDto} updateUsedishaDeliveryConfigDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminControllerUpdateDeliveryConfigV1(businessId: string, updateUsedishaDeliveryConfigDto: UpdateUsedishaDeliveryConfigDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminControllerUpdateDeliveryConfigV1(businessId, updateUsedishaDeliveryConfigDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['BusinessAdminUsedishaApi.usedishaAdminControllerUpdateDeliveryConfigV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -1902,6 +3385,17 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
     const localVarFp = BusinessAdminUsedishaApiFp(configuration)
     return {
         /**
+         * Registers a physical branch on this storefront for marketplace discovery. The branch must belong to the same business.
+         * @summary Add a branch to the storefront
+         * @param {string} businessId Business ID
+         * @param {CreateUsedishaBranchDto} createUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerAddBranchV1(businessId: string, createUsedishaBranchDto: CreateUsedishaBranchDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerAddBranchV1(businessId, createUsedishaBranchDto, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary Check if domain is available
          * @param {string} domain 
@@ -1909,7 +3403,7 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaAdminControllerCheckDomainAvailabilityV1(domain: string, businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaAdminControllerCheckDomainAvailabilityV1200Response> {
+        usedishaAdminControllerCheckDomainAvailabilityV1(domain: string, businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<DomainAvailabilityResponse> {
             return localVarFp.usedishaAdminControllerCheckDomainAvailabilityV1(domain, businessId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1930,7 +3424,7 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaAdminControllerDeleteUsedishaV1(businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaAdminControllerDeleteUsedishaV1200Response> {
+        usedishaAdminControllerDeleteUsedishaV1(businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<DeleteAckResponse> {
             return localVarFp.usedishaAdminControllerDeleteUsedishaV1(businessId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1944,6 +3438,21 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
             return localVarFp.usedishaAdminControllerGetStoreOverviewV1(businessId, options).then((request) => request(axios, basePath));
         },
         /**
+         * Session-aware view stats, daily timeline, peak hours, and breakdowns by country, referrer, path, and device for this business\'s storefront, plus a paginated recent-visit log.
+         * @summary Store visit history, trends, and traffic patterns
+         * @param {string} businessId Business ID
+         * @param {number} [days] Number of days to analyse for patterns (1–90)
+         * @param {number} [limit] Recent visits page size
+         * @param {string} [nextToken] Pagination cursor for recent visits
+         * @param {string} [startTime] Filter visits on or after this ISO timestamp
+         * @param {string} [endTime] Filter visits on or before this ISO timestamp
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerGetStoreVisitHistoryV1(businessId: string, days?: number, limit?: number, nextToken?: string, startTime?: string, endTime?: string, options?: RawAxiosRequestConfig): AxiosPromise<StoreVisitHistoryResponseDto> {
+            return localVarFp.usedishaAdminControllerGetStoreVisitHistoryV1(businessId, days, limit, nextToken, startTime, endTime, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary Get usedisha profile for business
          * @param {string} businessId Business ID
@@ -1955,6 +3464,29 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
         },
         /**
          * 
+         * @summary Remove a branch from the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerRemoveBranchV1(branchId: string, businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerRemoveBranchV1(branchId, businessId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update a branch entry on the storefront
+         * @param {string} branchId Branch ID (ref to Branch document)
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaBranchDto} updateUsedishaBranchDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateBranchV1(branchId: string, businessId: string, updateUsedishaBranchDto: UpdateUsedishaBranchDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerUpdateBranchV1(branchId, businessId, updateUsedishaBranchDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Update usedisha configuration
          * @param {string} businessId Business ID
          * @param {UsedishaConfig} usedishaConfig 
@@ -1963,6 +3495,17 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
          */
         usedishaAdminControllerUpdateConfigV1(businessId: string, usedishaConfig: UsedishaConfig, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
             return localVarFp.usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery flat-fee pricing. `businessDelivery.fee` is required when businessDelivery is supported.
+         * @summary Update delivery configuration
+         * @param {string} businessId Business ID
+         * @param {UpdateUsedishaDeliveryConfigDto} updateUsedishaDeliveryConfigDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminControllerUpdateDeliveryConfigV1(businessId: string, updateUsedishaDeliveryConfigDto: UpdateUsedishaDeliveryConfigDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaAdminControllerUpdateDeliveryConfigV1(businessId, updateUsedishaDeliveryConfigDto, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2027,6 +3570,18 @@ export const BusinessAdminUsedishaApiFactory = function (configuration?: Configu
  */
 export class BusinessAdminUsedishaApi extends BaseAPI {
     /**
+     * Registers a physical branch on this storefront for marketplace discovery. The branch must belong to the same business.
+     * @summary Add a branch to the storefront
+     * @param {string} businessId Business ID
+     * @param {CreateUsedishaBranchDto} createUsedishaBranchDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerAddBranchV1(businessId: string, createUsedishaBranchDto: CreateUsedishaBranchDto, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerAddBranchV1(businessId, createUsedishaBranchDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 
      * @summary Check if domain is available
      * @param {string} domain 
@@ -2073,6 +3628,22 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
     }
 
     /**
+     * Session-aware view stats, daily timeline, peak hours, and breakdowns by country, referrer, path, and device for this business\'s storefront, plus a paginated recent-visit log.
+     * @summary Store visit history, trends, and traffic patterns
+     * @param {string} businessId Business ID
+     * @param {number} [days] Number of days to analyse for patterns (1–90)
+     * @param {number} [limit] Recent visits page size
+     * @param {string} [nextToken] Pagination cursor for recent visits
+     * @param {string} [startTime] Filter visits on or after this ISO timestamp
+     * @param {string} [endTime] Filter visits on or before this ISO timestamp
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerGetStoreVisitHistoryV1(businessId: string, days?: number, limit?: number, nextToken?: string, startTime?: string, endTime?: string, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerGetStoreVisitHistoryV1(businessId, days, limit, nextToken, startTime, endTime, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 
      * @summary Get usedisha profile for business
      * @param {string} businessId Business ID
@@ -2085,6 +3656,31 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
 
     /**
      * 
+     * @summary Remove a branch from the storefront
+     * @param {string} branchId Branch ID (ref to Branch document)
+     * @param {string} businessId Business ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerRemoveBranchV1(branchId: string, businessId: string, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerRemoveBranchV1(branchId, businessId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update a branch entry on the storefront
+     * @param {string} branchId Branch ID (ref to Branch document)
+     * @param {string} businessId Business ID
+     * @param {UpdateUsedishaBranchDto} updateUsedishaBranchDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerUpdateBranchV1(branchId: string, businessId: string, updateUsedishaBranchDto: UpdateUsedishaBranchDto, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateBranchV1(branchId, businessId, updateUsedishaBranchDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Update usedisha configuration
      * @param {string} businessId Business ID
      * @param {UsedishaConfig} usedishaConfig 
@@ -2093,6 +3689,18 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
      */
     public usedishaAdminControllerUpdateConfigV1(businessId: string, usedishaConfig: UsedishaConfig, options?: RawAxiosRequestConfig) {
         return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateConfigV1(businessId, usedishaConfig, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery flat-fee pricing. `businessDelivery.fee` is required when businessDelivery is supported.
+     * @summary Update delivery configuration
+     * @param {string} businessId Business ID
+     * @param {UpdateUsedishaDeliveryConfigDto} updateUsedishaDeliveryConfigDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminControllerUpdateDeliveryConfigV1(businessId: string, updateUsedishaDeliveryConfigDto: UpdateUsedishaDeliveryConfigDto, options?: RawAxiosRequestConfig) {
+        return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateDeliveryConfigV1(businessId, updateUsedishaDeliveryConfigDto, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -2198,6 +3806,85 @@ export const UsedishaCheckoutApiAxiosParamCreator = function (configuration?: Co
             };
         },
         /**
+         * Returns the full fee breakdown (delivery, service, discount) for a cart before payment. Pass `userLng`/`userLat` for accurate distance-based EXPRESS delivery fees.
+         * @summary Estimate checkout fees
+         * @param {UsedishaEstimateFeesDto} usedishaEstimateFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCheckoutControllerEstimateFeesV1: async (usedishaEstimateFeesDto: UsedishaEstimateFeesDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'usedishaEstimateFeesDto' is not null or undefined
+            assertParamExists('usedishaCheckoutControllerEstimateFeesV1', 'usedishaEstimateFeesDto', usedishaEstimateFeesDto)
+            const localVarPath = `/v1/usedisha/usedisha/checkout/estimate-fees`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usedishaEstimateFeesDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns order summaries for a customer email at a given storefront — for shoppers who checked out without an account. Authenticated customers should use `GET usedisha/customer/orders`.
+         * @summary Guest order lookup by email
+         * @param {string} domain 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCheckoutControllerGetGuestOrdersV1: async (domain: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaCheckoutControllerGetGuestOrdersV1', 'domain', domain)
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('usedishaCheckoutControllerGetGuestOrdersV1', 'email', email)
+            const localVarPath = `/v1/usedisha/usedisha/checkout/orders`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (domain !== undefined) {
+                localVarQueryParameter['domain'] = domain;
+            }
+
+            if (email !== undefined) {
+                localVarQueryParameter['email'] = email;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 
          * @summary Get order intent details by ID
          * @param {string} intentId Order intent ID
@@ -2220,6 +3907,7 @@ export const UsedishaCheckoutApiAxiosParamCreator = function (configuration?: Co
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2231,8 +3919,8 @@ export const UsedishaCheckoutApiAxiosParamCreator = function (configuration?: Co
             };
         },
         /**
-         * 
-         * @summary Initiate checkout and create order intent
+         * Validates the cart, prices it, creates an order intent and returns a payment URL. With a bearer token, customer identity is sourced from the JWT (and the order is linked to the account); without one, provide `customer.email`. Poll `GET usedisha/checkout/status/:intentReference`.
+         * @summary Checkout — place an order (guest or authenticated)
          * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2251,6 +3939,10 @@ export const UsedishaCheckoutApiAxiosParamCreator = function (configuration?: Co
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
             localVarHeaderParameter['Content-Type'] = 'application/json';
             localVarHeaderParameter['Accept'] = 'application/json';
@@ -2323,21 +4015,48 @@ export const UsedishaCheckoutApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Returns the full fee breakdown (delivery, service, discount) for a cart before payment. Pass `userLng`/`userLat` for accurate distance-based EXPRESS delivery fees.
+         * @summary Estimate checkout fees
+         * @param {UsedishaEstimateFeesDto} usedishaEstimateFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto: UsedishaEstimateFeesDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaOrderFeeEstimateResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCheckoutApi.usedishaCheckoutControllerEstimateFeesV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns order summaries for a customer email at a given storefront — for shoppers who checked out without an account. Authenticated customers should use `GET usedisha/customer/orders`.
+         * @summary Guest order lookup by email
+         * @param {string} domain 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCheckoutControllerGetGuestOrdersV1(domain: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaGuestOrdersResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCheckoutControllerGetGuestOrdersV1(domain, email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCheckoutApi.usedishaCheckoutControllerGetGuestOrdersV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 
          * @summary Get order intent details by ID
          * @param {string} intentId Order intent ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaCheckoutControllerGetOrderIntentV1(intentId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaCheckoutControllerGetOrderIntentV1(intentId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaOrderIntentDetailResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCheckoutControllerGetOrderIntentV1(intentId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaCheckoutApi.usedishaCheckoutControllerGetOrderIntentV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 
-         * @summary Initiate checkout and create order intent
+         * Validates the cart, prices it, creates an order intent and returns a payment URL. With a bearer token, customer identity is sourced from the JWT (and the order is linked to the account); without one, provide `customer.email`. Poll `GET usedisha/checkout/status/:intentReference`.
+         * @summary Checkout — place an order (guest or authenticated)
          * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2381,18 +4100,39 @@ export const UsedishaCheckoutApiFactory = function (configuration?: Configuratio
             return localVarFp.usedishaCheckoutControllerCheckOrderStatusV1(intentReference, options).then((request) => request(axios, basePath));
         },
         /**
+         * Returns the full fee breakdown (delivery, service, discount) for a cart before payment. Pass `userLng`/`userLat` for accurate distance-based EXPRESS delivery fees.
+         * @summary Estimate checkout fees
+         * @param {UsedishaEstimateFeesDto} usedishaEstimateFeesDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto: UsedishaEstimateFeesDto, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaOrderFeeEstimateResponseDto> {
+            return localVarFp.usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns order summaries for a customer email at a given storefront — for shoppers who checked out without an account. Authenticated customers should use `GET usedisha/customer/orders`.
+         * @summary Guest order lookup by email
+         * @param {string} domain 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCheckoutControllerGetGuestOrdersV1(domain: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaGuestOrdersResponseDto> {
+            return localVarFp.usedishaCheckoutControllerGetGuestOrdersV1(domain, email, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 
          * @summary Get order intent details by ID
          * @param {string} intentId Order intent ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaCheckoutControllerGetOrderIntentV1(intentId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaCheckoutControllerGetOrderIntentV1(intentId: string, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaOrderIntentDetailResponseDto> {
             return localVarFp.usedishaCheckoutControllerGetOrderIntentV1(intentId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 
-         * @summary Initiate checkout and create order intent
+         * Validates the cart, prices it, creates an order intent and returns a payment URL. With a bearer token, customer identity is sourced from the JWT (and the order is linked to the account); without one, provide `customer.email`. Poll `GET usedisha/checkout/status/:intentReference`.
+         * @summary Checkout — place an order (guest or authenticated)
          * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2429,6 +4169,29 @@ export class UsedishaCheckoutApi extends BaseAPI {
     }
 
     /**
+     * Returns the full fee breakdown (delivery, service, discount) for a cart before payment. Pass `userLng`/`userLat` for accurate distance-based EXPRESS delivery fees.
+     * @summary Estimate checkout fees
+     * @param {UsedishaEstimateFeesDto} usedishaEstimateFeesDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto: UsedishaEstimateFeesDto, options?: RawAxiosRequestConfig) {
+        return UsedishaCheckoutApiFp(this.configuration).usedishaCheckoutControllerEstimateFeesV1(usedishaEstimateFeesDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns order summaries for a customer email at a given storefront — for shoppers who checked out without an account. Authenticated customers should use `GET usedisha/customer/orders`.
+     * @summary Guest order lookup by email
+     * @param {string} domain 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCheckoutControllerGetGuestOrdersV1(domain: string, email: string, options?: RawAxiosRequestConfig) {
+        return UsedishaCheckoutApiFp(this.configuration).usedishaCheckoutControllerGetGuestOrdersV1(domain, email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 
      * @summary Get order intent details by ID
      * @param {string} intentId Order intent ID
@@ -2440,8 +4203,8 @@ export class UsedishaCheckoutApi extends BaseAPI {
     }
 
     /**
-     * 
-     * @summary Initiate checkout and create order intent
+     * Validates the cart, prices it, creates an order intent and returns a payment URL. With a bearer token, customer identity is sourced from the JWT (and the order is linked to the account); without one, provide `customer.email`. Poll `GET usedisha/checkout/status/:intentReference`.
+     * @summary Checkout — place an order (guest or authenticated)
      * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2496,51 +4259,12 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarQueryParameter = {} as any;
 
             localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createStorefrontReviewDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @summary Get orders for a customer by email (no login)
-         * @param {string} domain Storefront domain
-         * @param {string} email Customer email address
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientControllerGetOrdersByEmailV1: async (domain: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientControllerGetOrdersByEmailV1', 'domain', domain)
-            // verify required parameter 'email' is not null or undefined
-            assertParamExists('usedishaClientControllerGetOrdersByEmailV1', 'email', email)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/orders`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            if (email !== undefined) {
-                localVarQueryParameter['email'] = email;
-            }
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2570,6 +4294,51 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Returns all active branches registered on this storefront. Use this to render the branch picker — pass the selected `branchId` as context for subsequent product and checkout calls. Optionally provide `lat` + `lng` to receive a `distanceKm` field on each branch.
+         * @summary List active branches for a storefront
+         * @param {string} domain Storefront domain
+         * @param {number} [lat] 
+         * @param {number} [lng] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStorefrontBranchesV1: async (domain: string, lat?: number, lng?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'domain' is not null or undefined
+            assertParamExists('usedishaClientControllerGetStorefrontBranchesV1', 'domain', domain)
+            const localVarPath = `/v1/usedisha/usedisha/{domain}/branches`
+                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (lat !== undefined) {
+                localVarQueryParameter['lat'] = lat;
+            }
+
+            if (lng !== undefined) {
+                localVarQueryParameter['lng'] = lng;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2619,10 +4388,11 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
          * @summary Get storefront categories
          * @param {string} domain Storefront domain
          * @param {string} [search] Search categories by name
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontCategoriesV1: async (domain: string, search?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStorefrontCategoriesV1: async (domain: string, search?: string, branchId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'domain' is not null or undefined
             assertParamExists('usedishaClientControllerGetStorefrontCategoriesV1', 'domain', domain)
             const localVarPath = `/v1/usedisha/usedisha/{domain}/categories`
@@ -2642,6 +4412,10 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['search'] = search;
             }
 
+            if (branchId !== undefined) {
+                localVarQueryParameter['branchId'] = branchId;
+            }
+
             localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -2658,10 +4432,11 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
          * @summary Get single category details
          * @param {string} domain Storefront domain
          * @param {string} categoryId Category ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontCategoryV1: async (domain: string, categoryId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStorefrontCategoryV1: async (domain: string, categoryId: string, branchId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'domain' is not null or undefined
             assertParamExists('usedishaClientControllerGetStorefrontCategoryV1', 'domain', domain)
             // verify required parameter 'categoryId' is not null or undefined
@@ -2680,6 +4455,10 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            if (branchId !== undefined) {
+                localVarQueryParameter['branchId'] = branchId;
+            }
+
             localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -2696,10 +4475,11 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
          * @summary Get single product details
          * @param {string} domain Storefront domain
          * @param {string} productId Product ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontProductV1: async (domain: string, productId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStorefrontProductV1: async (domain: string, productId: string, branchId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'domain' is not null or undefined
             assertParamExists('usedishaClientControllerGetStorefrontProductV1', 'domain', domain)
             // verify required parameter 'productId' is not null or undefined
@@ -2717,6 +4497,10 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (branchId !== undefined) {
+                localVarQueryParameter['branchId'] = branchId;
+            }
 
             localVarHeaderParameter['Accept'] = 'application/json';
 
@@ -2737,10 +4521,13 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
          * @param {string} [search] Search products by name
          * @param {string} [sortBy] Sort by field (name, price, createdAt)
          * @param {string} [sortOrder] Sort order (asc, desc)
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
+         * @param {number} [page] Page (1-based, default 1)
+         * @param {number} [limit] Page size (default 25, max 100)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontProductsV1: async (domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStorefrontProductsV1: async (domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, branchId?: string, page?: number, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'domain' is not null or undefined
             assertParamExists('usedishaClientControllerGetStorefrontProductsV1', 'domain', domain)
             const localVarPath = `/v1/usedisha/usedisha/{domain}/products`
@@ -2770,6 +4557,18 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
 
             if (sortOrder !== undefined) {
                 localVarQueryParameter['sortOrder'] = sortOrder;
+            }
+
+            if (branchId !== undefined) {
+                localVarQueryParameter['branchId'] = branchId;
+            }
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
             }
 
             localVarHeaderParameter['Accept'] = 'application/json';
@@ -2840,6 +4639,7 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2877,6 +4677,7 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2919,6 +4720,7 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['includeReply'] = includeReply;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2957,6 +4759,7 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['limit'] = limit;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2968,19 +4771,24 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
-         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * Returns active stores that opted into Shopmenu discovery. Filter by category, location hierarchy (country/state/city/lga), or free-text search. Provide `lng` + `lat` to sort results by proximity using branch coordinates.
          * @summary List Shopmenu-listed stores
-         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
-         * @param {string} [search] Full-text search on store name / description
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by category
+         * @param {string} [search] Search by store name, description or tags
          * @param {number} [page] 
          * @param {number} [limit] 
          * @param {number} [lng] Longitude for proximity search
          * @param {number} [lat] Latitude for proximity search
          * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {string} [country] Filter by country
+         * @param {string} [state] Filter by state / province
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by Local Government Area
+         * @param {boolean} [featured] Return only featured/promoted stores
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStoresByCategoryV1: async (category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStoresByCategoryV1: async (category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/usedisha/usedisha/shopmenu/stores`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3021,11 +4829,70 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 localVarQueryParameter['radiusKm'] = radiusKm;
             }
 
+            if (country !== undefined) {
+                localVarQueryParameter['country'] = country;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (lga !== undefined) {
+                localVarQueryParameter['lga'] = lga;
+            }
+
+            if (featured !== undefined) {
+                localVarQueryParameter['featured'] = featured;
+            }
+
             localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Primary tracking endpoint for storefront apps. Send a stable `sessionId` (localStorage) on each page so views group into sessions and counters reflect unique store views, not every page load. Server merges device, UTM, and geo fields.
+         * @summary Record a storefront visit (recommended for SPAs)
+         * @param {string} id Storefront MongoDB ID
+         * @param {ReportStoreVisitDto} reportStoreVisitDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerRecordStoreVisitV1: async (id: string, reportStoreVisitDto: ReportStoreVisitDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaClientControllerRecordStoreVisitV1', 'id', id)
+            // verify required parameter 'reportStoreVisitDto' is not null or undefined
+            assertParamExists('usedishaClientControllerRecordStoreVisitV1', 'reportStoreVisitDto', reportStoreVisitDto)
+            const localVarPath = `/v1/usedisha/usedisha/store/{id}/visit`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(reportStoreVisitDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -3049,24 +4916,10 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerCreateStorefrontReviewV1(domain: string, createStorefrontReviewDto: CreateStorefrontReviewDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerCreateStorefrontReviewV1(domain: string, createStorefrontReviewDto: CreateStorefrontReviewDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateStorefrontReviewResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerCreateStorefrontReviewV1(domain, createStorefrontReviewDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerCreateStorefrontReviewV1']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @summary Get orders for a customer by email (no login)
-         * @param {string} domain Storefront domain
-         * @param {string} email Customer email address
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usedishaClientControllerGetOrdersByEmailV1(domain: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetOrdersByEmailV1(domain, email, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetOrdersByEmailV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -3076,10 +4929,25 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontAverageRatingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontAverageRatingV1(domain, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontAverageRatingV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Returns all active branches registered on this storefront. Use this to render the branch picker — pass the selected `branchId` as context for subsequent product and checkout calls. Optionally provide `lat` + `lng` to receive a `distanceKm` field on each branch.
+         * @summary List active branches for a storefront
+         * @param {string} domain Storefront domain
+         * @param {number} [lat] 
+         * @param {number} [lng] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientControllerGetStorefrontBranchesV1(domain: string, lat?: number, lng?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontBranchesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontBranchesV1(domain, lat, lng, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontBranchesV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -3100,11 +4968,12 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @summary Get storefront categories
          * @param {string} domain Storefront domain
          * @param {string} [search] Search categories by name
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontCategoriesResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontCategoriesV1(domain, search, options);
+        async usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, branchId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontCategoriesResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontCategoriesV1(domain, search, branchId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontCategoriesV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3114,11 +4983,12 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @summary Get single category details
          * @param {string} domain Storefront domain
          * @param {string} categoryId Category ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontCategoryResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, options);
+        async usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, branchId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontCategoryResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, branchId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontCategoryV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3128,11 +4998,12 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @summary Get single product details
          * @param {string} domain Storefront domain
          * @param {string} productId Product ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontProductResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontProductV1(domain, productId, options);
+        async usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, branchId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontProductResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontProductV1(domain, productId, branchId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontProductV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3145,11 +5016,14 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {string} [search] Search products by name
          * @param {string} [sortBy] Sort by field (name, price, createdAt)
          * @param {string} [sortOrder] Sort order (asc, desc)
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
+         * @param {number} [page] Page (1-based, default 1)
+         * @param {number} [limit] Page size (default 25, max 100)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontProductsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, options);
+        async usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, branchId?: string, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedStorefrontProductsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, branchId, page, limit, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontProductsV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3174,7 +5048,7 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontReviewCountV1(domain: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerGetStorefrontReviewCountV1(domain: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontReviewCountResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontReviewCountV1(domain, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontReviewCountV1']?.[localVarOperationServerIndex]?.url;
@@ -3188,7 +5062,7 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontReviewReplyV1(domain: string, reviewId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerGetStorefrontReviewReplyV1(domain: string, reviewId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontReviewReplyResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontReviewReplyV1(domain, reviewId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontReviewReplyV1']?.[localVarOperationServerIndex]?.url;
@@ -3203,7 +5077,7 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontReviewV1(domain: string, reviewId: string, includeReply?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerGetStorefrontReviewV1(domain: string, reviewId: string, includeReply?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontReviewItemDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontReviewV1(domain, reviewId, includeReply, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontReviewV1']?.[localVarOperationServerIndex]?.url;
@@ -3217,29 +5091,48 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StorefrontReviewsResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStorefrontReviewsV1(domain, limit, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStorefrontReviewsV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * Returns active stores that opted into Shopmenu discovery. Filter by category, location hierarchy (country/state/city/lga), or free-text search. Provide `lng` + `lat` to sort results by proximity using branch coordinates.
          * @summary List Shopmenu-listed stores
-         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
-         * @param {string} [search] Full-text search on store name / description
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by category
+         * @param {string} [search] Search by store name, description or tags
          * @param {number} [page] 
          * @param {number} [limit] 
          * @param {number} [lng] Longitude for proximity search
          * @param {number} [lat] Latitude for proximity search
          * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {string} [country] Filter by country
+         * @param {string} [state] Filter by state / province
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by Local Government Area
+         * @param {boolean} [featured] Return only featured/promoted stores
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedShopmenuStoresResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options);
+        async usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedShopmenuStoresResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStoresByCategoryV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Primary tracking endpoint for storefront apps. Send a stable `sessionId` (localStorage) on each page so views group into sessions and counters reflect unique store views, not every page load. Server merges device, UTM, and geo fields.
+         * @summary Record a storefront visit (recommended for SPAs)
+         * @param {string} id Storefront MongoDB ID
+         * @param {ReportStoreVisitDto} reportStoreVisitDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaClientControllerRecordStoreVisitV1(id: string, reportStoreVisitDto: ReportStoreVisitDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StoreVisitRecordedResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerRecordStoreVisitV1(id, reportStoreVisitDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerRecordStoreVisitV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -3259,19 +5152,8 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerCreateStorefrontReviewV1(domain: string, createStorefrontReviewDto: CreateStorefrontReviewDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerCreateStorefrontReviewV1(domain: string, createStorefrontReviewDto: CreateStorefrontReviewDto, options?: RawAxiosRequestConfig): AxiosPromise<CreateStorefrontReviewResponse> {
             return localVarFp.usedishaClientControllerCreateStorefrontReviewV1(domain, createStorefrontReviewDto, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @summary Get orders for a customer by email (no login)
-         * @param {string} domain Storefront domain
-         * @param {string} email Customer email address
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientControllerGetOrdersByEmailV1(domain: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.usedishaClientControllerGetOrdersByEmailV1(domain, email, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3280,8 +5162,20 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontAverageRatingResponse> {
             return localVarFp.usedishaClientControllerGetStorefrontAverageRatingV1(domain, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Returns all active branches registered on this storefront. Use this to render the branch picker — pass the selected `branchId` as context for subsequent product and checkout calls. Optionally provide `lat` + `lng` to receive a `distanceKm` field on each branch.
+         * @summary List active branches for a storefront
+         * @param {string} domain Storefront domain
+         * @param {number} [lat] 
+         * @param {number} [lng] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerGetStorefrontBranchesV1(domain: string, lat?: number, lng?: number, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontBranchesResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontBranchesV1(domain, lat, lng, options).then((request) => request(axios, basePath));
         },
         /**
          * Returns the public profile of an active storefront by its MongoDB ID.
@@ -3298,33 +5192,36 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @summary Get storefront categories
          * @param {string} domain Storefront domain
          * @param {string} [search] Search categories by name
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontCategoriesResponse> {
-            return localVarFp.usedishaClientControllerGetStorefrontCategoriesV1(domain, search, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, branchId?: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontCategoriesResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontCategoriesV1(domain, search, branchId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get single category details
          * @param {string} domain Storefront domain
          * @param {string} categoryId Category ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontCategoryResponse> {
-            return localVarFp.usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, branchId?: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontCategoryResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, branchId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @summary Get single product details
          * @param {string} domain Storefront domain
          * @param {string} productId Product ID
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontProductResponse> {
-            return localVarFp.usedishaClientControllerGetStorefrontProductV1(domain, productId, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, branchId?: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontProductResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontProductV1(domain, productId, branchId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3334,11 +5231,14 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {string} [search] Search products by name
          * @param {string} [sortBy] Sort by field (name, price, createdAt)
          * @param {string} [sortOrder] Sort order (asc, desc)
+         * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
+         * @param {number} [page] Page (1-based, default 1)
+         * @param {number} [limit] Page size (default 25, max 100)
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontProductsResponse> {
-            return localVarFp.usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, branchId?: string, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedStorefrontProductsResponse> {
+            return localVarFp.usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, branchId, page, limit, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -3357,7 +5257,7 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontReviewCountV1(domain: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerGetStorefrontReviewCountV1(domain: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontReviewCountResponse> {
             return localVarFp.usedishaClientControllerGetStorefrontReviewCountV1(domain, options).then((request) => request(axios, basePath));
         },
         /**
@@ -3368,7 +5268,7 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontReviewReplyV1(domain: string, reviewId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerGetStorefrontReviewReplyV1(domain: string, reviewId: string, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontReviewReplyResponse> {
             return localVarFp.usedishaClientControllerGetStorefrontReviewReplyV1(domain, reviewId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -3380,7 +5280,7 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontReviewV1(domain: string, reviewId: string, includeReply?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerGetStorefrontReviewV1(domain: string, reviewId: string, includeReply?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontReviewItemDto> {
             return localVarFp.usedishaClientControllerGetStorefrontReviewV1(domain, reviewId, includeReply, options).then((request) => request(axios, basePath));
         },
         /**
@@ -3391,24 +5291,40 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaClientControllerGetStorefrontReviewsV1(domain: string, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<StorefrontReviewsResponse> {
             return localVarFp.usedishaClientControllerGetStorefrontReviewsV1(domain, limit, options).then((request) => request(axios, basePath));
         },
         /**
-         * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+         * Returns active stores that opted into Shopmenu discovery. Filter by category, location hierarchy (country/state/city/lga), or free-text search. Provide `lng` + `lat` to sort results by proximity using branch coordinates.
          * @summary List Shopmenu-listed stores
-         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
-         * @param {string} [search] Full-text search on store name / description
+         * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by category
+         * @param {string} [search] Search by store name, description or tags
          * @param {number} [page] 
          * @param {number} [limit] 
          * @param {number} [lng] Longitude for proximity search
          * @param {number} [lat] Latitude for proximity search
          * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+         * @param {string} [country] Filter by country
+         * @param {string} [state] Filter by state / province
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by Local Government Area
+         * @param {boolean} [featured] Return only featured/promoted stores
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedShopmenuStoresResponse> {
-            return localVarFp.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedShopmenuStoresResponse> {
+            return localVarFp.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Primary tracking endpoint for storefront apps. Send a stable `sessionId` (localStorage) on each page so views group into sessions and counters reflect unique store views, not every page load. Server merges device, UTM, and geo fields.
+         * @summary Record a storefront visit (recommended for SPAs)
+         * @param {string} id Storefront MongoDB ID
+         * @param {ReportStoreVisitDto} reportStoreVisitDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaClientControllerRecordStoreVisitV1(id: string, reportStoreVisitDto: ReportStoreVisitDto, options?: RawAxiosRequestConfig): AxiosPromise<StoreVisitRecordedResponse> {
+            return localVarFp.usedishaClientControllerRecordStoreVisitV1(id, reportStoreVisitDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3431,18 +5347,6 @@ export class UsedishaClientApi extends BaseAPI {
 
     /**
      * 
-     * @summary Get orders for a customer by email (no login)
-     * @param {string} domain Storefront domain
-     * @param {string} email Customer email address
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public usedishaClientControllerGetOrdersByEmailV1(domain: string, email: string, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetOrdersByEmailV1(domain, email, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
      * @summary Get average rating for the storefront
      * @param {string} domain Storefront domain
      * @param {*} [options] Override http request option.
@@ -3450,6 +5354,19 @@ export class UsedishaClientApi extends BaseAPI {
      */
     public usedishaClientControllerGetStorefrontAverageRatingV1(domain: string, options?: RawAxiosRequestConfig) {
         return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontAverageRatingV1(domain, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Returns all active branches registered on this storefront. Use this to render the branch picker — pass the selected `branchId` as context for subsequent product and checkout calls. Optionally provide `lat` + `lng` to receive a `distanceKm` field on each branch.
+     * @summary List active branches for a storefront
+     * @param {string} domain Storefront domain
+     * @param {number} [lat] 
+     * @param {number} [lng] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientControllerGetStorefrontBranchesV1(domain: string, lat?: number, lng?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontBranchesV1(domain, lat, lng, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3468,11 +5385,12 @@ export class UsedishaClientApi extends BaseAPI {
      * @summary Get storefront categories
      * @param {string} domain Storefront domain
      * @param {string} [search] Search categories by name
+     * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontCategoriesV1(domain, search, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStorefrontCategoriesV1(domain: string, search?: string, branchId?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontCategoriesV1(domain, search, branchId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3480,11 +5398,12 @@ export class UsedishaClientApi extends BaseAPI {
      * @summary Get single category details
      * @param {string} domain Storefront domain
      * @param {string} categoryId Category ID
+     * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStorefrontCategoryV1(domain: string, categoryId: string, branchId?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontCategoryV1(domain, categoryId, branchId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3492,11 +5411,12 @@ export class UsedishaClientApi extends BaseAPI {
      * @summary Get single product details
      * @param {string} domain Storefront domain
      * @param {string} productId Product ID
+     * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontProductV1(domain, productId, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStorefrontProductV1(domain: string, productId: string, branchId?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontProductV1(domain, productId, branchId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3507,11 +5427,14 @@ export class UsedishaClientApi extends BaseAPI {
      * @param {string} [search] Search products by name
      * @param {string} [sortBy] Sort by field (name, price, createdAt)
      * @param {string} [sortOrder] Sort order (asc, desc)
+     * @param {string} [branchId] Branch to shop from (defaults to the storefront default branch)
+     * @param {number} [page] Page (1-based, default 1)
+     * @param {number} [limit] Page size (default 25, max 100)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStorefrontProductsV1(domain: string, category?: string, search?: string, sortBy?: string, sortOrder?: string, branchId?: string, page?: number, limit?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStorefrontProductsV1(domain, category, search, sortBy, sortOrder, branchId, page, limit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3574,20 +5497,37 @@ export class UsedishaClientApi extends BaseAPI {
     }
 
     /**
-     * Returns active stores that opted into Shopmenu discovery. Filter by category and/or search by name or description. Provide `lng` + `lat` to sort results by proximity; optionally restrict radius with `radiusKm`.
+     * Returns active stores that opted into Shopmenu discovery. Filter by category, location hierarchy (country/state/city/lga), or free-text search. Provide `lng` + `lat` to sort results by proximity using branch coordinates.
      * @summary List Shopmenu-listed stores
-     * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by business category
-     * @param {string} [search] Full-text search on store name / description
+     * @param {UsedishaClientControllerGetStoresByCategoryV1CategoryEnum} [category] Filter by category
+     * @param {string} [search] Search by store name, description or tags
      * @param {number} [page] 
      * @param {number} [limit] 
      * @param {number} [lng] Longitude for proximity search
      * @param {number} [lat] Latitude for proximity search
      * @param {number} [radiusKm] Search radius in kilometres (default 10, max 100)
+     * @param {string} [country] Filter by country
+     * @param {string} [state] Filter by state / province
+     * @param {string} [city] Filter by city
+     * @param {string} [lga] Filter by Local Government Area
+     * @param {boolean} [featured] Return only featured/promoted stores
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Primary tracking endpoint for storefront apps. Send a stable `sessionId` (localStorage) on each page so views group into sessions and counters reflect unique store views, not every page load. Server merges device, UTM, and geo fields.
+     * @summary Record a storefront visit (recommended for SPAs)
+     * @param {string} id Storefront MongoDB ID
+     * @param {ReportStoreVisitDto} reportStoreVisitDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaClientControllerRecordStoreVisitV1(id: string, reportStoreVisitDto: ReportStoreVisitDto, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerRecordStoreVisitV1(id, reportStoreVisitDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -3612,23 +5552,19 @@ export type UsedishaClientControllerGetStoresByCategoryV1CategoryEnum = typeof U
 export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules.
          * @summary Cancel an order
-         * @param {string} domain Storefront domain
          * @param {string} orderId MongoDB order ID
          * @param {CancelOrderDto} cancelOrderDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientCustomerControllerCancelMyOrderV1: async (domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'domain', domain)
+        usedishaCustomerOrdersControllerCancelMyOrderV1: async (orderId: string, cancelOrderDto: CancelOrderDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'orderId' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'orderId', orderId)
+            assertParamExists('usedishaCustomerOrdersControllerCancelMyOrderV1', 'orderId', orderId)
             // verify required parameter 'cancelOrderDto' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerCancelMyOrderV1', 'cancelOrderDto', cancelOrderDto)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/{orderId}/cancel`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)))
+            assertParamExists('usedishaCustomerOrdersControllerCancelMyOrderV1', 'cancelOrderDto', cancelOrderDto)
+            const localVarPath = `/v1/usedisha/usedisha/customer/orders/{orderId}/cancel`
                 .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3659,190 +5595,9 @@ export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuratio
             };
         },
         /**
-         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
-         * @summary Checkout — place an order
-         * @param {string} domain Storefront domain
-         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerCheckoutV1: async (domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerCheckoutV1', 'domain', domain)
-            // verify required parameter 'usedishaInitiateCheckoutDto' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerCheckoutV1', 'usedishaInitiateCheckoutDto', usedishaInitiateCheckoutDto)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/checkout`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-            localVarHeaderParameter['Accept'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(usedishaInitiateCheckoutDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
-         * @summary Estimate checkout fees
-         * @param {string} domain Storefront domain
-         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerEstimateFeesV1: async (domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerEstimateFeesV1', 'domain', domain)
-            // verify required parameter 'estimateOrderFeesDto' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerEstimateFeesV1', 'estimateOrderFeesDto', estimateOrderFeesDto)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/estimate-fees`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-            localVarHeaderParameter['Accept'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(estimateOrderFeesDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
-         * @summary Get a single order
-         * @param {string} domain Storefront domain
+         * Returns one order owned by the authenticated customer, or 404 otherwise.
+         * @summary Get one of my orders
          * @param {string} orderId MongoDB order ID
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerGetMyOrderV1: async (domain: string, orderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerGetMyOrderV1', 'domain', domain)
-            // verify required parameter 'orderId' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerGetMyOrderV1', 'orderId', orderId)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders/{orderId}`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)))
-                .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            localVarHeaderParameter['Accept'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
-         * @summary List my orders
-         * @param {string} domain Storefront domain
-         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
-         * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerListMyOrdersV1: async (domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'domain' is not null or undefined
-            assertParamExists('usedishaClientCustomerControllerListMyOrdersV1', 'domain', domain)
-            const localVarPath = `/v1/usedisha/usedisha/{domain}/customer/orders`
-                .replace(`{${"domain"}}`, encodeURIComponent(String(domain)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearer required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-            if (status !== undefined) {
-                localVarQueryParameter['status'] = status;
-            }
-
-            if (page !== undefined) {
-                localVarQueryParameter['page'] = page;
-            }
-
-            if (limit !== undefined) {
-                localVarQueryParameter['limit'] = limit;
-            }
-
-            localVarHeaderParameter['Accept'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Returns one customer order by ID for the authenticated customer.
-         * @summary Get my order detail
-         * @param {string} orderId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3866,6 +5621,7 @@ export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuratio
             // http bearer authentication required
             await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -3877,12 +5633,12 @@ export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuratio
             };
         },
         /**
-         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
-         * @summary List my orders (optional domain)
-         * @param {string} [domain] Optional storefront domain filter
-         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * Paginated orders for the authenticated customer. Optionally scope to a storefront with `domain`, or filter by `status`. Omit `domain` to return orders across all storefronts.
+         * @summary List my orders
+         * @param {string} [domain] Scope to a single storefront domain
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter orders by status
          * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
+         * @param {number} [limit] Results per page
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3919,6 +5675,7 @@ export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuratio
                 localVarQueryParameter['limit'] = limit;
             }
 
+            localVarHeaderParameter['Accept'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -3939,102 +5696,43 @@ export const UsedishaCustomerOrdersApiFp = function(configuration?: Configuratio
     const localVarAxiosParamCreator = UsedishaCustomerOrdersApiAxiosParamCreator(configuration)
     return {
         /**
-         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules.
          * @summary Cancel an order
-         * @param {string} domain Storefront domain
          * @param {string} orderId MongoDB order ID
          * @param {CancelOrderDto} cancelOrderDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options);
+        async usedishaCustomerOrdersControllerCancelMyOrderV1(orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrdersControllerCancelMyOrderV1(orderId, cancelOrderDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerCancelMyOrderV1']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrdersControllerCancelMyOrderV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
-         * @summary Checkout — place an order
-         * @param {string} domain Storefront domain
-         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaCheckoutResponseDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerCheckoutV1']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
-         * @summary Estimate checkout fees
-         * @param {string} domain Storefront domain
-         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderFeeEstimateResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerEstimateFeesV1']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
-         * @summary Get a single order
-         * @param {string} domain Storefront domain
+         * Returns one order owned by the authenticated customer, or 404 otherwise.
+         * @summary Get one of my orders
          * @param {string} orderId MongoDB order ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerGetMyOrderV1']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
-         * @summary List my orders
-         * @param {string} domain Storefront domain
-         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
-         * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrdersResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaClientCustomerControllerListMyOrdersV1']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Returns one customer order by ID for the authenticated customer.
-         * @summary Get my order detail
-         * @param {string} orderId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrdersControllerGetMyOrderV1(orderId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrdersControllerGetMyOrderV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
-         * @summary List my orders (optional domain)
-         * @param {string} [domain] Optional storefront domain filter
-         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * Paginated orders for the authenticated customer. Optionally scope to a storefront with `domain`, or filter by `status`. Omit `domain` to return orders across all storefronts.
+         * @summary List my orders
+         * @param {string} [domain] Scope to a single storefront domain
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter orders by status
          * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
+         * @param {number} [limit] Results per page
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedOrdersResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrdersControllerListMyOrdersV1(domain, status, page, limit, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrdersControllerListMyOrdersV1']?.[localVarOperationServerIndex]?.url;
@@ -4050,84 +5748,37 @@ export const UsedishaCustomerOrdersApiFactory = function (configuration?: Config
     const localVarFp = UsedishaCustomerOrdersApiFp(configuration)
     return {
         /**
-         * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+         * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules.
          * @summary Cancel an order
-         * @param {string} domain Storefront domain
          * @param {string} orderId MongoDB order ID
          * @param {CancelOrderDto} cancelOrderDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
-            return localVarFp.usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options).then((request) => request(axios, basePath));
+        usedishaCustomerOrdersControllerCancelMyOrderV1(orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
+            return localVarFp.usedishaCustomerOrdersControllerCancelMyOrderV1(orderId, cancelOrderDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
-         * @summary Checkout — place an order
-         * @param {string} domain Storefront domain
-         * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig): AxiosPromise<UsedishaCheckoutResponseDto> {
-            return localVarFp.usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
-         * @summary Estimate checkout fees
-         * @param {string} domain Storefront domain
-         * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig): AxiosPromise<OrderFeeEstimateResponse> {
-            return localVarFp.usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
-         * @summary Get a single order
-         * @param {string} domain Storefront domain
+         * Returns one order owned by the authenticated customer, or 404 otherwise.
+         * @summary Get one of my orders
          * @param {string} orderId MongoDB order ID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
-            return localVarFp.usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
-         * @summary List my orders
-         * @param {string} domain Storefront domain
-         * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
-         * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedOrdersResponse> {
-            return localVarFp.usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Returns one customer order by ID for the authenticated customer.
-         * @summary Get my order detail
-         * @param {string} orderId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaCustomerOrdersControllerGetMyOrderV1(orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<OrderResponse> {
             return localVarFp.usedishaCustomerOrdersControllerGetMyOrderV1(orderId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
-         * @summary List my orders (optional domain)
-         * @param {string} [domain] Optional storefront domain filter
-         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+         * Paginated orders for the authenticated customer. Optionally scope to a storefront with `domain`, or filter by `status`. Omit `domain` to return orders across all storefronts.
+         * @summary List my orders
+         * @param {string} [domain] Scope to a single storefront domain
+         * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter orders by status
          * @param {number} [page] Page number (1-based)
-         * @param {number} [limit] Number of results per page
+         * @param {number} [limit] Results per page
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        usedishaCustomerOrdersControllerListMyOrdersV1(domain?: string, status?: UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedOrdersResponse> {
             return localVarFp.usedishaCustomerOrdersControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(axios, basePath));
         },
     };
@@ -4138,72 +5789,21 @@ export const UsedishaCustomerOrdersApiFactory = function (configuration?: Config
  */
 export class UsedishaCustomerOrdersApi extends BaseAPI {
     /**
-     * Cancels a customer order. Only orders in `pending` or `confirmed` status can be cancelled. Providing a cancellation reason is optional but recommended.
+     * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules.
      * @summary Cancel an order
-     * @param {string} domain Storefront domain
      * @param {string} orderId MongoDB order ID
      * @param {CancelOrderDto} cancelOrderDto 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientCustomerControllerCancelMyOrderV1(domain: string, orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig) {
-        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerCancelMyOrderV1(domain, orderId, cancelOrderDto, options).then((request) => request(this.axios, this.basePath));
+    public usedishaCustomerOrdersControllerCancelMyOrderV1(orderId: string, cancelOrderDto: CancelOrderDto, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaCustomerOrdersControllerCancelMyOrderV1(orderId, cancelOrderDto, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * Validates the cart, creates an order intent and returns a payment URL. Customer identity (name, email, phone) is sourced from the JWT token and can be overridden by providing values in the `customer` field of the request body. Poll `GET /usedisha/checkout/status/:intentReference` to track payment progress.
-     * @summary Checkout — place an order
-     * @param {string} domain Storefront domain
-     * @param {UsedishaInitiateCheckoutDto} usedishaInitiateCheckoutDto 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public usedishaClientCustomerControllerCheckoutV1(domain: string, usedishaInitiateCheckoutDto: UsedishaInitiateCheckoutDto, options?: RawAxiosRequestConfig) {
-        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerCheckoutV1(domain, usedishaInitiateCheckoutDto, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Calculates and returns the full fee breakdown for a given cart before payment is initiated. Includes delivery fee (distance-based for EXPRESS), platform service fee, and any applicable discount. Pass `userLng` and `userLat` for accurate delivery fee calculation when using EXPRESS.
-     * @summary Estimate checkout fees
-     * @param {string} domain Storefront domain
-     * @param {EstimateOrderFeesDto} estimateOrderFeesDto 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public usedishaClientCustomerControllerEstimateFeesV1(domain: string, estimateOrderFeesDto: EstimateOrderFeesDto, options?: RawAxiosRequestConfig) {
-        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerEstimateFeesV1(domain, estimateOrderFeesDto, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Returns the full detail of one order. Returns 404 if the order does not exist or belongs to a different customer.
-     * @summary Get a single order
-     * @param {string} domain Storefront domain
+     * Returns one order owned by the authenticated customer, or 404 otherwise.
+     * @summary Get one of my orders
      * @param {string} orderId MongoDB order ID
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public usedishaClientCustomerControllerGetMyOrderV1(domain: string, orderId: string, options?: RawAxiosRequestConfig) {
-        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerGetMyOrderV1(domain, orderId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Returns a paginated list of orders placed by the authenticated customer on this storefront. Optionally filter by order status.
-     * @summary List my orders
-     * @param {string} domain Storefront domain
-     * @param {UsedishaClientCustomerControllerListMyOrdersV1StatusEnum} [status] Filter by order status
-     * @param {number} [page] Page number (1-based)
-     * @param {number} [limit] Number of results per page
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     */
-    public usedishaClientCustomerControllerListMyOrdersV1(domain: string, status?: UsedishaClientCustomerControllerListMyOrdersV1StatusEnum, page?: number, limit?: number, options?: RawAxiosRequestConfig) {
-        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaClientCustomerControllerListMyOrdersV1(domain, status, page, limit, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Returns one customer order by ID for the authenticated customer.
-     * @summary Get my order detail
-     * @param {string} orderId 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -4212,12 +5812,12 @@ export class UsedishaCustomerOrdersApi extends BaseAPI {
     }
 
     /**
-     * Returns paginated customer orders. Provide `domain` to scope to a storefront; omit to return across storefronts.
-     * @summary List my orders (optional domain)
-     * @param {string} [domain] Optional storefront domain filter
-     * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter by order status
+     * Paginated orders for the authenticated customer. Optionally scope to a storefront with `domain`, or filter by `status`. Omit `domain` to return orders across all storefronts.
+     * @summary List my orders
+     * @param {string} [domain] Scope to a single storefront domain
+     * @param {UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum} [status] Filter orders by status
      * @param {number} [page] Page number (1-based)
-     * @param {number} [limit] Number of results per page
+     * @param {number} [limit] Results per page
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -4226,21 +5826,6 @@ export class UsedishaCustomerOrdersApi extends BaseAPI {
     }
 }
 
-export const UsedishaClientCustomerControllerListMyOrdersV1StatusEnum = {
-    Pending: 'pending',
-    Confirmed: 'confirmed',
-    Processing: 'processing',
-    ReadyForShipment: 'ready_for_shipment',
-    Shipped: 'shipped',
-    OutForDelivery: 'out_for_delivery',
-    Delivered: 'delivered',
-    Completed: 'completed',
-    Cancelled: 'cancelled',
-    Refunded: 'refunded',
-    OnHold: 'on_hold',
-    Failed: 'failed'
-} as const;
-export type UsedishaClientCustomerControllerListMyOrdersV1StatusEnum = typeof UsedishaClientCustomerControllerListMyOrdersV1StatusEnum[keyof typeof UsedishaClientCustomerControllerListMyOrdersV1StatusEnum];
 export const UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum = {
     Pending: 'pending',
     Confirmed: 'confirmed',
@@ -4256,5 +5841,1846 @@ export const UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum = {
     Failed: 'failed'
 } as const;
 export type UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum = typeof UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum[keyof typeof UsedishaCustomerOrdersControllerListMyOrdersV1StatusEnum];
+
+
+/**
+ * UsedishaMarketsApi - axios parameter creator
+ */
+export const UsedishaMarketsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Get a market by ID or slug
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerGetV1: async (idOrSlug: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'idOrSlug' is not null or undefined
+            assertParamExists('usedishaMarketsControllerGetV1', 'idOrSlug', idOrSlug)
+            const localVarPath = `/v1/usedisha/usedisha/markets/{idOrSlug}`
+                .replace(`{${"idOrSlug"}}`, encodeURIComponent(String(idOrSlug)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Active markets, filterable by state / city / lga / type / search, paginated.
+         * @summary List markets
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerListV1: async (page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/markets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (sortBy !== undefined) {
+                localVarQueryParameter['sortBy'] = sortBy;
+            }
+
+            if (sortOrder !== undefined) {
+                localVarQueryParameter['sortOrder'] = sortOrder;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (lga !== undefined) {
+                localVarQueryParameter['lga'] = lga;
+            }
+
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
+            }
+
+            if (featured !== undefined) {
+                localVarQueryParameter['featured'] = featured;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Storefronts with an approved branch in this market. Each item carries the store card and the in-market branch — pass that branchId to product/checkout calls to shop that branch.
+         * @summary List stores trading in a market
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaMarketsControllerStoresV1CategoryEnum} [category] Filter stores by category
+         * @param {string} [q] Search stores by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerStoresV1: async (idOrSlug: string, page?: number, limit?: number, category?: UsedishaMarketsControllerStoresV1CategoryEnum, q?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'idOrSlug' is not null or undefined
+            assertParamExists('usedishaMarketsControllerStoresV1', 'idOrSlug', idOrSlug)
+            const localVarPath = `/v1/usedisha/usedisha/markets/{idOrSlug}/stores`
+                .replace(`{${"idOrSlug"}}`, encodeURIComponent(String(idOrSlug)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (category !== undefined) {
+                localVarQueryParameter['category'] = category;
+            }
+
+            if (q !== undefined) {
+                localVarQueryParameter['q'] = q;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaMarketsApi - functional programming interface
+ */
+export const UsedishaMarketsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaMarketsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Get a market by ID or slug
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaMarketsControllerGetV1(idOrSlug: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Market>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaMarketsControllerGetV1(idOrSlug, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaMarketsApi.usedishaMarketsControllerGetV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Active markets, filterable by state / city / lga / type / search, paginated.
+         * @summary List markets
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMarketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaMarketsApi.usedishaMarketsControllerListV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Storefronts with an approved branch in this market. Each item carries the store card and the in-market branch — pass that branchId to product/checkout calls to shop that branch.
+         * @summary List stores trading in a market
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaMarketsControllerStoresV1CategoryEnum} [category] Filter stores by category
+         * @param {string} [q] Search stores by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaMarketsControllerStoresV1(idOrSlug: string, page?: number, limit?: number, category?: UsedishaMarketsControllerStoresV1CategoryEnum, q?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMarketStoresResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaMarketsControllerStoresV1(idOrSlug, page, limit, category, q, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaMarketsApi.usedishaMarketsControllerStoresV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaMarketsApi - factory interface
+ */
+export const UsedishaMarketsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaMarketsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Get a market by ID or slug
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerGetV1(idOrSlug: string, options?: RawAxiosRequestConfig): AxiosPromise<Market> {
+            return localVarFp.usedishaMarketsControllerGetV1(idOrSlug, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Active markets, filterable by state / city / lga / type / search, paginated.
+         * @summary List markets
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedMarketsResponse> {
+            return localVarFp.usedishaMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Storefronts with an approved branch in this market. Each item carries the store card and the in-market branch — pass that branchId to product/checkout calls to shop that branch.
+         * @summary List stores trading in a market
+         * @param {string} idOrSlug Market ObjectId or slug
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaMarketsControllerStoresV1CategoryEnum} [category] Filter stores by category
+         * @param {string} [q] Search stores by name
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaMarketsControllerStoresV1(idOrSlug: string, page?: number, limit?: number, category?: UsedishaMarketsControllerStoresV1CategoryEnum, q?: string, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedMarketStoresResponse> {
+            return localVarFp.usedishaMarketsControllerStoresV1(idOrSlug, page, limit, category, q, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaMarketsApi - object-oriented interface
+ */
+export class UsedishaMarketsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Get a market by ID or slug
+     * @param {string} idOrSlug Market ObjectId or slug
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaMarketsControllerGetV1(idOrSlug: string, options?: RawAxiosRequestConfig) {
+        return UsedishaMarketsApiFp(this.configuration).usedishaMarketsControllerGetV1(idOrSlug, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Active markets, filterable by state / city / lga / type / search, paginated.
+     * @summary List markets
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {string} [sortBy] 
+     * @param {UsedishaMarketsControllerListV1SortOrderEnum} [sortOrder] 
+     * @param {string} [state] Filter by state
+     * @param {string} [city] Filter by city
+     * @param {string} [lga] Filter by LGA
+     * @param {UsedishaMarketsControllerListV1TypeEnum} [type] Filter by market type
+     * @param {boolean} [featured] Return only featured markets
+     * @param {string} [search] Search by market name or description
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaMarketsApiFp(this.configuration).usedishaMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Storefronts with an approved branch in this market. Each item carries the store card and the in-market branch — pass that branchId to product/checkout calls to shop that branch.
+     * @summary List stores trading in a market
+     * @param {string} idOrSlug Market ObjectId or slug
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {UsedishaMarketsControllerStoresV1CategoryEnum} [category] Filter stores by category
+     * @param {string} [q] Search stores by name
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaMarketsControllerStoresV1(idOrSlug: string, page?: number, limit?: number, category?: UsedishaMarketsControllerStoresV1CategoryEnum, q?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaMarketsApiFp(this.configuration).usedishaMarketsControllerStoresV1(idOrSlug, page, limit, category, q, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+export const UsedishaMarketsControllerListV1SortOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type UsedishaMarketsControllerListV1SortOrderEnum = typeof UsedishaMarketsControllerListV1SortOrderEnum[keyof typeof UsedishaMarketsControllerListV1SortOrderEnum];
+export const UsedishaMarketsControllerListV1TypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
+} as const;
+export type UsedishaMarketsControllerListV1TypeEnum = typeof UsedishaMarketsControllerListV1TypeEnum[keyof typeof UsedishaMarketsControllerListV1TypeEnum];
+export const UsedishaMarketsControllerStoresV1CategoryEnum = {
+    Pharmacy: 'pharmacy',
+    Supermarket: 'supermarket',
+    Restaurant: 'restaurant',
+    Grocery: 'grocery',
+    Bakery: 'bakery',
+    Butcher: 'butcher',
+    FruitsAndVegetables: 'fruits_and_vegetables',
+    Beverages: 'beverages',
+    SnacksAndConfectionery: 'snacks_and_confectionery',
+    HouseholdSupplies: 'household_supplies'
+} as const;
+export type UsedishaMarketsControllerStoresV1CategoryEnum = typeof UsedishaMarketsControllerStoresV1CategoryEnum[keyof typeof UsedishaMarketsControllerStoresV1CategoryEnum];
+
+
+/**
+ * UsedishaSellerMarketsApi - axios parameter creator
+ */
+export const UsedishaSellerMarketsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Removes the membership (cancels a pending request or leaves an approved one).
+         * @summary Leave a market / cancel a request
+         * @param {string} membershipId Membership ID
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerLeaveV1: async (membershipId: string, businessId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'membershipId' is not null or undefined
+            assertParamExists('usedishaSellerMarketsControllerLeaveV1', 'membershipId', membershipId)
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaSellerMarketsControllerLeaveV1', 'businessId', businessId)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/markets/{membershipId}`
+                .replace(`{${"membershipId"}}`, encodeURIComponent(String(membershipId)))
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Optionally filter by status.
+         * @summary List my market memberships
+         * @param {string} businessId Business ID
+         * @param {UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerMyMembershipsV1: async (businessId: string, status?: UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaSellerMarketsControllerMyMembershipsV1', 'businessId', businessId)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/markets`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Creates a pending membership for admin review.
+         * @summary Request to list a branch in a market
+         * @param {string} businessId Business ID
+         * @param {RequestMarketListingDto} requestMarketListingDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerRequestV1: async (businessId: string, requestMarketListingDto: RequestMarketListingDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'businessId' is not null or undefined
+            assertParamExists('usedishaSellerMarketsControllerRequestV1', 'businessId', businessId)
+            // verify required parameter 'requestMarketListingDto' is not null or undefined
+            assertParamExists('usedishaSellerMarketsControllerRequestV1', 'requestMarketListingDto', requestMarketListingDto)
+            const localVarPath = `/v1/usedisha/{businessId}/usedisha/markets`
+                .replace(`{${"businessId"}}`, encodeURIComponent(String(businessId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(requestMarketListingDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaSellerMarketsApi - functional programming interface
+ */
+export const UsedishaSellerMarketsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaSellerMarketsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Removes the membership (cancels a pending request or leaves an approved one).
+         * @summary Leave a market / cancel a request
+         * @param {string} membershipId Membership ID
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSellerMarketsControllerLeaveV1(membershipId: string, businessId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MarketActionResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSellerMarketsControllerLeaveV1(membershipId, businessId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSellerMarketsApi.usedishaSellerMarketsControllerLeaveV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Optionally filter by status.
+         * @summary List my market memberships
+         * @param {string} businessId Business ID
+         * @param {UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSellerMarketsControllerMyMembershipsV1(businessId: string, status?: UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<MarketMembershipResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSellerMarketsControllerMyMembershipsV1(businessId, status, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSellerMarketsApi.usedishaSellerMarketsControllerMyMembershipsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Creates a pending membership for admin review.
+         * @summary Request to list a branch in a market
+         * @param {string} businessId Business ID
+         * @param {RequestMarketListingDto} requestMarketListingDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSellerMarketsControllerRequestV1(businessId: string, requestMarketListingDto: RequestMarketListingDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MarketMembershipResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSellerMarketsControllerRequestV1(businessId, requestMarketListingDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSellerMarketsApi.usedishaSellerMarketsControllerRequestV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaSellerMarketsApi - factory interface
+ */
+export const UsedishaSellerMarketsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaSellerMarketsApiFp(configuration)
+    return {
+        /**
+         * Removes the membership (cancels a pending request or leaves an approved one).
+         * @summary Leave a market / cancel a request
+         * @param {string} membershipId Membership ID
+         * @param {string} businessId Business ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerLeaveV1(membershipId: string, businessId: string, options?: RawAxiosRequestConfig): AxiosPromise<MarketActionResponse> {
+            return localVarFp.usedishaSellerMarketsControllerLeaveV1(membershipId, businessId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Optionally filter by status.
+         * @summary List my market memberships
+         * @param {string} businessId Business ID
+         * @param {UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum} [status] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerMyMembershipsV1(businessId: string, status?: UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<MarketMembershipResponse>> {
+            return localVarFp.usedishaSellerMarketsControllerMyMembershipsV1(businessId, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Creates a pending membership for admin review.
+         * @summary Request to list a branch in a market
+         * @param {string} businessId Business ID
+         * @param {RequestMarketListingDto} requestMarketListingDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSellerMarketsControllerRequestV1(businessId: string, requestMarketListingDto: RequestMarketListingDto, options?: RawAxiosRequestConfig): AxiosPromise<MarketMembershipResponse> {
+            return localVarFp.usedishaSellerMarketsControllerRequestV1(businessId, requestMarketListingDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaSellerMarketsApi - object-oriented interface
+ */
+export class UsedishaSellerMarketsApi extends BaseAPI {
+    /**
+     * Removes the membership (cancels a pending request or leaves an approved one).
+     * @summary Leave a market / cancel a request
+     * @param {string} membershipId Membership ID
+     * @param {string} businessId Business ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSellerMarketsControllerLeaveV1(membershipId: string, businessId: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSellerMarketsApiFp(this.configuration).usedishaSellerMarketsControllerLeaveV1(membershipId, businessId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Optionally filter by status.
+     * @summary List my market memberships
+     * @param {string} businessId Business ID
+     * @param {UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum} [status] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSellerMarketsControllerMyMembershipsV1(businessId: string, status?: UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum, options?: RawAxiosRequestConfig) {
+        return UsedishaSellerMarketsApiFp(this.configuration).usedishaSellerMarketsControllerMyMembershipsV1(businessId, status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Creates a pending membership for admin review.
+     * @summary Request to list a branch in a market
+     * @param {string} businessId Business ID
+     * @param {RequestMarketListingDto} requestMarketListingDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSellerMarketsControllerRequestV1(businessId: string, requestMarketListingDto: RequestMarketListingDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSellerMarketsApiFp(this.configuration).usedishaSellerMarketsControllerRequestV1(businessId, requestMarketListingDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+export const UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+export type UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum = typeof UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum[keyof typeof UsedishaSellerMarketsControllerMyMembershipsV1StatusEnum];
+
+
+/**
+ * UsedishaSystemAdminApi - axios parameter creator
+ */
+export const UsedishaSystemAdminApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Get any storefront by ID (any status)
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerGetStorefrontV1: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerGetStorefrontV1', 'id', id)
+            const localVarPath = `/v1/usedisha/usedisha/admin/stores/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Paginated listing of every storefront across all businesses, in any status. Filter by status, approvalStatus, category, featured, or free-text search.
+         * @summary List all storefronts
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum} [sortOrder] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1StatusEnum} [status] Filter by storefront status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum} [approvalStatus] Filter by approval status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum} [category] Filter by a Shopmenu category
+         * @param {boolean} [featured] Return only featured/promoted stores
+         * @param {string} [search] Search by store name, domain, description or tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerListStorefrontsV1: async (page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum, status?: UsedishaSystemAdminControllerListStorefrontsV1StatusEnum, approvalStatus?: UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum, category?: UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum, featured?: boolean, search?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/stores`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (sortBy !== undefined) {
+                localVarQueryParameter['sortBy'] = sortBy;
+            }
+
+            if (sortOrder !== undefined) {
+                localVarQueryParameter['sortOrder'] = sortOrder;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (approvalStatus !== undefined) {
+                localVarQueryParameter['approvalStatus'] = approvalStatus;
+            }
+
+            if (category !== undefined) {
+                localVarQueryParameter['category'] = category;
+            }
+
+            if (featured !== undefined) {
+                localVarQueryParameter['featured'] = featured;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Storefront counts by status, approval status and category, plus totals.
+         * @summary Platform overview metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerOverviewV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/overview`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Sets approvalStatus to gate the store on/off the marketplace.
+         * @summary Approve or reject a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetApprovalDto} adminSetApprovalDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetApprovalV1: async (id: string, adminSetApprovalDto: AdminSetApprovalDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetApprovalV1', 'id', id)
+            // verify required parameter 'adminSetApprovalDto' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetApprovalV1', 'adminSetApprovalDto', adminSetApprovalDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/stores/{id}/approval`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(adminSetApprovalDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Toggle featured and set priceRange, tags, minimumOrderAmount, estimatedDeliveryTime.
+         * @summary Curate marketplace fields
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminUpdateMarketplaceDto} adminUpdateMarketplaceDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetMarketplaceFieldsV1: async (id: string, adminUpdateMarketplaceDto: AdminUpdateMarketplaceDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetMarketplaceFieldsV1', 'id', id)
+            // verify required parameter 'adminUpdateMarketplaceDto' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetMarketplaceFieldsV1', 'adminUpdateMarketplaceDto', adminUpdateMarketplaceDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/stores/{id}/marketplace`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(adminUpdateMarketplaceDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Forces the storefront lifecycle status (e.g. suspended, active).
+         * @summary Suspend / reactivate a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetStatusDto} adminSetStatusDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetStatusV1: async (id: string, adminSetStatusDto: AdminSetStatusDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetStatusV1', 'id', id)
+            // verify required parameter 'adminSetStatusDto' is not null or undefined
+            assertParamExists('usedishaSystemAdminControllerSetStatusV1', 'adminSetStatusDto', adminSetStatusDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/stores/{id}/status`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(adminSetStatusDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaSystemAdminApi - functional programming interface
+ */
+export const UsedishaSystemAdminApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaSystemAdminApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Get any storefront by ID (any status)
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerGetStorefrontV1(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerGetStorefrontV1(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerGetStorefrontV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Paginated listing of every storefront across all businesses, in any status. Filter by status, approvalStatus, category, featured, or free-text search.
+         * @summary List all storefronts
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum} [sortOrder] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1StatusEnum} [status] Filter by storefront status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum} [approvalStatus] Filter by approval status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum} [category] Filter by a Shopmenu category
+         * @param {boolean} [featured] Return only featured/promoted stores
+         * @param {string} [search] Search by store name, domain, description or tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerListStorefrontsV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum, status?: UsedishaSystemAdminControllerListStorefrontsV1StatusEnum, approvalStatus?: UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum, category?: UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedStorefrontsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerListStorefrontsV1(page, limit, sortBy, sortOrder, status, approvalStatus, category, featured, search, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerListStorefrontsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Storefront counts by status, approval status and category, plus totals.
+         * @summary Platform overview metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerOverviewV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedishaPlatformOverviewResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerOverviewV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerOverviewV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Sets approvalStatus to gate the store on/off the marketplace.
+         * @summary Approve or reject a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetApprovalDto} adminSetApprovalDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerSetApprovalV1(id: string, adminSetApprovalDto: AdminSetApprovalDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerSetApprovalV1(id, adminSetApprovalDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerSetApprovalV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Toggle featured and set priceRange, tags, minimumOrderAmount, estimatedDeliveryTime.
+         * @summary Curate marketplace fields
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminUpdateMarketplaceDto} adminUpdateMarketplaceDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerSetMarketplaceFieldsV1(id: string, adminUpdateMarketplaceDto: AdminUpdateMarketplaceDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerSetMarketplaceFieldsV1(id, adminUpdateMarketplaceDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerSetMarketplaceFieldsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Forces the storefront lifecycle status (e.g. suspended, active).
+         * @summary Suspend / reactivate a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetStatusDto} adminSetStatusDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaSystemAdminControllerSetStatusV1(id: string, adminSetStatusDto: AdminSetStatusDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Usedisha>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaSystemAdminControllerSetStatusV1(id, adminSetStatusDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaSystemAdminControllerSetStatusV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaSystemAdminApi - factory interface
+ */
+export const UsedishaSystemAdminApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaSystemAdminApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Get any storefront by ID (any status)
+         * @param {string} id Storefront MongoDB ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerGetStorefrontV1(id: string, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaSystemAdminControllerGetStorefrontV1(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Paginated listing of every storefront across all businesses, in any status. Filter by status, approvalStatus, category, featured, or free-text search.
+         * @summary List all storefronts
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum} [sortOrder] 
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1StatusEnum} [status] Filter by storefront status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum} [approvalStatus] Filter by approval status
+         * @param {UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum} [category] Filter by a Shopmenu category
+         * @param {boolean} [featured] Return only featured/promoted stores
+         * @param {string} [search] Search by store name, domain, description or tags
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerListStorefrontsV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum, status?: UsedishaSystemAdminControllerListStorefrontsV1StatusEnum, approvalStatus?: UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum, category?: UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedStorefrontsResponse> {
+            return localVarFp.usedishaSystemAdminControllerListStorefrontsV1(page, limit, sortBy, sortOrder, status, approvalStatus, category, featured, search, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Storefront counts by status, approval status and category, plus totals.
+         * @summary Platform overview metrics
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerOverviewV1(options?: RawAxiosRequestConfig): AxiosPromise<UsedishaPlatformOverviewResponseDto> {
+            return localVarFp.usedishaSystemAdminControllerOverviewV1(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Sets approvalStatus to gate the store on/off the marketplace.
+         * @summary Approve or reject a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetApprovalDto} adminSetApprovalDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetApprovalV1(id: string, adminSetApprovalDto: AdminSetApprovalDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaSystemAdminControllerSetApprovalV1(id, adminSetApprovalDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Toggle featured and set priceRange, tags, minimumOrderAmount, estimatedDeliveryTime.
+         * @summary Curate marketplace fields
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminUpdateMarketplaceDto} adminUpdateMarketplaceDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetMarketplaceFieldsV1(id: string, adminUpdateMarketplaceDto: AdminUpdateMarketplaceDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaSystemAdminControllerSetMarketplaceFieldsV1(id, adminUpdateMarketplaceDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Forces the storefront lifecycle status (e.g. suspended, active).
+         * @summary Suspend / reactivate a storefront
+         * @param {string} id Storefront MongoDB ID
+         * @param {AdminSetStatusDto} adminSetStatusDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaSystemAdminControllerSetStatusV1(id: string, adminSetStatusDto: AdminSetStatusDto, options?: RawAxiosRequestConfig): AxiosPromise<Usedisha> {
+            return localVarFp.usedishaSystemAdminControllerSetStatusV1(id, adminSetStatusDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaSystemAdminApi - object-oriented interface
+ */
+export class UsedishaSystemAdminApi extends BaseAPI {
+    /**
+     * 
+     * @summary Get any storefront by ID (any status)
+     * @param {string} id Storefront MongoDB ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerGetStorefrontV1(id: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerGetStorefrontV1(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Paginated listing of every storefront across all businesses, in any status. Filter by status, approvalStatus, category, featured, or free-text search.
+     * @summary List all storefronts
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {string} [sortBy] 
+     * @param {UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum} [sortOrder] 
+     * @param {UsedishaSystemAdminControllerListStorefrontsV1StatusEnum} [status] Filter by storefront status
+     * @param {UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum} [approvalStatus] Filter by approval status
+     * @param {UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum} [category] Filter by a Shopmenu category
+     * @param {boolean} [featured] Return only featured/promoted stores
+     * @param {string} [search] Search by store name, domain, description or tags
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerListStorefrontsV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum, status?: UsedishaSystemAdminControllerListStorefrontsV1StatusEnum, approvalStatus?: UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum, category?: UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum, featured?: boolean, search?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerListStorefrontsV1(page, limit, sortBy, sortOrder, status, approvalStatus, category, featured, search, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Storefront counts by status, approval status and category, plus totals.
+     * @summary Platform overview metrics
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerOverviewV1(options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerOverviewV1(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Sets approvalStatus to gate the store on/off the marketplace.
+     * @summary Approve or reject a storefront
+     * @param {string} id Storefront MongoDB ID
+     * @param {AdminSetApprovalDto} adminSetApprovalDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerSetApprovalV1(id: string, adminSetApprovalDto: AdminSetApprovalDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerSetApprovalV1(id, adminSetApprovalDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Toggle featured and set priceRange, tags, minimumOrderAmount, estimatedDeliveryTime.
+     * @summary Curate marketplace fields
+     * @param {string} id Storefront MongoDB ID
+     * @param {AdminUpdateMarketplaceDto} adminUpdateMarketplaceDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerSetMarketplaceFieldsV1(id: string, adminUpdateMarketplaceDto: AdminUpdateMarketplaceDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerSetMarketplaceFieldsV1(id, adminUpdateMarketplaceDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Forces the storefront lifecycle status (e.g. suspended, active).
+     * @summary Suspend / reactivate a storefront
+     * @param {string} id Storefront MongoDB ID
+     * @param {AdminSetStatusDto} adminSetStatusDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaSystemAdminControllerSetStatusV1(id: string, adminSetStatusDto: AdminSetStatusDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaSystemAdminControllerSetStatusV1(id, adminSetStatusDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+export const UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum = typeof UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum[keyof typeof UsedishaSystemAdminControllerListStorefrontsV1SortOrderEnum];
+export const UsedishaSystemAdminControllerListStorefrontsV1StatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive',
+    PendingApproval: 'pending_approval',
+    Suspended: 'suspended',
+    Deleted: 'deleted'
+} as const;
+export type UsedishaSystemAdminControllerListStorefrontsV1StatusEnum = typeof UsedishaSystemAdminControllerListStorefrontsV1StatusEnum[keyof typeof UsedishaSystemAdminControllerListStorefrontsV1StatusEnum];
+export const UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+export type UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum = typeof UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum[keyof typeof UsedishaSystemAdminControllerListStorefrontsV1ApprovalStatusEnum];
+export const UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum = {
+    Pharmacy: 'pharmacy',
+    Supermarket: 'supermarket',
+    Restaurant: 'restaurant',
+    Grocery: 'grocery',
+    Bakery: 'bakery',
+    Butcher: 'butcher',
+    FruitsAndVegetables: 'fruits_and_vegetables',
+    Beverages: 'beverages',
+    SnacksAndConfectionery: 'snacks_and_confectionery',
+    HouseholdSupplies: 'household_supplies'
+} as const;
+export type UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum = typeof UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum[keyof typeof UsedishaSystemAdminControllerListStorefrontsV1CategoryEnum];
+
+
+/**
+ * UsedishaSystemAdminMarketsApi - axios parameter creator
+ */
+export const UsedishaSystemAdminMarketsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Create a market
+         * @param {CreateMarketDto} createMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerCreateV1: async (createMarketDto: CreateMarketDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createMarketDto' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerCreateV1', 'createMarketDto', createMarketDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createMarketDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Hides it from discovery; memberships are preserved.
+         * @summary Deactivate a market
+         * @param {string} id Market ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerDeactivateV1: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerDeactivateV1', 'id', id)
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary List markets (any status)
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaAdminMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaAdminMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {UsedishaAdminMarketsControllerListV1StatusEnum} [status] Filter by status (admin only)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerListV1: async (page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaAdminMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaAdminMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, status?: UsedishaAdminMarketsControllerListV1StatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (sortBy !== undefined) {
+                localVarQueryParameter['sortBy'] = sortBy;
+            }
+
+            if (sortOrder !== undefined) {
+                localVarQueryParameter['sortOrder'] = sortOrder;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (city !== undefined) {
+                localVarQueryParameter['city'] = city;
+            }
+
+            if (lga !== undefined) {
+                localVarQueryParameter['lga'] = lga;
+            }
+
+            if (type !== undefined) {
+                localVarQueryParameter['type'] = type;
+            }
+
+            if (featured !== undefined) {
+                localVarQueryParameter['featured'] = featured;
+            }
+
+            if (search !== undefined) {
+                localVarQueryParameter['search'] = search;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Branch listing requests; filter by status (e.g. pending) and/or market.
+         * @summary Membership moderation queue
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaAdminMarketsControllerMembershipsV1StatusEnum} [status] Filter by membership status
+         * @param {string} [marketId] Filter by market id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerMembershipsV1: async (page?: number, limit?: number, status?: UsedishaAdminMarketsControllerMembershipsV1StatusEnum, marketId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets/memberships`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (status !== undefined) {
+                localVarQueryParameter['status'] = status;
+            }
+
+            if (marketId !== undefined) {
+                localVarQueryParameter['marketId'] = marketId;
+            }
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Approve or reject a branch listing
+         * @param {string} id Membership ID
+         * @param {ReviewMembershipDto} reviewMembershipDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerReviewV1: async (id: string, reviewMembershipDto: ReviewMembershipDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerReviewV1', 'id', id)
+            // verify required parameter 'reviewMembershipDto' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerReviewV1', 'reviewMembershipDto', reviewMembershipDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets/memberships/{id}/review`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(reviewMembershipDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Update a market
+         * @param {string} id Market ID
+         * @param {UpdateMarketDto} updateMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerUpdateV1: async (id: string, updateMarketDto: UpdateMarketDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerUpdateV1', 'id', id)
+            // verify required parameter 'updateMarketDto' is not null or undefined
+            assertParamExists('usedishaAdminMarketsControllerUpdateV1', 'updateMarketDto', updateMarketDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/markets/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateMarketDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaSystemAdminMarketsApi - functional programming interface
+ */
+export const UsedishaSystemAdminMarketsApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaSystemAdminMarketsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a market
+         * @param {CreateMarketDto} createMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerCreateV1(createMarketDto: CreateMarketDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Market>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerCreateV1(createMarketDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerCreateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Hides it from discovery; memberships are preserved.
+         * @summary Deactivate a market
+         * @param {string} id Market ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerDeactivateV1(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Market>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerDeactivateV1(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerDeactivateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary List markets (any status)
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaAdminMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaAdminMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {UsedishaAdminMarketsControllerListV1StatusEnum} [status] Filter by status (admin only)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaAdminMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaAdminMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, status?: UsedishaAdminMarketsControllerListV1StatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMarketsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, status, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerListV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Branch listing requests; filter by status (e.g. pending) and/or market.
+         * @summary Membership moderation queue
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaAdminMarketsControllerMembershipsV1StatusEnum} [status] Filter by membership status
+         * @param {string} [marketId] Filter by market id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerMembershipsV1(page?: number, limit?: number, status?: UsedishaAdminMarketsControllerMembershipsV1StatusEnum, marketId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedMembershipsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerMembershipsV1(page, limit, status, marketId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerMembershipsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Approve or reject a branch listing
+         * @param {string} id Membership ID
+         * @param {ReviewMembershipDto} reviewMembershipDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerReviewV1(id: string, reviewMembershipDto: ReviewMembershipDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MarketMembershipResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerReviewV1(id, reviewMembershipDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerReviewV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Update a market
+         * @param {string} id Market ID
+         * @param {UpdateMarketDto} updateMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminMarketsControllerUpdateV1(id: string, updateMarketDto: UpdateMarketDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Market>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminMarketsControllerUpdateV1(id, updateMarketDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminMarketsApi.usedishaAdminMarketsControllerUpdateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaSystemAdminMarketsApi - factory interface
+ */
+export const UsedishaSystemAdminMarketsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaSystemAdminMarketsApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Create a market
+         * @param {CreateMarketDto} createMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerCreateV1(createMarketDto: CreateMarketDto, options?: RawAxiosRequestConfig): AxiosPromise<Market> {
+            return localVarFp.usedishaAdminMarketsControllerCreateV1(createMarketDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Hides it from discovery; memberships are preserved.
+         * @summary Deactivate a market
+         * @param {string} id Market ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerDeactivateV1(id: string, options?: RawAxiosRequestConfig): AxiosPromise<Market> {
+            return localVarFp.usedishaAdminMarketsControllerDeactivateV1(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary List markets (any status)
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {string} [sortBy] 
+         * @param {UsedishaAdminMarketsControllerListV1SortOrderEnum} [sortOrder] 
+         * @param {string} [state] Filter by state
+         * @param {string} [city] Filter by city
+         * @param {string} [lga] Filter by LGA
+         * @param {UsedishaAdminMarketsControllerListV1TypeEnum} [type] Filter by market type
+         * @param {boolean} [featured] Return only featured markets
+         * @param {string} [search] Search by market name or description
+         * @param {UsedishaAdminMarketsControllerListV1StatusEnum} [status] Filter by status (admin only)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaAdminMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaAdminMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, status?: UsedishaAdminMarketsControllerListV1StatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedMarketsResponse> {
+            return localVarFp.usedishaAdminMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, status, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Branch listing requests; filter by status (e.g. pending) and/or market.
+         * @summary Membership moderation queue
+         * @param {number} [page] 
+         * @param {number} [limit] 
+         * @param {UsedishaAdminMarketsControllerMembershipsV1StatusEnum} [status] Filter by membership status
+         * @param {string} [marketId] Filter by market id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerMembershipsV1(page?: number, limit?: number, status?: UsedishaAdminMarketsControllerMembershipsV1StatusEnum, marketId?: string, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedMembershipsResponse> {
+            return localVarFp.usedishaAdminMarketsControllerMembershipsV1(page, limit, status, marketId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Approve or reject a branch listing
+         * @param {string} id Membership ID
+         * @param {ReviewMembershipDto} reviewMembershipDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerReviewV1(id: string, reviewMembershipDto: ReviewMembershipDto, options?: RawAxiosRequestConfig): AxiosPromise<MarketMembershipResponse> {
+            return localVarFp.usedishaAdminMarketsControllerReviewV1(id, reviewMembershipDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update a market
+         * @param {string} id Market ID
+         * @param {UpdateMarketDto} updateMarketDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminMarketsControllerUpdateV1(id: string, updateMarketDto: UpdateMarketDto, options?: RawAxiosRequestConfig): AxiosPromise<Market> {
+            return localVarFp.usedishaAdminMarketsControllerUpdateV1(id, updateMarketDto, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaSystemAdminMarketsApi - object-oriented interface
+ */
+export class UsedishaSystemAdminMarketsApi extends BaseAPI {
+    /**
+     * 
+     * @summary Create a market
+     * @param {CreateMarketDto} createMarketDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerCreateV1(createMarketDto: CreateMarketDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerCreateV1(createMarketDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Hides it from discovery; memberships are preserved.
+     * @summary Deactivate a market
+     * @param {string} id Market ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerDeactivateV1(id: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerDeactivateV1(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary List markets (any status)
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {string} [sortBy] 
+     * @param {UsedishaAdminMarketsControllerListV1SortOrderEnum} [sortOrder] 
+     * @param {string} [state] Filter by state
+     * @param {string} [city] Filter by city
+     * @param {string} [lga] Filter by LGA
+     * @param {UsedishaAdminMarketsControllerListV1TypeEnum} [type] Filter by market type
+     * @param {boolean} [featured] Return only featured markets
+     * @param {string} [search] Search by market name or description
+     * @param {UsedishaAdminMarketsControllerListV1StatusEnum} [status] Filter by status (admin only)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerListV1(page?: number, limit?: number, sortBy?: string, sortOrder?: UsedishaAdminMarketsControllerListV1SortOrderEnum, state?: string, city?: string, lga?: string, type?: UsedishaAdminMarketsControllerListV1TypeEnum, featured?: boolean, search?: string, status?: UsedishaAdminMarketsControllerListV1StatusEnum, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerListV1(page, limit, sortBy, sortOrder, state, city, lga, type, featured, search, status, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Branch listing requests; filter by status (e.g. pending) and/or market.
+     * @summary Membership moderation queue
+     * @param {number} [page] 
+     * @param {number} [limit] 
+     * @param {UsedishaAdminMarketsControllerMembershipsV1StatusEnum} [status] Filter by membership status
+     * @param {string} [marketId] Filter by market id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerMembershipsV1(page?: number, limit?: number, status?: UsedishaAdminMarketsControllerMembershipsV1StatusEnum, marketId?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerMembershipsV1(page, limit, status, marketId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Approve or reject a branch listing
+     * @param {string} id Membership ID
+     * @param {ReviewMembershipDto} reviewMembershipDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerReviewV1(id: string, reviewMembershipDto: ReviewMembershipDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerReviewV1(id, reviewMembershipDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update a market
+     * @param {string} id Market ID
+     * @param {UpdateMarketDto} updateMarketDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminMarketsControllerUpdateV1(id: string, updateMarketDto: UpdateMarketDto, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminMarketsApiFp(this.configuration).usedishaAdminMarketsControllerUpdateV1(id, updateMarketDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+export const UsedishaAdminMarketsControllerListV1SortOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type UsedishaAdminMarketsControllerListV1SortOrderEnum = typeof UsedishaAdminMarketsControllerListV1SortOrderEnum[keyof typeof UsedishaAdminMarketsControllerListV1SortOrderEnum];
+export const UsedishaAdminMarketsControllerListV1TypeEnum = {
+    General: 'general',
+    Food: 'food',
+    Electronics: 'electronics',
+    Fashion: 'fashion',
+    BuildingMaterials: 'building_materials',
+    Agriculture: 'agriculture',
+    AutoParts: 'auto_parts'
+} as const;
+export type UsedishaAdminMarketsControllerListV1TypeEnum = typeof UsedishaAdminMarketsControllerListV1TypeEnum[keyof typeof UsedishaAdminMarketsControllerListV1TypeEnum];
+export const UsedishaAdminMarketsControllerListV1StatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive'
+} as const;
+export type UsedishaAdminMarketsControllerListV1StatusEnum = typeof UsedishaAdminMarketsControllerListV1StatusEnum[keyof typeof UsedishaAdminMarketsControllerListV1StatusEnum];
+export const UsedishaAdminMarketsControllerMembershipsV1StatusEnum = {
+    Pending: 'pending',
+    Approved: 'approved',
+    Rejected: 'rejected'
+} as const;
+export type UsedishaAdminMarketsControllerMembershipsV1StatusEnum = typeof UsedishaAdminMarketsControllerMembershipsV1StatusEnum[keyof typeof UsedishaAdminMarketsControllerMembershipsV1StatusEnum];
 
 

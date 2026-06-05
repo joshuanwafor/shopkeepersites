@@ -17,7 +17,7 @@ Name | Type | Description | Notes
 **caption** | **string** | A short, catchy tagline for the store | [optional] [default to undefined]
 **termsAndConditions** | **string** | Full text of the terms and conditions for this storefront (plain text; editable via update) | [optional] [default to undefined]
 **policyDocument** | **string** | Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update) | [optional] [default to undefined]
-**supportedDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods this storefront supports at checkout | [optional] [default to undefined]
+**deliveryConfig** | [**UsedishaDeliveryConfig**](UsedishaDeliveryConfig.md) | Delivery configuration — supported methods and businessDelivery pricing | [optional] [default to undefined]
 **supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods this storefront supports at checkout | [optional] [default to undefined]
 **theme** | [**UDThemeSettings**](UDThemeSettings.md) | Theme settings | [default to undefined]
 **socialMedia** | [**UDSocialMediaLinks**](UDSocialMediaLinks.md) | Social media links | [optional] [default to undefined]
@@ -30,6 +30,14 @@ Name | Type | Description | Notes
 **location** | [**UsedishaLocation**](UsedishaLocation.md) | Physical location of the store as a GeoJSON Point [longitude, latitude] | [optional] [default to undefined]
 **address** | [**UsedishaAddress**](UsedishaAddress.md) | Physical street address of the store | [optional] [default to undefined]
 **operatingHours** | [**UsedishaOperatingHours**](UsedishaOperatingHours.md) | Weekly operating hours (local times in timeZone) | [optional] [default to undefined]
+**branches** | [**Array&lt;UsedishaBranch&gt;**](UsedishaBranch.md) | All physical branches of this storefront, used for marketplace discovery and the branch picker | [optional] [default to undefined]
+**averageRating** | **number** | Aggregated average rating (0–5) | [optional] [default to undefined]
+**reviewCount** | **number** | Total number of reviews | [optional] [default to undefined]
+**minimumOrderAmount** | **number** | Minimum cart value required for checkout | [optional] [default to undefined]
+**estimatedDeliveryTime** | **string** | Estimated delivery time display string | [optional] [default to undefined]
+**priceRange** | **string** | Price tier | [optional] [default to undefined]
+**tags** | **Array&lt;string&gt;** | Freeform discovery keywords | [optional] [default to undefined]
+**featured** | **boolean** | Promoted/featured listing flag | [optional] [default to false]
 **metadata** | **object** | Metadata for tracking, custom scripts, etc. | [optional] [default to undefined]
 **createdAt** | **string** | Timestamp of creation | [optional] [readonly] [default to undefined]
 **updatedAt** | **string** | Timestamp of last update | [optional] [readonly] [default to undefined]
@@ -54,7 +62,7 @@ const instance: Usedisha = {
     caption,
     termsAndConditions,
     policyDocument,
-    supportedDeliveryMethods,
+    deliveryConfig,
     supportedPaymentMethods,
     theme,
     socialMedia,
@@ -67,6 +75,14 @@ const instance: Usedisha = {
     location,
     address,
     operatingHours,
+    branches,
+    averageRating,
+    reviewCount,
+    minimumOrderAmount,
+    estimatedDeliveryTime,
+    priceRange,
+    tags,
+    featured,
     metadata,
     createdAt,
     updatedAt,

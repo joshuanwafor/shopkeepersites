@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Container,
@@ -23,6 +23,7 @@ import {
   useStorefrontProfile,
   useStorefrontProducts,
   useStorefrontCategories,
+  useTrackStoreView,
 } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
 import type {
@@ -38,53 +39,42 @@ function HomeContent() {
   const searchQuery = searchParams.get("q")?.trim() || undefined;
   const { addItem } = useCart();
 
+  const PAGE_SIZE = 25;
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+
+  // Reset to the first page whenever the active filter changes.
+  useEffect(() => {
+    setPage(1);
+  }, [activeCategoryId, searchQuery]);
+
   const { data: profileRes, isLoading: profileLoading, error: profileError } = useStorefrontProfile();
-  const { data: productsRes, isLoading: productsLoading, error: productsError } = useStorefrontProducts(
-    searchQuery ? { search: searchQuery } : undefined
-  );
+  const {
+    data: productsRes,
+    isLoading: productsLoading,
+    isFetching: productsFetching,
+    error: productsError,
+  } = useStorefrontProducts({
+    category: activeCategoryId ?? undefined,
+    search: searchQuery,
+    page,
+    limit: PAGE_SIZE,
+  });
   const { data: categoriesRes } = useStorefrontCategories();
+
   const profile = profileRes?.data;
+  // Records a session-aware store view once the storefront resolves (fire-and-forget).
+  useTrackStoreView(profile?.id);
   const products = productsRes?.data?.products ?? EMPTY_PRODUCTS;
   const categories = categoriesRes?.data?.categories ?? EMPTY_CATEGORIES;
-  const menuSections = useMemo(() => {
-    const sections = categories.map((category) => ({
-      id: category.id,
-      name: category.name,
-      products: products.filter((product) => product.categoryIds?.includes(category.id)),
-    }));
-    const uncategorized = products.filter(
-      (product) => !product.categoryIds || product.categoryIds.length === 0
-    );
-    if (uncategorized.length > 0) {
-      sections.push({
-        id: "uncategorized",
-        name: "More items",
-        products: uncategorized,
-      });
-    }
-    return sections.filter((section) => section.products.length > 0);
-  }, [categories, products]);
-  const visibleSections = useMemo(() => {
-    if (!activeCategoryId) return menuSections;
-    return menuSections.filter((section) => section.id === activeCategoryId);
-  }, [activeCategoryId, menuSections]);
-  const totalItems = products.length;
+  const total = productsRes?.data?.total ?? 0;
+  const limit = productsRes?.data?.limit ?? PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
   const hasStoreError = !!(profileError || productsError);
 
-  useEffect(() => {
-    if (menuSections.length === 0) {
-      setActiveCategoryId(null);
-      return;
-    }
-    if (activeCategoryId && !menuSections.some((section) => section.id === activeCategoryId)) {
-      setActiveCategoryId(null);
-    }
-  }, [activeCategoryId, menuSections]);
-
-  const selectCategory = (sectionId: string | null) => {
-    setActiveCategoryId(sectionId);
+  const selectCategory = (categoryId: string | null) => {
+    setActiveCategoryId(categoryId);
   };
 
   const renderMenuItem = (product: StorefrontProductResponse) => (
@@ -212,24 +202,28 @@ function HomeContent() {
                 <Text size="sm" className="text-stone-500 mt-1.5 sm:mt-2">
                   {searchQuery
                     ? `Showing results for “${searchQuery}”.`
-                    : "Browse all items on a single page."}
+                    : "Browse our products."}
                 </Text>
               </div>
               <Group gap={6} className="text-left sm:text-right">
                 <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                  {menuSections.length} sections
+                  {total} items
                 </Text>
-                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
-                  •
-                </Text>
-                <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                  {totalItems} items
-                </Text>
+                {totalPages > 1 && (
+                  <>
+                    <Text size="xs" className="uppercase tracking-[0.12em] text-stone-400">
+                      •
+                    </Text>
+                    <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
+                      Page {page} of {totalPages}
+                    </Text>
+                  </>
+                )}
               </Group>
             </Group>
           </div>
 
-          {menuSections.length > 0 && (
+          {categories.length > 0 && (
             <div
               className="border-t border-stone-200 bg-stone-50/40 px-2 py-2 sm:px-4 sticky top-[7.25rem] sm:top-[7.5rem] z-10 backdrop-blur supports-[backdrop-filter]:bg-white/85"
             >
@@ -244,16 +238,16 @@ function HomeContent() {
                   >
                     All
                   </UnstyledButton>
-                  {menuSections.map((section) => (
+                  {categories.map((category) => (
                     <UnstyledButton
-                      key={section.id}
-                      onClick={() => selectCategory(section.id)}
+                      key={category.id}
+                      onClick={() => selectCategory(category.id)}
                       className={`
                     px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-                    ${activeCategoryId === section.id ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
+                    ${activeCategoryId === category.id ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                   `}
                     >
-                      {section.name}
+                      {category.name}
                     </UnstyledButton>
                   ))}
                 </Group>
@@ -278,26 +272,36 @@ function HomeContent() {
             </Text>
           </Paper>
         )}
-        {!productsLoading && visibleSections.length > 0 && (
-          <Stack gap="md" className="sm:gap-lg">
-            {visibleSections.map((section) => (
-              <section key={section.id} id={`menu-section-${section.id}`} className="scroll-mt-36">
-                <Paper p="md" className="store-classic-paper border border-stone-200/80 sm:p-lg" radius="xl">
-                  <Group justify="space-between" align="flex-end" mb="xs" gap="xs">
-                    <Title order={3} className="store-classic-title text-xl sm:text-2xl text-stone-800 tracking-tight">
-                      {section.name}
-                    </Title>
-                    <Text size="xs" className="uppercase tracking-[0.12em] text-stone-500">
-                      {section.products.length} item{section.products.length === 1 ? "" : "s"}
-                    </Text>
-                  </Group>
-                  {/* <Divider color="#e7e5e4" mb="md" /> */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                    {section.products.map((product) => renderMenuItem(product))}
-                  </div>
-                </Paper>
-              </section>
-            ))}
+        {!productsLoading && products.length > 0 && (
+          <Stack gap="lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+              {products.map((product) => renderMenuItem(product))}
+            </div>
+            {totalPages > 1 && (
+              <Group justify="center" align="center" gap="sm" className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1 || productsFetching}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="border-stone-300 text-stone-700 hover:bg-stone-100 rounded"
+                >
+                  Previous
+                </Button>
+                <Text size="sm" className="text-stone-600 min-w-[6.5rem] text-center">
+                  Page {page} of {totalPages}
+                </Text>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= totalPages || productsFetching}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  className="border-stone-300 text-stone-700 hover:bg-stone-100 rounded"
+                >
+                  Next
+                </Button>
+              </Group>
+            )}
           </Stack>
         )}
       </Container>

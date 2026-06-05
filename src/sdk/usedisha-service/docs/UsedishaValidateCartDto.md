@@ -6,6 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **domain** | **string** | Usedisha store domain | [default to undefined]
+**branchId** | **string** | Branch to shop from. Defaults to the storefront default branch when omitted. | [optional] [default to undefined]
 **items** | [**Array&lt;UsedishaCheckoutItemDto&gt;**](UsedishaCheckoutItemDto.md) | Cart items | [default to undefined]
 
 ## Example
@@ -15,6 +16,7 @@ import { UsedishaValidateCartDto } from './api';
 
 const instance: UsedishaValidateCartDto = {
     domain,
+    branchId,
     items,
 };
 ```

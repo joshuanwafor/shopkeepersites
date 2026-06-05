@@ -13,7 +13,6 @@ Name | Type | Description | Notes
 **caption** | **string** | A short, catchy tagline for the store | [optional] [default to undefined]
 **termsAndConditions** | **string** | Full text of the terms and conditions for this storefront (plain text; editable via update) | [optional] [default to undefined]
 **policyDocument** | **string** | Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update) | [optional] [default to undefined]
-**supportedDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods this storefront supports at checkout | [optional] [default to undefined]
 **supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods this storefront supports at checkout | [optional] [default to undefined]
 **theme** | [**UDThemeSettings**](UDThemeSettings.md) | Theme settings | [optional] [default to undefined]
 **legalName** | **string** | Legal name of business | [optional] [default to undefined]
@@ -23,6 +22,11 @@ Name | Type | Description | Notes
 **launchDate** | **string** | Date the store went live | [optional] [default to undefined]
 **address** | [**UsedishaAddress**](UsedishaAddress.md) | Physical street address of the store | [optional] [default to undefined]
 **operatingHours** | [**UsedishaOperatingHours**](UsedishaOperatingHours.md) | Weekly operating hours (local times in timeZone) | [optional] [default to undefined]
+**minimumOrderAmount** | **number** | Minimum cart value required for checkout | [optional] [default to undefined]
+**estimatedDeliveryTime** | **string** | Estimated delivery time display string | [optional] [default to undefined]
+**priceRange** | **string** | Price tier | [optional] [default to undefined]
+**tags** | **Array&lt;string&gt;** | Freeform discovery keywords | [optional] [default to undefined]
+**featured** | **boolean** | Promoted/featured listing flag | [optional] [default to false]
 
 ## Example
 
@@ -38,7 +42,6 @@ const instance: UpdateUsedishaDto = {
     caption,
     termsAndConditions,
     policyDocument,
-    supportedDeliveryMethods,
     supportedPaymentMethods,
     theme,
     legalName,
@@ -48,6 +51,11 @@ const instance: UpdateUsedishaDto = {
     launchDate,
     address,
     operatingHours,
+    minimumOrderAmount,
+    estimatedDeliveryTime,
+    priceRange,
+    tags,
+    featured,
 };
 ```
 

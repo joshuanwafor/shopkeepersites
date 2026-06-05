@@ -1,4 +1,4 @@
-# OrderFeeEstimateResponse
+# UsedishaOrderFeeEstimateResponseDto
 
 
 ## Properties
@@ -6,20 +6,21 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **subTotal** | **number** | Cart sub-total (items only) | [default to undefined]
-**deliveryFee** | **number** | Delivery fee in NGN (0 for PICKUP or free-delivery threshold met) | [default to undefined]
+**deliveryFee** | **number** | Delivery fee in NGN (0 for PICKUP / free-delivery threshold) | [default to undefined]
 **serviceFee** | **number** | Platform service fee in NGN | [default to undefined]
 **discountAmount** | **number** | Discount amount in NGN | [default to undefined]
 **totalAmount** | **number** | Grand total the customer will pay | [default to undefined]
 **distanceKm** | **number** | Straight-line distance from customer to store in km (EXPRESS only) | [optional] [default to undefined]
-**isFreeDelivery** | **boolean** | Whether free-delivery threshold was met | [default to undefined]
-**breakdown** | [**FeeBreakdownResponse**](FeeBreakdownResponse.md) | Human-readable notes for each fee line | [default to undefined]
+**isFreeDelivery** | **boolean** | Whether the free-delivery threshold was met | [default to undefined]
+**breakdown** | [**UsedishaFeeBreakdownDto**](UsedishaFeeBreakdownDto.md) | Human-readable notes for each fee line | [default to undefined]
+**delivery** | [**UsedishaDeliveryQuoteDto**](UsedishaDeliveryQuoteDto.md) | Delivery quote details (provider + reference for platformDelivery) | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { OrderFeeEstimateResponse } from './api';
+import { UsedishaOrderFeeEstimateResponseDto } from './api';
 
-const instance: OrderFeeEstimateResponse = {
+const instance: UsedishaOrderFeeEstimateResponseDto = {
     subTotal,
     deliveryFee,
     serviceFee,
@@ -28,6 +29,7 @@ const instance: OrderFeeEstimateResponse = {
     distanceKm,
     isFreeDelivery,
     breakdown,
+    delivery,
 };
 ```
 

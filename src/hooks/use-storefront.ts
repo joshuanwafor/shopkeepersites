@@ -12,8 +12,13 @@ import {
   type UsedishaValidateCartDto,
   type UsedishaCheckoutItemDto,
   type UsedishaCheckoutCustomerDto,
+  type UsedishaEstimateFeesDto,
   type Address,
 } from "@/sdk/usedisha-service";
+
+/** Storefront delivery methods (single shared union across the app). */
+export type DeliveryMethod =
+  (typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum)[keyof typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum];
 
 const FALLBACK_DOMAIN =
   process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "demo";
@@ -80,17 +85,25 @@ export function useStorefrontProducts(opts?: {
   search?: string;
   sortBy?: string;
   sortOrder?: string;
+  branchId?: string;
+  page?: number;
+  limit?: number;
 }) {
   const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "products", domain, opts],
+    // Keep the current page visible while the next one loads (no flash to empty).
+    placeholderData: (previous) => previous,
     queryFn: () =>
       usedishaClientApi.usedishaClientControllerGetStorefrontProductsV1(
         domain,
         opts?.category,
         opts?.search,
         opts?.sortBy,
-        opts?.sortOrder
+        opts?.sortOrder,
+        opts?.branchId,
+        opts?.page,
+        opts?.limit
       ),
   });
 }
@@ -153,7 +166,7 @@ export function useOrdersByEmail(email: string | null) {
   return useQuery({
     queryKey: ["storefront", "orders", domain, email],
     queryFn: () =>
-      usedishaClientApi.usedishaClientControllerGetOrdersByEmailV1(
+      usedishaCheckoutApi.usedishaCheckoutControllerGetGuestOrdersV1(
         domain,
         email!
       ),
@@ -161,13 +174,90 @@ export function useOrdersByEmail(email: string | null) {
   });
 }
 
+/**
+ * Live fee estimate (delivery + service) for the current cart and delivery method.
+ * Re-runs when items, method, branch or coordinates change. `platformDelivery` is priced by the
+ * backend provider (distance-based when coordinates are supplied).
+ */
+export function useEstimateFees(params: {
+  items: Array<{ productId: string; quantity: number }>;
+  deliveryMethod: DeliveryMethod;
+  userLat?: number;
+  userLng?: number;
+  branchId?: string;
+}) {
+  const domain = useStorefrontDomain();
+  return useQuery({
+    queryKey: ["storefront", "fees", domain, params],
+    enabled: params.items.length > 0 && !!params.deliveryMethod,
+    retry: false,
+    queryFn: () =>
+      usedishaCheckoutApi.usedishaCheckoutControllerEstimateFeesV1({
+        domain,
+        items: params.items.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+        })),
+        deliveryMethod: params.deliveryMethod,
+        userLat: params.userLat,
+        userLng: params.userLng,
+        branchId: params.branchId,
+      } as UsedishaEstimateFeesDto),
+  });
+}
+
+function getOrCreateId(storage: Storage, key: string): string {
+  let v = storage.getItem(key);
+  if (!v) {
+    v =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    storage.setItem(key, v);
+  }
+  return v;
+}
+
+/**
+ * Records a session-aware store view via the SPA visit endpoint. Fires once per browser session
+ * per store; sends a stable `sessionId` (sessionStorage) + persistent `visitorId` (localStorage)
+ * so the backend groups page loads into sessions and counts unique store views. Fire-and-forget.
+ */
+export function useTrackStoreView(storeId: string | undefined) {
+  useEffect(() => {
+    if (!storeId || typeof window === "undefined") return;
+    const onceKey = `ud_viewed_${storeId}`;
+    if (window.sessionStorage.getItem(onceKey)) return;
+    window.sessionStorage.setItem(onceKey, "1");
+
+    usedishaClientApi
+      .usedishaClientControllerRecordStoreVisitV1(storeId, {
+        sessionId: getOrCreateId(window.sessionStorage, "ud_session_id"),
+        visitorId: getOrCreateId(window.localStorage, "ud_visitor_id"),
+        path: window.location.pathname,
+        referrer: document.referrer || undefined,
+        language: navigator.language,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      })
+      .catch(() => {
+        // best-effort analytics — never block or surface to the shopper
+      });
+  }, [storeId]);
+}
+
 export function buildCheckoutPayload(
   domain: string,
   items: Array<{ productId: string; quantity: number }>,
   customer: UsedishaCheckoutCustomerDto,
-  shippingAddress?: Address,
-  callbackUrl?: string,
-  customerNotes?: string
+  opts: {
+    deliveryMethod: DeliveryMethod;
+    shippingAddress?: Address;
+    userLat?: number;
+    userLng?: number;
+    branchId?: string;
+    callbackUrl?: string;
+    customerNotes?: string;
+  }
 ): UsedishaInitiateCheckoutDto {
   const dtoItems: UsedishaCheckoutItemDto[] = items.map((i) => ({
     productId: i.productId,
@@ -177,9 +267,12 @@ export function buildCheckoutPayload(
     domain,
     customer,
     items: dtoItems,
-    shippingAddress,
-    deliveryMethod: UsedishaInitiateCheckoutDtoDeliveryMethodEnum.Express,
-    callbackUrl,
-    customerNotes,
+    deliveryMethod: opts.deliveryMethod,
+    shippingAddress: opts.shippingAddress,
+    userLat: opts.userLat,
+    userLng: opts.userLng,
+    branchId: opts.branchId,
+    callbackUrl: opts.callbackUrl,
+    customerNotes: opts.customerNotes,
   };
 }

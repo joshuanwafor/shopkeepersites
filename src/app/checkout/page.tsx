@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Container,
@@ -17,6 +17,9 @@ import {
   Alert,
   Skeleton,
   ActionIcon,
+  Radio,
+  Divider,
+  Loader,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { StoreLayout } from "@/components/store/StoreLayout";
@@ -27,8 +30,17 @@ import {
   useStorefrontQueryString,
   useValidateCart,
   useInitiateCheckout,
+  useEstimateFees,
   buildCheckoutPayload,
+  type DeliveryMethod,
 } from "@/hooks/use-storefront";
+
+const METHOD_META: Record<DeliveryMethod, { label: string; hint: string }> = {
+  pickup: { label: "Pickup", hint: "Collect in store — no delivery fee" },
+  platformDelivery: { label: "Delivery", hint: "Delivered to your address" },
+  businessDelivery: { label: "Store delivery", hint: "Delivered by the store" },
+};
+const DEFAULT_METHODS: DeliveryMethod[] = ["pickup", "platformDelivery"];
 
 function formatPrice(amount: number) {
   return new Intl.NumberFormat("en-NG", {
@@ -46,11 +58,18 @@ function CheckoutContent() {
   const validateCart = useValidateCart();
   const initiateCheckout = useInitiateCheckout();
 
+  const supportedMethods =
+    (profile?.deliveryConfig?.supportedMethods as DeliveryMethod[] | undefined) ??
+    DEFAULT_METHODS;
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+
   const form = useForm({
     initialValues: {
       email: "",
       fullName: "",
       phone: "",
+      deliveryMethod: "platformDelivery" as DeliveryMethod,
       address: "",
       city: "",
       state: "",
@@ -59,20 +78,63 @@ function CheckoutContent() {
     },
     validate: {
       email: (v) => (!v ? "Email is required" : /^\S+@\S+$/.test(v) ? null : "Invalid email"),
-      address: (v) => (!v ? "Delivery address is required" : null),
-      city: (v) => (!v ? "City is required" : null),
-      state: (v) => (!v ? "State is required" : null),
+      address: (v, values) =>
+        values.deliveryMethod !== "pickup" && !v ? "Delivery address is required" : null,
+      city: (v, values) =>
+        values.deliveryMethod !== "pickup" && !v ? "City is required" : null,
+      state: (v, values) =>
+        values.deliveryMethod !== "pickup" && !v ? "State is required" : null,
     },
   });
 
+  const deliveryMethod = form.values.deliveryMethod;
+  const needsAddress = deliveryMethod !== "pickup";
+
+  // Keep the selected method within what the store actually supports (once the profile loads).
+  useEffect(() => {
+    if (supportedMethods.length && !supportedMethods.includes(deliveryMethod)) {
+      form.setFieldValue("deliveryMethod", supportedMethods[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supportedMethods.join(",")]);
+
+  const feesQuery = useEstimateFees({
+    items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+    deliveryMethod,
+    userLat: coords?.lat,
+    userLng: coords?.lng,
+  });
+  const fees = feesQuery.data?.data;
+
+  function requestLocation() {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocating(false);
+      },
+      () => setLocating(false),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
   const handleSubmit = form.onSubmit(async (values) => {
-    // Build shipping address object
-    const shippingAddress = {
-      address: values.address,
-      city: values.city,
-      state: values.state,
-      postalCode: values.postalCode || undefined,
-    };
+    // Pickup needs no address; delivery methods do.
+    const shippingAddress =
+      values.deliveryMethod !== "pickup"
+        ? {
+            address: values.address,
+            city: values.city,
+            state: values.state,
+            postalCode: values.postalCode || undefined,
+          }
+        : undefined;
+
+    const callbackUrl =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/orders?success=1${queryString ? `&${queryString.slice(1)}` : ""}`
+        : undefined;
 
     const payload = buildCheckoutPayload(
       domain,
@@ -82,9 +144,14 @@ function CheckoutContent() {
         fullName: values.fullName || undefined,
         phone: values.phone || undefined,
       },
-      shippingAddress,
-      typeof window !== "undefined" ? `${window.location.origin}/orders?success=1${queryString ? `&${queryString.slice(1)}` : ""}` : undefined,
-      values.customerNotes || undefined
+      {
+        deliveryMethod: values.deliveryMethod,
+        shippingAddress,
+        userLat: coords?.lat,
+        userLng: coords?.lng,
+        callbackUrl,
+        customerNotes: values.customerNotes || undefined,
+      }
     );
 
     try {
@@ -198,11 +265,37 @@ function CheckoutContent() {
                   </Group>
                 ))}
               </Stack>
-              <Group justify="flex-end" mt="md" className="pt-4 border-t border-stone-200">
-                <Text fw={700} className="text-stone-800">
-                  Total: {formatPrice(totalAmount)}
-                </Text>
-              </Group>
+              <Stack gap={6} mt="md" className="pt-4 border-t border-stone-200">
+                <Group justify="space-between">
+                  <Text size="sm" className="text-stone-500">Subtotal</Text>
+                  <Text size="sm" className="text-stone-700">{formatPrice(fees?.subTotal ?? totalAmount)}</Text>
+                </Group>
+                {needsAddress && (
+                  <Group justify="space-between">
+                    <Text size="sm" className="text-stone-500">Delivery fee</Text>
+                    <Text size="sm" className="text-stone-700">
+                      {feesQuery.isFetching ? (
+                        <Loader size="xs" color="gray" />
+                      ) : fees ? (
+                        fees.isFreeDelivery ? "Free" : formatPrice(fees.deliveryFee)
+                      ) : (
+                        "—"
+                      )}
+                    </Text>
+                  </Group>
+                )}
+                {!!fees?.serviceFee && (
+                  <Group justify="space-between">
+                    <Text size="sm" className="text-stone-500">Service fee</Text>
+                    <Text size="sm" className="text-stone-700">{formatPrice(fees.serviceFee)}</Text>
+                  </Group>
+                )}
+                <Divider className="border-stone-200" />
+                <Group justify="space-between">
+                  <Text fw={700} className="text-stone-800">Total</Text>
+                  <Text fw={700} className="text-stone-800">{formatPrice(fees?.totalAmount ?? totalAmount)}</Text>
+                </Group>
+              </Stack>
             </Paper>
 
             <Text fw={600} className="text-stone-800 font-serif">
@@ -229,38 +322,81 @@ function CheckoutContent() {
             />
 
             <Text fw={600} className="text-stone-800 font-serif mt-4">
-              Delivery details
+              Delivery method
             </Text>
-            <Textarea
-              label="Delivery address"
-              placeholder="Street address, apartment, suite, etc."
-              required
-              minRows={2}
-              classNames={{ input: "rounded border-stone-300" }}
-              {...form.getInputProps("address")}
-            />
-            <Group grow>
-              <TextInput
-                label="City"
-                placeholder="City"
-                required
-                classNames={{ input: "rounded border-stone-300" }}
-                {...form.getInputProps("city")}
-              />
-              <TextInput
-                label="State"
-                placeholder="State"
-                required
-                classNames={{ input: "rounded border-stone-300" }}
-                {...form.getInputProps("state")}
-              />
-            </Group>
-            <TextInput
-              label="Postal code (optional)"
-              placeholder="Postal code"
-              classNames={{ input: "rounded border-stone-300" }}
-              {...form.getInputProps("postalCode")}
-            />
+            <Radio.Group {...form.getInputProps("deliveryMethod")}>
+              <Stack gap="xs">
+                {supportedMethods.map((m) => (
+                  <Paper
+                    key={m}
+                    p="sm"
+                    className={`store-classic-paper border rounded cursor-pointer ${
+                      deliveryMethod === m ? "border-stone-400 bg-stone-50" : "border-stone-200"
+                    }`}
+                    onClick={() => form.setFieldValue("deliveryMethod", m)}
+                  >
+                    <Radio
+                      value={m}
+                      label={METHOD_META[m].label}
+                      description={METHOD_META[m].hint}
+                      classNames={{ label: "text-stone-800 font-medium", description: "text-stone-500" }}
+                    />
+                  </Paper>
+                ))}
+              </Stack>
+            </Radio.Group>
+
+            {deliveryMethod === "platformDelivery" && (
+              <Button
+                type="button"
+                variant="light"
+                size="xs"
+                color="gray"
+                loading={locating}
+                onClick={requestLocation}
+                className="self-start border border-stone-300 text-stone-700 hover:bg-stone-100 rounded"
+              >
+                {coords ? "Location set ✓ — fee updated" : "Use my location for accurate delivery fee"}
+              </Button>
+            )}
+
+            {needsAddress && (
+              <>
+                <Text fw={600} className="text-stone-800 font-serif mt-2">
+                  Delivery address
+                </Text>
+                <Textarea
+                  label="Delivery address"
+                  placeholder="Street address, apartment, suite, etc."
+                  required
+                  minRows={2}
+                  classNames={{ input: "rounded border-stone-300" }}
+                  {...form.getInputProps("address")}
+                />
+                <Group grow>
+                  <TextInput
+                    label="City"
+                    placeholder="City"
+                    required
+                    classNames={{ input: "rounded border-stone-300" }}
+                    {...form.getInputProps("city")}
+                  />
+                  <TextInput
+                    label="State"
+                    placeholder="State"
+                    required
+                    classNames={{ input: "rounded border-stone-300" }}
+                    {...form.getInputProps("state")}
+                  />
+                </Group>
+                <TextInput
+                  label="Postal code (optional)"
+                  placeholder="Postal code"
+                  classNames={{ input: "rounded border-stone-300" }}
+                  {...form.getInputProps("postalCode")}
+                />
+              </>
+            )}
             <Textarea
               label="Additional notes (optional)"
               placeholder="Delivery instructions, special requests, etc."
