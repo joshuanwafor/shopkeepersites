@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   Container,
@@ -17,13 +18,13 @@ import {
 } from "@mantine/core";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import { StorefrontInfo } from "@/components/store/StorefrontInfo";
-import { ProductModal } from "@/components/store/ProductModal";
 import { formatPrice } from "@/hooks";
 import {
   useStorefrontProfile,
   useStorefrontProducts,
   useStorefrontCategories,
   useTrackStoreView,
+  useStorefrontQueryString,
 } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
 import type {
@@ -40,7 +41,7 @@ function HomeContent() {
   const { addItem } = useCart();
 
   const PAGE_SIZE = 25;
-  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const queryString = useStorefrontQueryString();
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
@@ -92,22 +93,25 @@ function HomeContent() {
       className="store-classic-paper overflow-hidden rounded-2xl border border-stone-200/80 hover:shadow-md hover:border-stone-300 transition-all"
     >
       <div className="relative">
-        <div className="h-40 sm:h-44 w-full bg-stone-100 border-b border-stone-200 overflow-hidden flex items-center justify-center">
-          {product.primaryPhoto ? (
-            <Image
-              src={product.primaryPhoto}
-              alt={product.name}
-              w="100%"
-              h="100%"
-              fit="cover"
-              fallbackSrc="https://placehold.co/640x360?text=No+image"
-            />
-          ) : (
-            <Text size="xs" className="text-stone-400 px-2 text-center leading-tight">
-              No image
-            </Text>
-          )}
-        </div>
+        <Link href={`/products/${product.id}${queryString}`} className="block">
+          <div className="aspect-[4/3] w-full bg-gradient-to-br from-stone-50 to-stone-100 border-b border-stone-200 overflow-hidden flex items-center justify-center p-3">
+            {product.primaryPhoto ? (
+              <Image
+                src={product.primaryPhoto}
+                alt={product.name}
+                w="100%"
+                h="100%"
+                fit="contain"
+                fallbackSrc="https://placehold.co/640x480?text=No+image"
+                className="transition-transform duration-300 hover:scale-[1.03]"
+              />
+            ) : (
+              <Text size="xs" className="text-stone-400 px-2 text-center leading-tight">
+                No image
+              </Text>
+            )}
+          </div>
+        </Link>
         {product.availability && (
           <Text
             size="10px"
@@ -124,7 +128,12 @@ function HomeContent() {
       <Stack gap={8} className="p-3 sm:p-4">
         <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
           <div className="min-w-0 flex-1">
-            <Text fw={600} className="text-stone-800 text-base leading-snug tracking-tight">
+            <Text
+              component={Link}
+              href={`/products/${product.id}${queryString}`}
+              fw={600}
+              className="text-stone-800 text-base leading-snug tracking-tight hover:text-stone-600 transition-colors"
+            >
               {product.name}
             </Text>
           </div>
@@ -154,10 +163,11 @@ function HomeContent() {
             Add to cart
           </Button>
           <Button
+            component={Link}
+            href={`/products/${product.id}${queryString}`}
             variant="default"
             size="xs"
             className="flex-1 border-stone-300 text-stone-800 hover:bg-stone-100 rounded-md"
-            onClick={() => setSelectedProductId(product.id)}
           >
             View details
           </Button>
@@ -305,11 +315,6 @@ function HomeContent() {
           </Stack>
         )}
       </Container>
-      <ProductModal
-        productId={selectedProductId}
-        opened={!!selectedProductId}
-        onClose={() => setSelectedProductId(null)}
-      />
     </StoreLayout>
   );
 }

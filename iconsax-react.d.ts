@@ -8,4 +8,7 @@ declare module "iconsax-react" {
   export type Icon = FC<IconProps>;
   export const InfoCircle: Icon;
   export const ShoppingCart: Icon;
+  export const Share: Icon;
+  export const TickCircle: Icon;
+  export const ArrowLeft2: Icon;
 }
