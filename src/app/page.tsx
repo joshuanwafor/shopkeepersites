@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   Container,
@@ -14,11 +13,11 @@ import {
   Paper,
   Stack,
   Button,
-  Image,
 } from "@mantine/core";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import { StorefrontInfo } from "@/components/store/StorefrontInfo";
-import { formatPrice } from "@/hooks";
+import { ProductCard } from "@/components/store/ProductCard";
+import { ProductModal } from "@/components/store/ProductModal";
 import {
   useStorefrontProfile,
   useStorefrontProducts,
@@ -44,6 +43,7 @@ function HomeContent() {
   const queryString = useStorefrontQueryString();
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [quickViewId, setQuickViewId] = useState<string | null>(null);
 
   // Reset to the first page whenever the active filter changes.
   useEffect(() => {
@@ -79,103 +79,13 @@ function HomeContent() {
   };
 
   const renderMenuItem = (product: StorefrontProductResponse) => (
-    (() => {
-      const isInStock =
-        (product.stockQuantity ?? 0) > 0 && product.availability !== "out_of_stock";
-      const availabilityLabel = isInStock
-        ? "In stock"
-        : "Out of stock";
-
-      return (
-    <Paper
+    <ProductCard
       key={product.id}
-      p={0}
-      className="store-classic-paper overflow-hidden rounded-2xl border border-stone-200/80 hover:shadow-md hover:border-stone-300 transition-all"
-    >
-      <div className="relative">
-        <Link href={`/products/${product.id}${queryString}`} className="block">
-          <div className="aspect-[4/3] w-full bg-gradient-to-br from-stone-50 to-stone-100 border-b border-stone-200 overflow-hidden flex items-center justify-center p-3">
-            {product.primaryPhoto ? (
-              <Image
-                src={product.primaryPhoto}
-                alt={product.name}
-                w="100%"
-                h="100%"
-                fit="contain"
-                fallbackSrc="https://placehold.co/640x480?text=No+image"
-                className="transition-transform duration-300 hover:scale-[1.03]"
-              />
-            ) : (
-              <Text size="xs" className="text-stone-400 px-2 text-center leading-tight">
-                No image
-              </Text>
-            )}
-          </div>
-        </Link>
-        {product.availability && (
-          <Text
-            size="10px"
-            className={`absolute top-2 right-2 uppercase tracking-[0.12em] px-2 py-1 rounded-full border ${
-              isInStock
-                ? "bg-white/90 text-stone-600 border-stone-200"
-                : "bg-rose-50/95 text-rose-700 border-rose-200"
-            }`}
-          >
-            {availabilityLabel}
-          </Text>
-        )}
-      </div>
-      <Stack gap={8} className="p-3 sm:p-4">
-        <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
-          <div className="min-w-0 flex-1">
-            <Text
-              component={Link}
-              href={`/products/${product.id}${queryString}`}
-              fw={600}
-              className="text-stone-800 text-base leading-snug tracking-tight hover:text-stone-600 transition-colors"
-            >
-              {product.name}
-            </Text>
-          </div>
-          <Text fw={700} className="text-stone-800 text-base shrink-0">
-            {formatPrice(product.amount)}
-          </Text>
-        </Group>
-        {(product.description || product.SKU) && (
-          <Text size="sm" className="text-stone-500 leading-relaxed line-clamp-2 min-h-[2.5rem]">
-            {product.description || product.SKU}
-          </Text>
-        )}
-        {!(product.description || product.SKU) && (
-          <Text size="sm" className="text-transparent select-none min-h-[2.5rem]">
-            placeholder
-          </Text>
-        )}
-        <Group justify="stretch" align="center" className="pt-1 gap-2" grow>
-          <Button
-            size="xs"
-            className="flex-1 bg-stone-800 text-white hover:bg-stone-700 rounded-md font-medium"
-            disabled={!isInStock}
-            onClick={() => {
-              if (isInStock) addItem(product, 1);
-            }}
-          >
-            Add to cart
-          </Button>
-          <Button
-            component={Link}
-            href={`/products/${product.id}${queryString}`}
-            variant="default"
-            size="xs"
-            className="flex-1 border-stone-300 text-stone-800 hover:bg-stone-100 rounded-md"
-          >
-            View details
-          </Button>
-        </Group>
-      </Stack>
-    </Paper>
-      );
-    })()
+      product={product}
+      href={`/products/${product.id}${queryString}`}
+      onAddToCart={() => addItem(product, 1)}
+      onQuickView={() => setQuickViewId(product.id)}
+    />
   );
 
   return (
@@ -315,6 +225,12 @@ function HomeContent() {
           </Stack>
         )}
       </Container>
+
+      <ProductModal
+        productId={quickViewId}
+        opened={quickViewId !== null}
+        onClose={() => setQuickViewId(null)}
+      />
     </StoreLayout>
   );
 }
