@@ -25,7 +25,6 @@ import {
   useTrackStoreView,
   useStorefrontQueryString,
 } from "@/hooks/use-storefront";
-import { useCart } from "@/context/cart-context";
 import type {
   StorefrontCategoryResponse,
   StorefrontProductResponse,
@@ -37,7 +36,6 @@ const EMPTY_CATEGORIES: StorefrontCategoryResponse[] = [];
 function HomeContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q")?.trim() || undefined;
-  const { addItem } = useCart();
 
   const PAGE_SIZE = 25;
   const queryString = useStorefrontQueryString();
@@ -83,7 +81,6 @@ function HomeContent() {
       key={product.id}
       product={product}
       href={`/products/${product.id}${queryString}`}
-      onAddToCart={() => addItem(product, 1)}
       onQuickView={() => setQuickViewId(product.id)}
     />
   );

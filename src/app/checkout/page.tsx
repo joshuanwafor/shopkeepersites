@@ -235,7 +235,7 @@ function CheckoutContent() {
             color="dark"
             classNames={{
               stepLabel: "store-classic-title text-stone-800",
-              stepDescription: "text-stone-500",
+              stepDescription: "text-stone-500 hidden sm:block",
             }}
           >
             {/* Step 1 — Cart */}
@@ -246,14 +246,14 @@ function CheckoutContent() {
                 </Text>
                 <Stack gap="sm">
                   {items.map((item) => (
-                    <Group key={item.product.id} justify="space-between" className="py-2 border-b border-stone-100 last:border-0">
-                      <Group gap="sm">
+                    <Group key={item.product.id} justify="space-between" wrap="nowrap" align="flex-start" className="py-2 border-b border-stone-100 last:border-0">
+                      <Group gap="sm" wrap="nowrap" className="min-w-0 flex-1">
                         <Box w={52} h={52} className="bg-stone-100 rounded-lg overflow-hidden shrink-0 flex items-center justify-center p-1">
                           {item.product.primaryPhoto ? (
                             <Image src={item.product.primaryPhoto} alt="" w="100%" h="100%" fit="contain" />
                           ) : null}
                         </Box>
-                        <div>
+                        <div className="min-w-0">
                           <Text size="sm" fw={500} className="text-stone-800">
                             {item.product.name}
                           </Text>
@@ -287,7 +287,7 @@ function CheckoutContent() {
                           </Group>
                         </div>
                       </Group>
-                      <Stack gap={4} align="flex-end">
+                      <Stack gap={4} align="flex-end" className="shrink-0">
                         <Text fw={600} className="text-stone-700">
                           {formatPrice(item.product.amount * item.quantity)}
                         </Text>
@@ -323,7 +323,7 @@ function CheckoutContent() {
                       classNames={{ input: "rounded border-stone-300" }}
                       {...form.getInputProps("email")}
                     />
-                    <Group grow>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <TextInput
                         label="Full name"
                         placeholder="Your name"
@@ -336,7 +336,7 @@ function CheckoutContent() {
                         classNames={{ input: "rounded border-stone-300" }}
                         {...form.getInputProps("phone")}
                       />
-                    </Group>
+                    </div>
                   </Stack>
                 </Paper>
 
@@ -388,7 +388,7 @@ function CheckoutContent() {
                         classNames={{ input: "rounded border-stone-300" }}
                         {...form.getInputProps("address")}
                       />
-                      <Group grow>
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <TextInput
                           label="City"
                           placeholder="City"
@@ -403,7 +403,7 @@ function CheckoutContent() {
                           classNames={{ input: "rounded border-stone-300" }}
                           {...form.getInputProps("state")}
                         />
-                      </Group>
+                      </div>
                       <TextInput
                         label="Postal code (optional)"
                         placeholder="Postal code"

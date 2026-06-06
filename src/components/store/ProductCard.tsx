@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Image, Text, Button } from "@mantine/core";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
 import { formatPrice } from "@/hooks";
+import { useCart } from "@/context/cart-context";
 
 function EyeIcon({ size = 16 }: { size?: number }) {
   return (
@@ -24,19 +25,54 @@ function EyeIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+function MinusIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+    </svg>
+  );
+}
+
+function PlusIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.5}
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
 export function ProductCard({
   product,
   href,
-  onAddToCart,
   onQuickView,
 }: {
   product: StorefrontProductResponse;
   /** Link to the full product detail page. */
   href: string;
-  onAddToCart: () => void;
   /** Opens the quick-view preview modal. */
   onQuickView: () => void;
 }) {
+  const { items, addItem, updateQuantity } = useCart();
+  const quantityInCart =
+    items.find((i) => i.product.id === product.id)?.quantity ?? 0;
   const isInStock =
     (product.stockQuantity ?? 0) > 0 && product.availability !== "out_of_stock";
 
@@ -112,14 +148,47 @@ export function ProductCard({
         </Text>
 
         <div className="mt-auto flex items-center gap-2 pt-1">
-          <Button
-            size="xs"
-            className="flex-1 rounded-md bg-stone-800 font-medium text-white hover:bg-stone-700"
-            disabled={!isInStock}
-            onClick={onAddToCart}
-          >
-            Add to cart
-          </Button>
+          {quantityInCart > 0 ? (
+            <div
+              role="group"
+              aria-label={`${product.name} quantity in cart`}
+              className="flex h-[30px] flex-1 items-stretch overflow-hidden rounded-md border border-stone-800"
+            >
+              <button
+                type="button"
+                onClick={() => updateQuantity(product.id, quantityInCart - 1)}
+                aria-label={
+                  quantityInCart === 1
+                    ? `Remove ${product.name} from cart`
+                    : `Decrease quantity of ${product.name}`
+                }
+                className="flex w-9 items-center justify-center bg-stone-800 text-white transition-colors hover:bg-stone-700"
+              >
+                <MinusIcon size={14} />
+              </button>
+              <span className="flex flex-1 items-center justify-center px-1 text-sm font-semibold tabular-nums text-stone-800">
+                {quantityInCart}
+              </span>
+              <button
+                type="button"
+                onClick={() => updateQuantity(product.id, quantityInCart + 1)}
+                disabled={!isInStock}
+                aria-label={`Increase quantity of ${product.name}`}
+                className="flex w-9 items-center justify-center bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <PlusIcon size={14} />
+              </button>
+            </div>
+          ) : (
+            <Button
+              size="xs"
+              className="flex-1 rounded-md bg-stone-800 font-medium text-white hover:bg-stone-700"
+              disabled={!isInStock}
+              onClick={() => addItem(product, 1)}
+            >
+              Add to cart
+            </Button>
+          )}
           <Button
             component={Link}
             href={href}
