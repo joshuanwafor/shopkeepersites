@@ -87,29 +87,27 @@ export function ProductModal({
       )}
       {!isLoading && product && (
         <Stack gap={0}>
-          <Box className="relative bg-stone-100">
-            <Box className="aspect-[16/10] sm:aspect-[2/1] max-h-[min(52vh,320px)] w-full overflow-hidden">
+          <Box className="relative">
+            {/* Image — shown in full (not cropped), matching the product page */}
+            <div className="flex min-h-[240px] max-h-[min(52vh,380px)] items-center justify-center overflow-hidden border-b border-stone-200 bg-gradient-to-br from-stone-50 to-stone-100 p-5">
               {product.primaryPhoto ? (
                 <Image
                   src={product.primaryPhoto}
                   alt={product.name}
-                  fit="cover"
-                  h="100%"
-                  w="100%"
-                  fallbackSrc="https://placehold.co/800x500?text=No+image"
-                  className="object-center"
+                  fit="contain"
+                  className="max-h-[min(48vh,340px)] w-auto max-w-full"
+                  fallbackSrc="https://placehold.co/800x800?text=No+image"
                 />
               ) : (
-                <Box className="flex h-full min-h-[200px] items-center justify-center text-stone-400 text-sm">
+                <Box className="flex min-h-[200px] items-center justify-center text-stone-400 text-sm">
                   No image available
                 </Box>
               )}
-            </Box>
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/25 via-transparent to-stone-900/5" />
+            </div>
             <Badge
               size="lg"
               radius="xl"
-              className={`absolute bottom-3 left-3 border shadow-sm ${
+              className={`absolute top-3 left-3 border shadow-sm ${
                 isInStock
                   ? "bg-white/95 text-stone-800 border-stone-200/80"
                   : "bg-rose-50/95 text-rose-800 border-rose-200"
