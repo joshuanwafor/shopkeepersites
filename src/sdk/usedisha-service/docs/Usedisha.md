@@ -13,23 +13,27 @@ Name | Type | Description | Notes
 **customDomain** | **string** | The custom domain for the storefront | [optional] [default to undefined]
 **status** | **string** | The storefront status | [default to StatusEnum_Active]
 **approvalStatus** | **string** | The storefront approval status | [optional] [default to ApprovalStatusEnum_Pending]
+**claimable** | **boolean** | When true, this storefront is unclaimed and prospective owners may submit a claim to take it over. Managed by platform admins. | [optional] [default to false]
+**readyForOrders** | **boolean** | When true, this storefront is cleared to receive customer orders. Managed by platform admins. | [optional] [default to false]
 **description** | **string** | A detailed store description | [optional] [default to undefined]
 **caption** | **string** | A short, catchy tagline for the store | [optional] [default to undefined]
 **termsAndConditions** | **string** | Full text of the terms and conditions for this storefront (plain text; editable via update) | [optional] [default to undefined]
 **policyDocument** | **string** | Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update) | [optional] [default to undefined]
 **deliveryConfig** | [**UsedishaDeliveryConfig**](UsedishaDeliveryConfig.md) | Delivery configuration — supported methods and businessDelivery pricing | [optional] [default to undefined]
 **supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods this storefront supports at checkout | [optional] [default to undefined]
+**badges** | **Array&lt;string&gt;** | Trust/quality badges awarded to this storefront by a platform admin | [optional] [default to undefined]
+**officialVendor** | **boolean** | ShopCentral\&#39;s own vendor for sourced customer requests | [optional] [readonly] [default to false]
+**sellerTypes** | **Array&lt;string&gt;** | What kind of seller this storefront is. Declared by the merchant; customers can filter on it. | [optional] [default to undefined]
 **theme** | [**UDThemeSettings**](UDThemeSettings.md) | Theme settings | [default to undefined]
 **socialMedia** | [**UDSocialMediaLinks**](UDSocialMediaLinks.md) | Social media links | [optional] [default to undefined]
 **config** | [**UsedishaConfig**](UsedishaConfig.md) | Storefront configuration options | [default to undefined]
+**appLayout** | [**UsedishaAppLayout**](UsedishaAppLayout.md) | Store app home layout; null until the owner first saves one. Set through PUT /:businessId/usedisha/app-layout only. | [optional] [default to undefined]
 **legalName** | **string** | Legal name of business | [optional] [default to undefined]
 **favicon** | **string** | Store favicon emoji | [optional] [default to undefined]
 **logo** | **string** | Store logo | [optional] [default to undefined]
 **coverPhoto** | **string** | Store cover photo | [optional] [default to undefined]
 **launchDate** | **string** | Date the store went live | [optional] [default to undefined]
 **location** | [**UsedishaLocation**](UsedishaLocation.md) | Physical location of the store as a GeoJSON Point [longitude, latitude] | [optional] [default to undefined]
-**address** | [**UsedishaAddress**](UsedishaAddress.md) | Physical street address of the store | [optional] [default to undefined]
-**operatingHours** | [**UsedishaOperatingHours**](UsedishaOperatingHours.md) | Weekly operating hours (local times in timeZone) | [optional] [default to undefined]
 **branches** | [**Array&lt;UsedishaBranch&gt;**](UsedishaBranch.md) | All physical branches of this storefront, used for marketplace discovery and the branch picker | [optional] [default to undefined]
 **averageRating** | **number** | Aggregated average rating (0–5) | [optional] [default to undefined]
 **reviewCount** | **number** | Total number of reviews | [optional] [default to undefined]
@@ -58,23 +62,27 @@ const instance: Usedisha = {
     customDomain,
     status,
     approvalStatus,
+    claimable,
+    readyForOrders,
     description,
     caption,
     termsAndConditions,
     policyDocument,
     deliveryConfig,
     supportedPaymentMethods,
+    badges,
+    officialVendor,
+    sellerTypes,
     theme,
     socialMedia,
     config,
+    appLayout,
     legalName,
     favicon,
     logo,
     coverPhoto,
     launchDate,
     location,
-    address,
-    operatingHours,
     branches,
     averageRating,
     reviewCount,

@@ -1,0 +1,94 @@
+# UpdateProductDto
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**SKU** | **string** | Unique Stock Keeping Unit identifier for the product. | [optional] [default to undefined]
+**metadata** | [**ProductMetadata**](ProductMetadata.md) | Metadata for the product | [optional] [default to undefined]
+**categoryIds** | **Array&lt;string&gt;** | Array of category IDs to which the product belongs. | [optional] [default to undefined]
+**name** | **string** | Name of the product. | [optional] [default to undefined]
+**description** | **string** | Short description of the product. | [optional] [default to undefined]
+**primaryPhoto** | **string** | URL to the product image. | [optional] [default to undefined]
+**tags** | **Array&lt;string&gt;** | Keywords associated with the product. | [optional] [default to undefined]
+**contexts** | **Array&lt;string&gt;** | Contexts associated with the product. | [optional] [default to undefined]
+**stockQuantityFormatted** | **string** | Formatted stock quantity | [optional] [default to undefined]
+**sourceProductId** | **string** | Source product ID | [optional] [default to undefined]
+**sourceTemplateId** | **string** | Source global-catalog template id, when imported from the catalog | [optional] [default to undefined]
+**uoms** | [**Array&lt;ProductUoM&gt;**](ProductUoM.md) | Units of Measurement for this product with pricing (optional - for multi-unit products) | [optional] [default to undefined]
+**productInstances** | [**Array&lt;ProductInstance&gt;**](ProductInstance.md) | Product instances for the product | [optional] [default to undefined]
+**amount** | **number** | Base selling price for the primary Unit of Measurement | [optional] [default to undefined]
+**wholesalePrice** | **number** | Wholesale price for the primary Unit of Measurement | [optional] [default to undefined]
+**costPrice** | **number** | Base cost price for the primary Unit of Measurement | [optional] [default to undefined]
+**availability** | **string** | Current availability status of the product. | [optional] [default to undefined]
+**lowStockThreshold** | **number** | Low stock threshold for the product (deprecated - use stockInfo.reorderLevel) | [optional] [default to undefined]
+**trackInventory** | **boolean** | Whether the product is tracked in inventory. | [optional] [default to undefined]
+**allowBackOrder** | **boolean** | Whether the product allows backorders. | [optional] [default to undefined]
+**barcode** | **string** | Primary barcode of the product (for primary UoM). | [optional] [default to undefined]
+**barcodeType** | **string** | Type of the primary barcode. | [optional] [default to undefined]
+**otherBarcodesObject** | **object** | Other barcodes for the product | [optional] [default to undefined]
+**reorderLevel** | **number** | Minimum stock level before a reorder is triggered. | [optional] [default to undefined]
+**supplierId** | **string** | Default supplier this product is bought from. References a Customer with type \&quot;supplier\&quot;, so a supplier keeps one contact record across purchases, stock receipts and reporting. | [optional] [default to undefined]
+**supplierName** | **string** | Supplier name captured at the time of tagging. Denormalised so historic records still read correctly if the supplier is later renamed or removed. | [optional] [default to undefined]
+**_options** | [**Array&lt;ProductOption&gt;**](ProductOption.md) | Variant options for this product (e.g. Size, Color), each with its own ordered values. Max 3, matching Shopify\&#39;s model. | [optional] [default to undefined]
+**dimensions** | [**ProductDimensions**](ProductDimensions.md) | Product dimensions (L x W x H) in cm | [optional] [default to undefined]
+**keywords** | **string** | Search keywords for the product | [optional] [default to undefined]
+**warranty** | **string** | Product warranty information | [optional] [default to undefined]
+**expirationDate** | **string** | Expiration date of the product | [optional] [default to undefined]
+**trackExpiration** | **boolean** | Whether to track expiration date | [optional] [default to undefined]
+**minOrderQuantity** | **number** | Minimum order quantity | [optional] [default to undefined]
+**maxOrderQuantity** | **number** | Maximum order quantity per order | [optional] [default to undefined]
+**type** | **string** | Type of the product. | [optional] [default to undefined]
+**unit** | **string** | Unit of measurement for the product. | [optional] [default to undefined]
+**hasVariants** | **boolean** | Whether this product can have variants | [optional] [default to false]
+**brand** | **string** | Brand of the product | [optional] [default to undefined]
+
+## Example
+
+```typescript
+import { UpdateProductDto } from './api';
+
+const instance: UpdateProductDto = {
+    SKU,
+    metadata,
+    categoryIds,
+    name,
+    description,
+    primaryPhoto,
+    tags,
+    contexts,
+    stockQuantityFormatted,
+    sourceProductId,
+    sourceTemplateId,
+    uoms,
+    productInstances,
+    amount,
+    wholesalePrice,
+    costPrice,
+    availability,
+    lowStockThreshold,
+    trackInventory,
+    allowBackOrder,
+    barcode,
+    barcodeType,
+    otherBarcodesObject,
+    reorderLevel,
+    supplierId,
+    supplierName,
+    _options,
+    dimensions,
+    keywords,
+    warranty,
+    expirationDate,
+    trackExpiration,
+    minOrderQuantity,
+    maxOrderQuantity,
+    type,
+    unit,
+    hasVariants,
+    brand,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

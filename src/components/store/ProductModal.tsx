@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 import { useStorefrontProduct } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
+import { productStock } from "@/lib/product-stock";
 import { useEffect, useState } from "react";
 import { formatPrice } from "@/hooks";
 
@@ -29,13 +30,13 @@ export function ProductModal({
   opened: boolean;
   onClose: () => void;
 }) {
-  const { data, isLoading } = useStorefrontProduct(productId);
+  const { data, isPending: isLoading } = useStorefrontProduct(productId);
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
 
   const product = data?.data;
-  const isInStock =
-    (product?.stockQuantity ?? 0) > 0 && product?.availability !== "out_of_stock";
+  const stock = productStock(product);
+  const isInStock = stock.inStock;
   const availabilityLabel = product?.availability
     ? product.availability.replaceAll("_", " ")
     : "Available";
@@ -113,7 +114,7 @@ export function ProductModal({
                   : "bg-rose-50/95 text-rose-800 border-rose-200"
               }`}
             >
-              {isInStock ? `In stock · ${product.stockQuantity}` : "Out of stock"}
+              {isInStock ? (stock.quantity !== undefined ? `In stock · ${stock.quantity}` : "Available") : "Out of stock"}
             </Badge>
           </Box>
 
@@ -195,7 +196,7 @@ export function ProductModal({
               <NumberInput
                 label="Quantity"
                 min={1}
-                max={Math.max(1, product.stockQuantity ?? 999)}
+                max={stock.maxQuantity}
                 value={qty}
                 onChange={(v) => setQty(Number(v) || 1)}
                 disabled={!isInStock}

@@ -14,9 +14,11 @@ Name | Type | Description | Notes
 **totalAmount** | **number** |  | [default to undefined]
 **discount** | **object** |  | [optional] [default to undefined]
 **shipping** | [**OrderShippingResponse**](OrderShippingResponse.md) |  | [optional] [default to undefined]
-**delivery** | **object** |  | [optional] [default to undefined]
+**delivery** | [**OrderDeliveryCustomerResponse**](OrderDeliveryCustomerResponse.md) |  | [optional] [default to undefined]
 **items** | [**Array&lt;OrderItemResponse&gt;**](OrderItemResponse.md) |  | [default to undefined]
 **payments** | **Array&lt;object&gt;** |  | [default to undefined]
+**vendor** | [**OrderVendorResponse**](OrderVendorResponse.md) | Vendor (business + fulfilling branch) that owns this order | [optional] [default to undefined]
+**rating** | [**OrderRatingSummaryResponse**](OrderRatingSummaryResponse.md) | This customer\&#39;s rating for the order, or null if not yet rated | [optional] [default to undefined]
 **notes** | **string** |  | [optional] [default to undefined]
 **customerNotes** | **string** |  | [optional] [default to undefined]
 **createdAt** | **string** |  | [default to undefined]
@@ -40,6 +42,8 @@ const instance: OrderResponse = {
     delivery,
     items,
     payments,
+    vendor,
+    rating,
     notes,
     customerNotes,
     createdAt,

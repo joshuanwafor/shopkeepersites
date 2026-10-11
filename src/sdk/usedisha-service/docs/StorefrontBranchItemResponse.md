@@ -16,6 +16,7 @@ Name | Type | Description | Notes
 **city** | **string** |  | [default to undefined]
 **lga** | **string** |  | [optional] [default to undefined]
 **distanceKm** | **number** | Distance from supplied lat/lng in km | [optional] [default to undefined]
+**takingOnlineOrders** | **boolean** | Whether this branch takes online orders (its &#x60;enableOnlineOrdering&#x60; setting, default true). When false, show the store as not taking orders: checkout is refused with BRANCH_NOT_TAKING_ONLINE_ORDERS. | [default to undefined]
 
 ## Example
 
@@ -34,6 +35,7 @@ const instance: StorefrontBranchItemResponse = {
     city,
     lga,
     distanceKm,
+    takingOnlineOrders,
 };
 ```
 

@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -48,10 +49,11 @@ function HomeContent() {
     setPage(1);
   }, [activeCategoryId, searchQuery]);
 
-  const { data: profileRes, isLoading: profileLoading, error: profileError } = useStorefrontProfile();
+  // isPending, not isLoading: queries wait for the store's domain, and must read as loading meanwhile.
+  const { data: profileRes, isPending: profileLoading, error: profileError } = useStorefrontProfile();
   const {
     data: productsRes,
-    isLoading: productsLoading,
+    isPending: productsLoading,
     isFetching: productsFetching,
     error: productsError,
   } = useStorefrontProducts({
@@ -70,11 +72,26 @@ function HomeContent() {
   const total = productsRes?.data?.total ?? 0;
   const limit = productsRes?.data?.limit ?? PAGE_SIZE;
   const totalPages = Math.max(1, Math.ceil(total / limit));
-  const hasStoreError = !!(profileError || productsError);
+  // A 404 means there's no store at this address, not a hiccup worth retrying.
+  const storeMissing = axios.isAxiosError(profileError) && profileError.response?.status === 404;
+  const hasStoreError = !storeMissing && !!(profileError || productsError);
 
   const selectCategory = (categoryId: string | null) => {
     setActiveCategoryId(categoryId);
   };
+
+  if (storeMissing) {
+    return (
+      <StoreLayout storeName="Store">
+        <Container size="lg" className="max-w-4xl mx-auto py-10 px-3 sm:px-6">
+          <Alert color="gray" title="Store not found" className="rounded border border-stone-200">
+            There&apos;s no store at this address. Check the link, or find stores near you on{" "}
+            <a href="https://shopcentral.ng" className="underline">ShopCentral</a>.
+          </Alert>
+        </Container>
+      </StoreLayout>
+    );
+  }
 
   const renderMenuItem = (product: StorefrontProductResponse) => (
     <ProductCard

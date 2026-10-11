@@ -28,6 +28,7 @@ import {
   useStorefrontQueryString,
 } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
+import { productStock } from "@/lib/product-stock";
 
 function ProductDetail() {
   const params = useParams();
@@ -36,15 +37,16 @@ function ProductDetail() {
   const queryString = useStorefrontQueryString();
   const { data: profileRes } = useStorefrontProfile();
   const profile = profileRes?.data;
-  const { data, isLoading, error } = useStorefrontProduct(productId);
+  // isPending, not isLoading: the query waits for the store's domain, and must read as loading meanwhile.
+  const { data, isPending: isLoading, error } = useStorefrontProduct(productId);
   const product = data?.data;
   const { addItem } = useCart();
   const clipboard = useClipboard({ timeout: 1800 });
   const [shared, setShared] = useState(false);
   const [qty, setQty] = useState(1);
 
-  const isInStock =
-    (product?.stockQuantity ?? 0) > 0 && product?.availability !== "out_of_stock";
+  const stock = productStock(product);
+  const isInStock = stock.inStock;
   const backHref = queryString ? `/${queryString}` : "/";
   const shareDone = shared || clipboard.copied;
 
@@ -164,8 +166,8 @@ function ProductDetail() {
                   </Text>
                   <Text size="xs" className="text-stone-500 mt-1">
                     {isInStock
-                      ? product.stockQuantity
-                        ? `In stock · ${product.stockQuantity} available`
+                      ? stock.quantity
+                        ? `In stock · ${stock.quantity} available`
                         : "In stock"
                       : "Out of stock"}
                   </Text>
@@ -205,7 +207,7 @@ function ProductDetail() {
                   <NumberInput
                     label="Quantity"
                     min={1}
-                    max={Math.max(1, product.stockQuantity ?? 999)}
+                    max={stock.maxQuantity}
                     value={qty}
                     onChange={(v) => setQty(Number(v) || 1)}
                     disabled={!isInStock}

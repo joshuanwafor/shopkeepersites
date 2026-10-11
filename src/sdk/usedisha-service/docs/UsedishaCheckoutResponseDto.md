@@ -11,6 +11,8 @@ Name | Type | Description | Notes
 **paymentAccessCode** | **string** | Payment access code | [default to undefined]
 **paymentReference** | **string** | Payment reference | [default to undefined]
 **totalAmount** | **number** | Order total amount | [default to undefined]
+**creditAmount** | **number** | Paid with ShopCentral credit (naira); 0 when none was used | [optional] [default to undefined]
+**amountDue** | **number** | What the card is charged: total less credit (naira) | [optional] [default to undefined]
 **currencyCode** | **string** | Currency code | [default to undefined]
 **expiresAt** | **string** | Order expiry time | [default to undefined]
 **summary** | [**UsedishaCheckoutSummaryDto**](UsedishaCheckoutSummaryDto.md) | Order summary | [default to undefined]
@@ -27,6 +29,8 @@ const instance: UsedishaCheckoutResponseDto = {
     paymentAccessCode,
     paymentReference,
     totalAmount,
+    creditAmount,
+    amountDue,
     currencyCode,
     expiresAt,
     summary,

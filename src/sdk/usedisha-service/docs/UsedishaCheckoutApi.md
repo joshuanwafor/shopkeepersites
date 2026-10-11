@@ -9,6 +9,7 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaCheckoutControllerGetGuestOrdersV1**](#usedishacheckoutcontrollergetguestordersv1) | **GET** /v1/usedisha/usedisha/checkout/orders | Guest order lookup by email|
 |[**usedishaCheckoutControllerGetOrderIntentV1**](#usedishacheckoutcontrollergetorderintentv1) | **GET** /v1/usedisha/usedisha/checkout/intent/{intentId} | Get order intent details by ID|
 |[**usedishaCheckoutControllerInitiateCheckoutV1**](#usedishacheckoutcontrollerinitiatecheckoutv1) | **POST** /v1/usedisha/usedisha/checkout/initiate | Checkout — place an order (guest or authenticated)|
+|[**usedishaCheckoutControllerTrackOrderV1**](#usedishacheckoutcontrollertrackorderv1) | **GET** /v1/usedisha/usedisha/checkout/track | Track a single order by order number|
 |[**usedishaCheckoutControllerValidateCartV1**](#usedishacheckoutcontrollervalidatecartv1) | **POST** /v1/usedisha/usedisha/checkout/validate-cart | Validate cart items before checkout|
 
 # **usedishaCheckoutControllerCheckOrderStatusV1**
@@ -272,6 +273,62 @@ const { status, data } = await apiInstance.usedishaCheckoutControllerInitiateChe
 |-------------|-------------|------------------|
 |**201** | Order intent created — open &#x60;paymentUrl&#x60; to complete payment |  -  |
 |**400** | Cart validation failed, store inactive, or missing customer email |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaCheckoutControllerTrackOrderV1**
+> UsedishaTrackOrderResponseDto usedishaCheckoutControllerTrackOrderV1()
+
+Guest-safe tracking for a single order. Requires both the `orderNumber` (from the receipt/confirmation) and the customer `email` used at checkout — the email must match the order, so sequential order numbers cannot be enumerated. Returns status, payment/fulfillment state, item summary and shipping/tracking details.
+
+### Example
+
+```typescript
+import {
+    UsedishaCheckoutApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaCheckoutApi(configuration);
+
+let orderNumber: string; // (default to undefined)
+let email: string; // (default to undefined)
+
+const { status, data } = await apiInstance.usedishaCheckoutControllerTrackOrderV1(
+    orderNumber,
+    email
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **orderNumber** | [**string**] |  | defaults to undefined|
+| **email** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**UsedishaTrackOrderResponseDto**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Order tracking detail |  -  |
+|**400** | orderNumber and email are required |  -  |
+|**404** | Order not found or email does not match |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

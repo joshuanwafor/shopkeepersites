@@ -12,8 +12,12 @@ Name | Type | Description | Notes
 **totalAmount** | **number** | Grand total the customer will pay | [default to undefined]
 **distanceKm** | **number** | Straight-line distance from customer to store in km (EXPRESS only) | [optional] [default to undefined]
 **isFreeDelivery** | **boolean** | Whether the free-delivery threshold was met | [default to undefined]
+**packageClass** | **string** | Package/handling class the delivery fee was priced for | [default to undefined]
+**marketDelivery** | [**UsedishaMarketDeliveryDto**](UsedishaMarketDeliveryDto.md) | The market-delivery run this quote is for. Present only for &#x60;marketDelivery&#x60;. | [optional] [default to undefined]
+**packageSurcharge** | **number** | Extra delivery cost added by the package class (already included in deliveryFee) | [default to undefined]
 **breakdown** | [**UsedishaFeeBreakdownDto**](UsedishaFeeBreakdownDto.md) | Human-readable notes for each fee line | [default to undefined]
 **delivery** | [**UsedishaDeliveryQuoteDto**](UsedishaDeliveryQuoteDto.md) | Delivery quote details (provider + reference for platformDelivery) | [optional] [default to undefined]
+**credit** | [**UsedishaCheckoutCreditDto**](UsedishaCheckoutCreditDto.md) | Signed-in shoppers only, while rewards are on: their credit and how much this order can use | [optional] [default to undefined]
 
 ## Example
 
@@ -28,8 +32,12 @@ const instance: UsedishaOrderFeeEstimateResponseDto = {
     totalAmount,
     distanceKm,
     isFreeDelivery,
+    packageClass,
+    marketDelivery,
+    packageSurcharge,
     breakdown,
     delivery,
+    credit,
 };
 ```
 

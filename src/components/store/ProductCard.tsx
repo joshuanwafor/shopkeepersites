@@ -5,6 +5,7 @@ import { Image, Text, Button } from "@mantine/core";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
 import { formatPrice } from "@/hooks";
 import { useCart } from "@/context/cart-context";
+import { productStock } from "@/lib/product-stock";
 
 function EyeIcon({ size = 16 }: { size?: number }) {
   return (
@@ -73,8 +74,8 @@ export function ProductCard({
   const { items, addItem, updateQuantity } = useCart();
   const quantityInCart =
     items.find((i) => i.product.id === product.id)?.quantity ?? 0;
-  const isInStock =
-    (product.stockQuantity ?? 0) > 0 && product.availability !== "out_of_stock";
+  const stock = productStock(product);
+  const isInStock = stock.inStock;
 
   return (
     <div className="group store-classic-paper flex flex-col overflow-hidden rounded-2xl border border-stone-200/80 transition-all duration-300 hover:-translate-y-1 hover:border-stone-300 hover:shadow-xl hover:shadow-stone-300/30">
@@ -102,7 +103,7 @@ export function ProductCard({
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-stone-900/55 via-stone-900/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         {/* Stock badge */}
-        {product.availability && (
+        {product.availability && (stock.quantity !== undefined || !isInStock) && (
           <span
             className={`absolute right-2.5 top-2.5 rounded-full border px-2 py-1 text-[10px] uppercase tracking-[0.12em] backdrop-blur ${
               isInStock
@@ -171,7 +172,7 @@ export function ProductCard({
               </span>
               <button
                 type="button"
-                onClick={() => updateQuantity(product.id, quantityInCart + 1)}
+                onClick={() => updateQuantity(product.id, Math.min(stock.maxQuantity, quantityInCart + 1))}
                 disabled={!isInStock}
                 aria-label={`Increase quantity of ${product.name}`}
                 className="flex w-9 items-center justify-center bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
