@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **status** | **string** | New storefront status | [optional] [default to undefined]
-**reason** | **string** | Optional note explaining the decision | [optional] [default to undefined]
+**reason** | **string** | Why — required when suspending or deleting. Kept in the moderation history. | [optional] [default to undefined]
 
 ## Example
 

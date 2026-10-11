@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**data** | [**Array&lt;Usedisha&gt;**](Usedisha.md) | Storefronts for this page | [default to undefined]
+**data** | [**Array&lt;AdminStorefrontListItem&gt;**](AdminStorefrontListItem.md) | Storefronts for this page | [default to undefined]
 **count** | **number** |  | [default to undefined]
 **page** | **number** |  | [default to undefined]
 **limit** | **number** |  | [default to undefined]

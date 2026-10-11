@@ -4,9 +4,61 @@ All URIs are relative to *http://localhost:3000*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
+|[**usedishaMarketsControllerDeliveryV1**](#usedishamarketscontrollerdeliveryv1) | **GET** /v1/usedisha/usedisha/markets/{idOrSlug}/delivery | Market delivery availability, zones and upcoming runs|
 |[**usedishaMarketsControllerGetV1**](#usedishamarketscontrollergetv1) | **GET** /v1/usedisha/usedisha/markets/{idOrSlug} | Get a market by ID or slug|
 |[**usedishaMarketsControllerListV1**](#usedishamarketscontrollerlistv1) | **GET** /v1/usedisha/usedisha/markets | List markets|
 |[**usedishaMarketsControllerStoresV1**](#usedishamarketscontrollerstoresv1) | **GET** /v1/usedisha/usedisha/markets/{idOrSlug}/stores | List stores trading in a market|
+
+# **usedishaMarketsControllerDeliveryV1**
+> usedishaMarketsControllerDeliveryV1()
+
+Returns an empty window list when the market does not offer bulk delivery, so a market page can render either way.
+
+### Example
+
+```typescript
+import {
+    UsedishaMarketsApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaMarketsApi(configuration);
+
+let idOrSlug: string; //Market ID or slug (default to undefined)
+
+const { status, data } = await apiInstance.usedishaMarketsControllerDeliveryV1(
+    idOrSlug
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **idOrSlug** | [**string**] | Market ID or slug | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **usedishaMarketsControllerGetV1**
 > Market usedishaMarketsControllerGetV1()
@@ -83,7 +135,8 @@ let state: string; //Filter by state (optional) (default to undefined)
 let city: string; //Filter by city (optional) (default to undefined)
 let lga: string; //Filter by LGA (optional) (default to undefined)
 let type: 'general' | 'food' | 'electronics' | 'fashion' | 'building_materials' | 'agriculture' | 'auto_parts'; //Filter by market type (optional) (default to undefined)
-let featured: boolean; //Return only featured markets (optional) (default to undefined)
+let featured: boolean; //true = only featured markets, false = only non-featured (optional) (default to undefined)
+let ids: string; //Only these markets: comma-separated ObjectIds, at most 24. Order is not guaranteed. (optional) (default to undefined)
 let search: string; //Search by market name or description (optional) (default to undefined)
 
 const { status, data } = await apiInstance.usedishaMarketsControllerListV1(
@@ -96,6 +149,7 @@ const { status, data } = await apiInstance.usedishaMarketsControllerListV1(
     lga,
     type,
     featured,
+    ids,
     search
 );
 ```
@@ -112,7 +166,8 @@ const { status, data } = await apiInstance.usedishaMarketsControllerListV1(
 | **city** | [**string**] | Filter by city | (optional) defaults to undefined|
 | **lga** | [**string**] | Filter by LGA | (optional) defaults to undefined|
 | **type** | [**&#39;general&#39; | &#39;food&#39; | &#39;electronics&#39; | &#39;fashion&#39; | &#39;building_materials&#39; | &#39;agriculture&#39; | &#39;auto_parts&#39;**]**Array<&#39;general&#39; &#124; &#39;food&#39; &#124; &#39;electronics&#39; &#124; &#39;fashion&#39; &#124; &#39;building_materials&#39; &#124; &#39;agriculture&#39; &#124; &#39;auto_parts&#39;>** | Filter by market type | (optional) defaults to undefined|
-| **featured** | [**boolean**] | Return only featured markets | (optional) defaults to undefined|
+| **featured** | [**boolean**] | true &#x3D; only featured markets, false &#x3D; only non-featured | (optional) defaults to undefined|
+| **ids** | [**string**] | Only these markets: comma-separated ObjectIds, at most 24. Order is not guaranteed. | (optional) defaults to undefined|
 | **search** | [**string**] | Search by market name or description | (optional) defaults to undefined|
 
 

@@ -5,6 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**badges** | **Array&lt;string&gt;** | Trust/quality badges awarded to this storefront by a platform admin | [optional] [default to undefined]
+**sellerTypes** | **Array&lt;string&gt;** | What kind of seller this storefront is. Declared by the merchant; customers can filter on it. | [optional] [default to undefined]
 **minimumOrderAmount** | **number** | Minimum cart value required for checkout | [optional] [default to undefined]
 **estimatedDeliveryTime** | **string** | Estimated delivery time display string | [optional] [default to undefined]
 **priceRange** | **string** | Price tier | [optional] [default to undefined]
@@ -17,6 +19,8 @@ Name | Type | Description | Notes
 import { AdminUpdateMarketplaceDto } from './api';
 
 const instance: AdminUpdateMarketplaceDto = {
+    badges,
+    sellerTypes,
     minimumOrderAmount,
     estimatedDeliveryTime,
     priceRange,

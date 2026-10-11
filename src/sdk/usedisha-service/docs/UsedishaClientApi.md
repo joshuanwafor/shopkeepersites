@@ -5,7 +5,9 @@ All URIs are relative to *http://localhost:3000*
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
 |[**usedishaClientControllerCreateStorefrontReviewV1**](#usedishaclientcontrollercreatestorefrontreviewv1) | **POST** /v1/usedisha/usedisha/{domain}/reviews | Submit a review for the storefront|
+|[**usedishaClientControllerGetHomeLayoutV1**](#usedishaclientcontrollergethomelayoutv1) | **GET** /v1/usedisha/usedisha/shopmenu/home-layout | ShopCentral home layout|
 |[**usedishaClientControllerGetStorefrontAverageRatingV1**](#usedishaclientcontrollergetstorefrontaverageratingv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews/average-rating | Get average rating for the storefront|
+|[**usedishaClientControllerGetStorefrontBranchDetailV1**](#usedishaclientcontrollergetstorefrontbranchdetailv1) | **GET** /v1/usedisha/usedisha/{domain}/branches/{branchId} | Get a selected branch detail (address + opening hours)|
 |[**usedishaClientControllerGetStorefrontBranchesV1**](#usedishaclientcontrollergetstorefrontbranchesv1) | **GET** /v1/usedisha/usedisha/{domain}/branches | List active branches for a storefront|
 |[**usedishaClientControllerGetStorefrontByIdV1**](#usedishaclientcontrollergetstorefrontbyidv1) | **GET** /v1/usedisha/usedisha/store/{id} | Get storefront profile by ID|
 |[**usedishaClientControllerGetStorefrontCategoriesV1**](#usedishaclientcontrollergetstorefrontcategoriesv1) | **GET** /v1/usedisha/usedisha/{domain}/categories | Get storefront categories|
@@ -19,6 +21,9 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaClientControllerGetStorefrontReviewsV1**](#usedishaclientcontrollergetstorefrontreviewsv1) | **GET** /v1/usedisha/usedisha/{domain}/reviews | Get approved reviews for the storefront|
 |[**usedishaClientControllerGetStoresByCategoryV1**](#usedishaclientcontrollergetstoresbycategoryv1) | **GET** /v1/usedisha/usedisha/shopmenu/stores | List Shopmenu-listed stores|
 |[**usedishaClientControllerRecordStoreVisitV1**](#usedishaclientcontrollerrecordstorevisitv1) | **POST** /v1/usedisha/usedisha/store/{id}/visit | Record a storefront visit (recommended for SPAs)|
+|[**usedishaClientControllerSubmitClaimV1**](#usedishaclientcontrollersubmitclaimv1) | **POST** /v1/usedisha/usedisha/store/{id}/claim | Submit a claim to take ownership of a storefront|
+|[**usedishaClientControllerUploadClaimDocumentV1**](#usedishaclientcontrolleruploadclaimdocumentv1) | **POST** /v1/usedisha/usedisha/store/{id}/claim-document | Upload a registration document for a store claim|
+|[**usedishaShopmenuProductsControllerProductsV1**](#usedishashopmenuproductscontrollerproductsv1) | **GET** /v1/usedisha/usedisha/shopmenu/products | Products for a ShopCentral home section|
 
 # **usedishaClientControllerCreateStorefrontReviewV1**
 > CreateStorefrontReviewResponse usedishaClientControllerCreateStorefrontReviewV1(createStorefrontReviewDto)
@@ -75,6 +80,66 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **usedishaClientControllerGetHomeLayoutV1**
+> usedishaClientControllerGetHomeLayoutV1()
+
+Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let shopper: 'guest' | 'new' | 'returning'; // (optional) (default to undefined)
+let state: any; //Nigerian state of the delivery address, e.g. Lagos or FCT (optional) (default to undefined)
+let platform: 'ios' | 'android'; // (optional) (default to undefined)
+let mode: any; //\'all\', \'mall\' or a shopping category (optional) (default to undefined)
+
+const { status, data } = await apiInstance.usedishaClientControllerGetHomeLayoutV1(
+    shopper,
+    state,
+    platform,
+    mode
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **shopper** | [**&#39;guest&#39; | &#39;new&#39; | &#39;returning&#39;**]**Array<&#39;guest&#39; &#124; &#39;new&#39; &#124; &#39;returning&#39;>** |  | (optional) defaults to undefined|
+| **state** | **any** | Nigerian state of the delivery address, e.g. Lagos or FCT | (optional) defaults to undefined|
+| **platform** | [**&#39;ios&#39; | &#39;android&#39;**]**Array<&#39;ios&#39; &#124; &#39;android&#39;>** |  | (optional) defaults to undefined|
+| **mode** | **any** | \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category | (optional) defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { templateId, version, updatedAt, sections: HomeSection[] | null } |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **usedishaClientControllerGetStorefrontAverageRatingV1**
 > StorefrontAverageRatingResponse usedishaClientControllerGetStorefrontAverageRatingV1()
 
@@ -122,6 +187,61 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Average rating |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaClientControllerGetStorefrontBranchDetailV1**
+> StorefrontBranchDetailResponse usedishaClientControllerGetStorefrontBranchDetailV1()
+
+Returns the selected branch, including its full address and opening hours. These come from the canonical Branch record (not the storefront profile), and should be fetched once the shopper picks a branch.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let domain: string; //Storefront domain (default to undefined)
+let branchId: string; //Selected branch ID (default to undefined)
+
+const { status, data } = await apiInstance.usedishaClientControllerGetStorefrontBranchDetailV1(
+    domain,
+    branchId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **domain** | [**string**] | Storefront domain | defaults to undefined|
+| **branchId** | [**string**] | Selected branch ID | defaults to undefined|
+
+
+### Return type
+
+**StorefrontBranchDetailResponse**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Branch detail |  -  |
+|**404** | Storefront or branch not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -350,7 +470,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **usedishaClientControllerGetStorefrontProductV1**
-> StorefrontProductResponse usedishaClientControllerGetStorefrontProductV1()
+> StorefrontProductDetailResponse usedishaClientControllerGetStorefrontProductV1()
 
 
 ### Example
@@ -386,7 +506,7 @@ const { status, data } = await apiInstance.usedishaClientControllerGetStorefront
 
 ### Return type
 
-**StorefrontProductResponse**
+**StorefrontProductDetailResponse**
 
 ### Authorization
 
@@ -769,7 +889,10 @@ let country: string; //Filter by country (optional) (default to undefined)
 let state: string; //Filter by state / province (optional) (default to undefined)
 let city: string; //Filter by city (optional) (default to undefined)
 let lga: string; //Filter by Local Government Area (optional) (default to undefined)
-let featured: boolean; //Return only featured/promoted stores (optional) (default to undefined)
+let featured: boolean; //true = only featured/promoted stores, false = only non-featured (optional) (default to undefined)
+let ids: string; //Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed. (optional) (default to undefined)
+let sellerType: 'retailer' | 'wholesaler' | 'manufacturer' | 'distributor'; //Only return stores of this seller type (e.g. wholesaler) (optional) (default to undefined)
+let badges: Array<'verified' | 'official' | 'top_rated' | 'fast_delivery' | 'popular' | 'premium' | 'new' | 'mall_store'>; //Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCategoryV1(
     category,
@@ -783,7 +906,10 @@ const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCa
     state,
     city,
     lga,
-    featured
+    featured,
+    ids,
+    sellerType,
+    badges
 );
 ```
 
@@ -802,7 +928,10 @@ const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCa
 | **state** | [**string**] | Filter by state / province | (optional) defaults to undefined|
 | **city** | [**string**] | Filter by city | (optional) defaults to undefined|
 | **lga** | [**string**] | Filter by Local Government Area | (optional) defaults to undefined|
-| **featured** | [**boolean**] | Return only featured/promoted stores | (optional) defaults to undefined|
+| **featured** | [**boolean**] | true &#x3D; only featured/promoted stores, false &#x3D; only non-featured | (optional) defaults to undefined|
+| **ids** | [**string**] | Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed. | (optional) defaults to undefined|
+| **sellerType** | [**&#39;retailer&#39; | &#39;wholesaler&#39; | &#39;manufacturer&#39; | &#39;distributor&#39;**]**Array<&#39;retailer&#39; &#124; &#39;wholesaler&#39; &#124; &#39;manufacturer&#39; &#124; &#39;distributor&#39;>** | Only return stores of this seller type (e.g. wholesaler) | (optional) defaults to undefined|
+| **badges** | **Array<&#39;verified&#39; &#124; &#39;official&#39; &#124; &#39;top_rated&#39; &#124; &#39;fast_delivery&#39; &#124; &#39;popular&#39; &#124; &#39;premium&#39; &#124; &#39;new&#39; &#124; &#39;mall_store&#39;>** | Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -879,6 +1008,174 @@ No authorization required
 |-------------|-------------|------------------|
 |**200** | Visit recorded |  -  |
 |**404** | Storefront not found or inactive |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaClientControllerSubmitClaimV1**
+> usedishaClientControllerSubmitClaimV1(submitProfileClaimDto)
+
+Public endpoint for a prospective owner to claim a claimable storefront. Requires full contact/business details and at least one registration document. A platform admin reviews the claim and, on approval, the business is transferred to the claimer.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration,
+    SubmitProfileClaimDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let id: string; //Storefront MongoDB ID (default to undefined)
+let submitProfileClaimDto: SubmitProfileClaimDto; //
+
+const { status, data } = await apiInstance.usedishaClientControllerSubmitClaimV1(
+    id,
+    submitProfileClaimDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **submitProfileClaimDto** | **SubmitProfileClaimDto**|  | |
+| **id** | [**string**] | Storefront MongoDB ID | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Claim submitted |  -  |
+|**403** | Storefront is not open for claims |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaClientControllerUploadClaimDocumentV1**
+> usedishaClientControllerUploadClaimDocumentV1()
+
+Public multipart upload (`file`) for a claim supporting document (PDF or image). Allowed only while the storefront is claimable. Returns the CDN `url` + original `name` to include in the claim\'s registrationDocuments.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let id: string; //Storefront MongoDB ID (default to undefined)
+let file: File; // (default to undefined)
+
+const { status, data } = await apiInstance.usedishaClientControllerUploadClaimDocumentV1(
+    id,
+    file
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **id** | [**string**] | Storefront MongoDB ID | defaults to undefined|
+| **file** | [**File**] |  | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: multipart/form-data
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Uploaded document URL and name |  -  |
+|**403** | Storefront is not open for claims |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaShopmenuProductsControllerProductsV1**
+> usedishaShopmenuProductsControllerProductsV1()
+
+Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let ids: string; //Picked products, comma-separated, returned in this order (optional) (default to undefined)
+let storeId: string; //One store\'s products (storefront id) (optional) (default to undefined)
+let limit: number; //How many for storeId (default 10) (optional) (default to undefined)
+
+const { status, data } = await apiInstance.usedishaShopmenuProductsControllerProductsV1(
+    ids,
+    storeId,
+    limit
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **ids** | [**string**] | Picked products, comma-separated, returned in this order | (optional) defaults to undefined|
+| **storeId** | [**string**] | One store\&#39;s products (storefront id) | (optional) defaults to undefined|
+| **limit** | [**number**] | How many for storeId (default 10) | (optional) defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { products: [{ productId, name, price, imageUrl, storeId, storeName, domain, branchId }] } |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

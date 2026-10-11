@@ -7,11 +7,12 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaCustomerOrdersControllerCancelMyOrderV1**](#usedishacustomerorderscontrollercancelmyorderv1) | **PUT** /v1/usedisha/usedisha/customer/orders/{orderId}/cancel | Cancel an order|
 |[**usedishaCustomerOrdersControllerGetMyOrderV1**](#usedishacustomerorderscontrollergetmyorderv1) | **GET** /v1/usedisha/usedisha/customer/orders/{orderId} | Get one of my orders|
 |[**usedishaCustomerOrdersControllerListMyOrdersV1**](#usedishacustomerorderscontrollerlistmyordersv1) | **GET** /v1/usedisha/usedisha/customer/orders | List my orders|
+|[**usedishaCustomerOrdersControllerRateMyOrderV1**](#usedishacustomerorderscontrollerratemyorderv1) | **POST** /v1/usedisha/usedisha/customer/orders/{orderId}/rate | Rate an order|
 
 # **usedishaCustomerOrdersControllerCancelMyOrderV1**
 > OrderResponse usedishaCustomerOrdersControllerCancelMyOrderV1(cancelOrderDto)
 
-Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules.
+Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules. Self-service cancellation is limited to 12 hours after the order was placed; after that the customer is directed to support and an admin handles the cancellation and any refund.
 
 ### Example
 
@@ -177,6 +178,64 @@ const { status, data } = await apiInstance.usedishaCustomerOrdersControllerListM
 |-------------|-------------|------------------|
 |**200** | Paginated list of orders |  -  |
 |**401** | Missing or invalid JWT token |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaCustomerOrdersControllerRateMyOrderV1**
+> OrderRatingResponse usedishaCustomerOrdersControllerRateMyOrderV1(rateOrderDto)
+
+Submit a 1–5 star rating (with optional title/comment) for an order owned by the authenticated customer. Recorded as a verified-purchase review pending moderation. An order can only be rated once.
+
+### Example
+
+```typescript
+import {
+    UsedishaCustomerOrdersApi,
+    Configuration,
+    RateOrderDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaCustomerOrdersApi(configuration);
+
+let orderId: string; //MongoDB order ID (default to undefined)
+let rateOrderDto: RateOrderDto; //
+
+const { status, data } = await apiInstance.usedishaCustomerOrdersControllerRateMyOrderV1(
+    orderId,
+    rateOrderDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **rateOrderDto** | **RateOrderDto**|  | |
+| **orderId** | [**string**] | MongoDB order ID | defaults to undefined|
+
+
+### Return type
+
+**OrderRatingResponse**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**201** | Rating submitted |  -  |
+|**400** | Invalid rating, the order is not delivered/completed, or it has already been rated |  -  |
+|**401** | Missing or invalid JWT token |  -  |
+|**404** | Order not found or does not belong to this customer |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

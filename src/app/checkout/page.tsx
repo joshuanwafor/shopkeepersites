@@ -23,6 +23,7 @@ import {
   Stepper,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useDebouncedValue } from "@mantine/hooks";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import { useCart } from "@/context/cart-context";
 import {
@@ -33,14 +34,27 @@ import {
   useInitiateCheckout,
   useEstimateFees,
   buildCheckoutPayload,
+  rememberPendingCheckout,
   type DeliveryMethod,
 } from "@/hooks/use-storefront";
+import { apiError } from "@/lib/api-error";
 
 const METHOD_META: Record<DeliveryMethod, { label: string; hint: string }> = {
   pickup: { label: "Pickup", hint: "Collect in store — no delivery fee" },
   platformDelivery: { label: "Delivery", hint: "Delivered to your address" },
   businessDelivery: { label: "Store delivery", hint: "Delivered by the store" },
+  marketDelivery: { label: "Market delivery", hint: "Joins the next scheduled delivery run" },
 };
+
+/** The API's codes for a market run that can't be used; re-quoting picks the next one. */
+const MARKET_RUN_CODES = new Set(["MARKET_RUN_EXPIRED", "MARKET_RUN_UNAVAILABLE", "MARKET_RUN_REQUIRED"]);
+
+function formatRunTime(iso?: string) {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString("en-NG", { weekday: "short", hour: "numeric", minute: "2-digit" });
+}
 const DEFAULT_METHODS: DeliveryMethod[] = ["pickup", "platformDelivery"];
 
 function formatPrice(amount: number) {
@@ -68,9 +82,15 @@ function CheckoutContent() {
   const validateCart = useValidateCart();
   const initiateCheckout = useInitiateCheckout();
 
+  // What the store can fulfil right now — the API works that out from its
+  // settings, riders and market runs. Older responses only have the configured list.
   const supportedMethods =
+    (profile?.availableDeliveryMethods as DeliveryMethod[] | undefined) ??
     (profile?.deliveryConfig?.supportedMethods as DeliveryMethod[] | undefined) ??
     DEFAULT_METHODS;
+  // Paused in the store's own settings: carts are refused, so say so up front.
+  const notTakingOrders = profile?.takingOnlineOrders === false;
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [active, setActive] = useState(0);
@@ -109,13 +129,28 @@ function CheckoutContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supportedMethods.join(",")]);
 
+  // Without coordinates, store delivery is priced by the city and state typed in.
+  const [debouncedCity] = useDebouncedValue(form.values.city.trim(), 600);
+  const [debouncedState] = useDebouncedValue(form.values.state.trim(), 600);
   const feesQuery = useEstimateFees({
     items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
     deliveryMethod,
     userLat: coords?.lat,
     userLng: coords?.lng,
+    userCity: needsAddress ? debouncedCity : undefined,
+    userState: needsAddress ? debouncedState : undefined,
   });
   const fees = feesQuery.data?.data;
+  const feesError = feesQuery.isError
+    ? apiError(feesQuery.error, "We couldn't price delivery. Check the address and try again.").message
+    : null;
+  // Market delivery joins a scheduled run; the quote names it and checkout pins it.
+  const marketRun = deliveryMethod === "marketDelivery" ? fees?.marketDelivery : undefined;
+  const canPay =
+    !notTakingOrders &&
+    supportedMethods.length > 0 &&
+    !feesQuery.isError &&
+    (deliveryMethod !== "marketDelivery" || Boolean(marketRun?.windowLabel));
 
   function requestLocation() {
     if (typeof navigator === "undefined" || !navigator.geolocation) return;
@@ -140,6 +175,7 @@ function CheckoutContent() {
   }
 
   const handleSubmit = form.onSubmit(async (values) => {
+    setCheckoutError(null);
     // Pickup needs no address; delivery methods do.
     const shippingAddress =
       values.deliveryMethod !== "pickup"
@@ -171,6 +207,7 @@ function CheckoutContent() {
         userLng: coords?.lng,
         callbackUrl,
         customerNotes: values.customerNotes || undefined,
+        marketDeliveryWindow: marketRun?.windowLabel,
       }
     );
 
@@ -181,20 +218,27 @@ function CheckoutContent() {
       });
       const validation = validateRes.data;
       if (!validation?.isValid) {
-        form.setFieldError("email", validation?.errors?.join(", ") ?? "Cart validation failed");
-        setActive(1);
+        setCheckoutError(validation?.errors?.join(" ") || "Some items in your cart can't be ordered.");
         return;
       }
       const checkoutRes = await initiateCheckout.mutateAsync(payload);
       const data = checkoutRes.data;
       if (data?.paymentUrl) {
+        // Paystack's return link can't carry it, so the orders page reads it from here.
+        rememberPendingCheckout(data.intentReference);
         window.location.href = data.paymentUrl;
       } else {
-        form.setFieldError("email", "Checkout failed. Please try again.");
-        setActive(1);
+        setCheckoutError("We couldn't start the payment. Please try again.");
       }
-    } catch {
-      form.setFieldError("email", "Checkout failed. Please try again.");
+    } catch (error) {
+      const { message, code } = apiError(error, "Checkout failed. Please try again.");
+      if (code && MARKET_RUN_CODES.has(code)) {
+        // The quoted run has closed: fetch the next one and let them confirm it.
+        void feesQuery.refetch();
+        setCheckoutError(`${message} We've updated the delivery run — check the new time and pay again.`);
+        return;
+      }
+      setCheckoutError(message);
     }
   });
 
@@ -225,6 +269,18 @@ function CheckoutContent() {
         <Text size="sm" className="text-stone-500 mb-8">
           Complete your order in three steps.
         </Text>
+
+        {notTakingOrders && (
+          <Alert color="yellow" className="mb-6 rounded border border-amber-200">
+            {profile?.name ?? "This store"} isn&apos;t taking online orders right now. You can still browse;
+            check back soon to order.
+          </Alert>
+        )}
+        {!notTakingOrders && profile && supportedMethods.length === 0 && (
+          <Alert color="yellow" className="mb-6 rounded border border-amber-200">
+            {profile.name} isn&apos;t offering pickup or delivery online right now.
+          </Alert>
+        )}
 
         <form onSubmit={handleSubmit}>
           <Stepper
@@ -355,8 +411,8 @@ function CheckoutContent() {
                         >
                           <Radio
                             value={m}
-                            label={METHOD_META[m].label}
-                            description={METHOD_META[m].hint}
+                            label={METHOD_META[m]?.label ?? m}
+                            description={METHOD_META[m]?.hint}
                             classNames={{ label: "text-stone-800 font-medium", description: "text-stone-500" }}
                           />
                         </Paper>
@@ -364,7 +420,7 @@ function CheckoutContent() {
                     </Stack>
                   </Radio.Group>
 
-                  {deliveryMethod === "platformDelivery" && (
+                  {needsAddress && (
                     <Button
                       type="button"
                       variant="light"
@@ -376,6 +432,19 @@ function CheckoutContent() {
                     >
                       {coords ? "Location set ✓ — fee updated" : "Use my location for accurate delivery fee"}
                     </Button>
+                  )}
+
+                  {marketRun?.windowLabel && (
+                    <Alert color="gray" className="mt-3 rounded border border-stone-200">
+                      Next run: <strong>{marketRun.windowLabel}</strong>
+                      {marketRun.marketName ? ` from ${marketRun.marketName}` : ""}
+                      {marketRun.cutoffAt ? ` · order by ${formatRunTime(marketRun.cutoffAt)}` : ""}
+                    </Alert>
+                  )}
+                  {feesError && (
+                    <Alert color="red" className="mt-3 rounded border border-red-200">
+                      {feesError}
+                    </Alert>
                   )}
 
                   {needsAddress && (
@@ -482,7 +551,8 @@ function CheckoutContent() {
                     <SummaryRow label="Email" value={form.values.email || "—"} />
                     {form.values.fullName && <SummaryRow label="Name" value={form.values.fullName} />}
                     {form.values.phone && <SummaryRow label="Phone" value={form.values.phone} />}
-                    <SummaryRow label="Method" value={METHOD_META[deliveryMethod].label} />
+                    <SummaryRow label="Method" value={METHOD_META[deliveryMethod]?.label ?? deliveryMethod} />
+                    {marketRun?.windowLabel && <SummaryRow label="Delivery run" value={marketRun.windowLabel} />}
                     {needsAddress && (
                       <SummaryRow
                         label="Ship to"
@@ -497,9 +567,9 @@ function CheckoutContent() {
                   </Stack>
                 </Paper>
 
-                {(validateCart.isError || initiateCheckout.isError) && (
+                {checkoutError && (
                   <Alert color="red" className="rounded border border-red-200">
-                    Something went wrong. Please check your details and try again.
+                    {checkoutError}
                   </Alert>
                 )}
               </Stack>
@@ -539,6 +609,7 @@ function CheckoutContent() {
             ) : (
               <Button
                 type="submit"
+                disabled={!canPay}
                 className="bg-stone-800 hover:bg-stone-900 text-white rounded"
                 loading={validateCart.isPending || initiateCheckout.isPending}
                 loaderProps={{ type: "dots" }}

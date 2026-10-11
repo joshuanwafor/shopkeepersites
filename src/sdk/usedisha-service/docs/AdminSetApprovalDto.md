@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **approvalStatus** | **string** | New approval status | [optional] [default to undefined]
-**reason** | **string** | Optional note explaining the decision | [optional] [default to undefined]
+**reason** | **string** | Why — required when rejecting. Kept in the moderation history. | [optional] [default to undefined]
 
 ## Example
 

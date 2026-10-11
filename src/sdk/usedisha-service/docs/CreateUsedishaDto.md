@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **termsAndConditions** | **string** | Full text of the terms and conditions for this storefront (plain text; editable via update) | [optional] [default to undefined]
 **policyDocument** | **string** | Full text of the policy document for this storefront (e.g. privacy or store policy; plain text; editable via update) | [optional] [default to undefined]
 **supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods this storefront supports at checkout | [optional] [default to undefined]
+**sellerTypes** | **Array&lt;string&gt;** | What kind of seller this storefront is. Declared by the merchant; customers can filter on it. | [optional] [default to undefined]
 **legalName** | **string** | Legal name of business | [optional] [default to undefined]
 
 ## Example
@@ -31,6 +32,7 @@ const instance: CreateUsedishaDto = {
     termsAndConditions,
     policyDocument,
     supportedPaymentMethods,
+    sellerTypes,
     legalName,
 };
 ```

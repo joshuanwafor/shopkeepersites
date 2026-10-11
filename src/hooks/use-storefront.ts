@@ -23,12 +23,12 @@ export type DeliveryMethod =
 const FALLBACK_DOMAIN =
   process.env.NEXT_PUBLIC_STOREFRONT_DOMAIN ?? "demo";
 const SITES_BASE_DOMAIN =
-  process.env.NEXT_PUBLIC_SITES_BASE_DOMAIN ?? "sitesdomain.ng";
+  process.env.NEXT_PUBLIC_SITES_BASE_DOMAIN ?? "bigmerchant.ng";
 
 /**
  * Resolves the storefront domain key from the current URL:
  * - Query: ?domain=key
- * - Subdomain: [key].sitesdomain.ng
+ * - Subdomain: [key].bigmerchant.ng
  * - Fallback: NEXT_PUBLIC_STOREFRONT_DOMAIN or "demo"
  */
 export function getStorefrontDomainKey(): string {
@@ -46,11 +46,12 @@ export function getStorefrontDomainKey(): string {
 }
 
 /**
- * Hook that returns the current storefront domain key (from ?domain= or subdomain).
- * Updates after mount so SSR/first paint use fallback; then client resolves from URL.
+ * The current storefront's domain key (from ?domain= or the subdomain). Empty
+ * until it is read from the URL after mount, so nothing is fetched for the
+ * fallback store first: queries below wait for it (`enabled: !!domain`).
  */
 export function useStorefrontDomain(): string {
-  const [domain, setDomain] = useState(FALLBACK_DOMAIN);
+  const [domain, setDomain] = useState("");
   useEffect(() => {
     setDomain(getStorefrontDomainKey());
   }, []);
@@ -75,6 +76,7 @@ export function useStorefrontProfile() {
   const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "profile", domain],
+    enabled: !!domain,
     queryFn: () =>
       usedishaClientApi.usedishaClientControllerGetStorefrontProfileV1(domain),
   });
@@ -92,6 +94,7 @@ export function useStorefrontProducts(opts?: {
   const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "products", domain, opts],
+    enabled: !!domain,
     // Keep the current page visible while the next one loads (no flash to empty).
     placeholderData: (previous) => previous,
     queryFn: () =>
@@ -117,7 +120,7 @@ export function useStorefrontProduct(productId: string | null) {
         domain,
         productId!
       ),
-    enabled: !!productId,
+    enabled: !!domain && !!productId,
   });
 }
 
@@ -125,6 +128,7 @@ export function useStorefrontCategories() {
   const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "categories", domain],
+    enabled: !!domain,
     queryFn: () =>
       usedishaClientApi.usedishaClientControllerGetStorefrontCategoriesV1(
         domain
@@ -150,6 +154,13 @@ export function useInitiateCheckout() {
   });
 }
 
+/** Intent statuses after which nothing more will happen to a checkout. */
+const SETTLED_INTENT_STATUSES = new Set(["order_created", "failed", "expired", "cancelled"]);
+
+/**
+ * A checkout's status. While the payment is still being confirmed (Paystack's
+ * webhook can take a few seconds), it checks again every few seconds.
+ */
 export function useOrderStatus(intentReference: string | null) {
   return useQuery({
     queryKey: ["orderStatus", intentReference],
@@ -158,7 +169,33 @@ export function useOrderStatus(intentReference: string | null) {
         intentReference!
       ),
     enabled: !!intentReference,
+    refetchInterval: (query) => {
+      const status = query.state.data?.data?.status;
+      return status && SETTLED_INTENT_STATUSES.has(status) ? false : 4000;
+    },
   });
+}
+
+const PENDING_CHECKOUT_KEY = "ud_pending_checkout";
+
+/** Keep the checkout we're sending the shopper to Paystack for, so the return page can follow it. */
+export function rememberPendingCheckout(intentReference: string | undefined) {
+  if (!intentReference || typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(PENDING_CHECKOUT_KEY, intentReference);
+  } catch {
+    /* storage unavailable: the shopper can still look the order up by email */
+  }
+}
+
+/** The checkout this tab last sent to Paystack, if any. */
+export function readPendingCheckout(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.sessionStorage.getItem(PENDING_CHECKOUT_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function useOrdersByEmail(email: string | null) {
@@ -170,7 +207,7 @@ export function useOrdersByEmail(email: string | null) {
         domain,
         email!
       ),
-    enabled: !!email && email.length > 0,
+    enabled: !!domain && !!email && email.length > 0,
   });
 }
 
@@ -184,12 +221,15 @@ export function useEstimateFees(params: {
   deliveryMethod: DeliveryMethod;
   userLat?: number;
   userLng?: number;
+  /** Prices store delivery by zone when there are no coordinates. */
+  userCity?: string;
+  userState?: string;
   branchId?: string;
 }) {
   const domain = useStorefrontDomain();
   return useQuery({
     queryKey: ["storefront", "fees", domain, params],
-    enabled: params.items.length > 0 && !!params.deliveryMethod,
+    enabled: !!domain && params.items.length > 0 && !!params.deliveryMethod,
     retry: false,
     queryFn: () =>
       usedishaCheckoutApi.usedishaCheckoutControllerEstimateFeesV1({
@@ -201,6 +241,8 @@ export function useEstimateFees(params: {
         deliveryMethod: params.deliveryMethod,
         userLat: params.userLat,
         userLng: params.userLng,
+        userCity: params.userCity || undefined,
+        userState: params.userState || undefined,
         branchId: params.branchId,
       } as UsedishaEstimateFeesDto),
   });
@@ -226,6 +268,8 @@ function getOrCreateId(storage: Storage, key: string): string {
 export function useTrackStoreView(storeId: string | undefined) {
   useEffect(() => {
     if (!storeId || typeof window === "undefined") return;
+    // Local and preview runs often point at the live API; don't count them as real visits.
+    if (process.env.NODE_ENV !== "production") return;
     const onceKey = `ud_viewed_${storeId}`;
     if (window.sessionStorage.getItem(onceKey)) return;
     window.sessionStorage.setItem(onceKey, "1");
@@ -257,6 +301,8 @@ export function buildCheckoutPayload(
     branchId?: string;
     callbackUrl?: string;
     customerNotes?: string;
+    /** Market delivery only: the run the shopper was quoted for. */
+    marketDeliveryWindow?: string;
   }
 ): UsedishaInitiateCheckoutDto {
   const dtoItems: UsedishaCheckoutItemDto[] = items.map((i) => ({
@@ -274,5 +320,6 @@ export function buildCheckoutPayload(
     branchId: opts.branchId,
     callbackUrl: opts.callbackUrl,
     customerNotes: opts.customerNotes,
+    marketDeliveryWindow: opts.marketDeliveryWindow,
   };
 }

@@ -8,10 +8,13 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaAdminControllerCheckDomainAvailabilityV1**](#usedishaadmincontrollercheckdomainavailabilityv1) | **GET** /v1/usedisha/{businessId}/usedisha/check-domain/{domain} | Check if domain is available|
 |[**usedishaAdminControllerCreateUsedishaV1**](#usedishaadmincontrollercreateusedishav1) | **POST** /v1/usedisha/{businessId}/usedisha | Create usedisha profile for business|
 |[**usedishaAdminControllerDeleteUsedishaV1**](#usedishaadmincontrollerdeleteusedishav1) | **DELETE** /v1/usedisha/{businessId}/usedisha | Delete/deactivate usedisha profile|
+|[**usedishaAdminControllerGetKycV1**](#usedishaadmincontrollergetkycv1) | **GET** /v1/usedisha/{businessId}/usedisha/kyc | Get my storefront KYC status|
 |[**usedishaAdminControllerGetStoreOverviewV1**](#usedishaadmincontrollergetstoreoverviewv1) | **GET** /v1/usedisha/{businessId}/usedisha/store-overview | Store overview dashboard metrics|
 |[**usedishaAdminControllerGetStoreVisitHistoryV1**](#usedishaadmincontrollergetstorevisithistoryv1) | **GET** /v1/usedisha/{businessId}/usedisha/visit-history | Store visit history, trends, and traffic patterns|
 |[**usedishaAdminControllerGetUsedishaV1**](#usedishaadmincontrollergetusedishav1) | **GET** /v1/usedisha/{businessId}/usedisha | Get usedisha profile for business|
 |[**usedishaAdminControllerRemoveBranchV1**](#usedishaadmincontrollerremovebranchv1) | **DELETE** /v1/usedisha/{businessId}/usedisha/branches/{branchId} | Remove a branch from the storefront|
+|[**usedishaAdminControllerSubmitKycV1**](#usedishaadmincontrollersubmitkycv1) | **PUT** /v1/usedisha/{businessId}/usedisha/kyc | Submit KYC details|
+|[**usedishaAdminControllerUpdateAppLayoutV1**](#usedishaadmincontrollerupdateapplayoutv1) | **PUT** /v1/usedisha/{businessId}/usedisha/app-layout | Save the store app home layout|
 |[**usedishaAdminControllerUpdateBranchV1**](#usedishaadmincontrollerupdatebranchv1) | **PATCH** /v1/usedisha/{businessId}/usedisha/branches/{branchId} | Update a branch entry on the storefront|
 |[**usedishaAdminControllerUpdateConfigV1**](#usedishaadmincontrollerupdateconfigv1) | **PUT** /v1/usedisha/{businessId}/usedisha/config | Update usedisha configuration|
 |[**usedishaAdminControllerUpdateDeliveryConfigV1**](#usedishaadmincontrollerupdatedeliveryconfigv1) | **PUT** /v1/usedisha/{businessId}/usedisha/delivery-config | Update delivery configuration|
@@ -237,6 +240,57 @@ const { status, data } = await apiInstance.usedishaAdminControllerDeleteUsedisha
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **usedishaAdminControllerGetKycV1**
+> UsedishaKycResponse usedishaAdminControllerGetKycV1()
+
+Returns the KYC block (status, requested fields, submitted details). Defaults to not_required.
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+
+const { status, data } = await apiInstance.usedishaAdminControllerGetKycV1(
+    businessId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**UsedishaKycResponse**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | KYC block |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **usedishaAdminControllerGetStoreOverviewV1**
 > UsedishaStoreOverviewResponseDto usedishaAdminControllerGetStoreOverviewV1()
 
@@ -459,6 +513,118 @@ const { status, data } = await apiInstance.usedishaAdminControllerRemoveBranchV1
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **usedishaAdminControllerSubmitKycV1**
+> UsedishaKycResponse usedishaAdminControllerSubmitKycV1(submitUsedishaKycDto)
+
+Business owner provides KYC details; moves KYC to the submitted state for admin review.
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration,
+    SubmitUsedishaKycDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+let submitUsedishaKycDto: SubmitUsedishaKycDto; //
+
+const { status, data } = await apiInstance.usedishaAdminControllerSubmitKycV1(
+    businessId,
+    submitUsedishaKycDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **submitUsedishaKycDto** | **SubmitUsedishaKycDto**|  | |
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**UsedishaKycResponse**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Submitted KYC block |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminControllerUpdateAppLayoutV1**
+> Usedisha usedishaAdminControllerUpdateAppLayoutV1(updateAppLayoutDto)
+
+Replaces the whole ordered list of store-app home sections (contract: store-app/docs/APP-LAYOUT.md). Validation is strict: unknown section/link types or properties, non-https URLs and anything over a limit return 400. Every product and category id referenced must belong to this business. Changes are live in the store app on its next profile fetch.
+
+### Example
+
+```typescript
+import {
+    BusinessAdminUsedishaApi,
+    Configuration,
+    UpdateAppLayoutDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new BusinessAdminUsedishaApi(configuration);
+
+let businessId: string; //Business ID (default to undefined)
+let updateAppLayoutDto: UpdateAppLayoutDto; //
+
+const { status, data } = await apiInstance.usedishaAdminControllerUpdateAppLayoutV1(
+    businessId,
+    updateAppLayoutDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **updateAppLayoutDto** | **UpdateAppLayoutDto**|  | |
+| **businessId** | [**string**] | Business ID | defaults to undefined|
+
+
+### Return type
+
+**Usedisha**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Layout saved; returns the storefront with &#x60;appLayout&#x60; |  -  |
+|**400** | Invalid layout, or it references products/categories outside this business |  -  |
+|**404** | Usedisha profile not found |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **usedishaAdminControllerUpdateBranchV1**
 > Usedisha usedishaAdminControllerUpdateBranchV1(updateUsedishaBranchDto)
 
@@ -574,7 +740,7 @@ const { status, data } = await apiInstance.usedishaAdminControllerUpdateConfigV1
 # **usedishaAdminControllerUpdateDeliveryConfigV1**
 > Usedisha usedishaAdminControllerUpdateDeliveryConfigV1(updateUsedishaDeliveryConfigDto)
 
-Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery flat-fee pricing. `businessDelivery.fee` is required when businessDelivery is supported.
+Sets which delivery methods the storefront offers (pickup / platformDelivery / businessDelivery) and the businessDelivery pricing. For businessDelivery, provide either a flat `businessDelivery.fee` or a distance-based `businessDelivery.rateCard` (at least one is required when businessDelivery is supported).
 
 ### Example
 
@@ -623,7 +789,7 @@ const { status, data } = await apiInstance.usedishaAdminControllerUpdateDelivery
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Delivery configuration updated |  -  |
-|**400** | businessDelivery.fee is required when businessDelivery is supported |  -  |
+|**400** | businessDelivery requires a flat fee or a rate card when supported |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -847,6 +1013,7 @@ const { status, data } = await apiInstance.usedishaAdminControllerUpdateThemeV1(
 # **usedishaAdminControllerUpdateUsedishaV1**
 > Usedisha usedishaAdminControllerUpdateUsedishaV1(updateUsedishaDto)
 
+Owners can pause and resume their store by switching `status` between `active` and `inactive`, but cannot change a status the platform set (suspended, pending approval, deleted). Sending the current status back is not a change.
 
 ### Example
 
@@ -895,6 +1062,7 @@ const { status, data } = await apiInstance.usedishaAdminControllerUpdateUsedisha
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Usedisha profile updated successfully |  -  |
+|**403** | The request tries to change a status the owner does not control |  -  |
 |**404** | Usedisha profile not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

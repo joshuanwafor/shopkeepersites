@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Container,
@@ -22,13 +22,26 @@ import {
   useStorefrontQueryString,
   useOrdersByEmail,
   useOrderStatus,
+  readPendingCheckout,
 } from "@/hooks/use-storefront";
+import { formatPrice } from "@/hooks";
+
+/** Plain words for the API's status values (e.g. "payment_completed" → "Payment completed"). */
+function humanise(value?: string) {
+  if (!value) return "—";
+  const words = value.replace(/[_-]+/g, " ").trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
 
 function OrdersContent() {
   const searchParams = useSearchParams();
   const queryString = useStorefrontQueryString();
   const success = searchParams.get("success") === "1";
-  const intentRef = searchParams.get("intentReference");
+  // From the link, or the checkout this tab just sent to Paystack.
+  const [intentRef, setIntentRef] = useState<string | null>(searchParams.get("intentReference"));
+  useEffect(() => {
+    if (!intentRef && success) setIntentRef(readPendingCheckout());
+  }, [intentRef, success]);
 
   const { data: profileRes } = useStorefrontProfile();
   const profile = profileRes?.data;
@@ -44,8 +57,11 @@ function OrdersContent() {
   const { data: ordersRes, isLoading: ordersLoading } = useOrdersByEmail(submittedEmail);
   const { data: statusRes, isLoading: statusLoading } = useOrderStatus(intentRef ?? null);
 
-  const orders = (ordersRes?.data as unknown as Array<{ id?: string; reference?: string; status?: string; createdAt?: string }>) ?? [];
+  // The API answers { domain, email, orders }.
+  const orders = ordersRes?.data?.orders ?? [];
   const orderStatus = statusRes?.data;
+  const confirming =
+    !!orderStatus && !["order_created", "failed", "expired", "cancelled"].includes(orderStatus.status);
 
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
@@ -57,9 +73,9 @@ function OrdersContent() {
           Enter the email address you used when placing the order.
         </Text>
 
-        {success && (
-          <Alert color="green" title="Payment successful" className="mb-6 rounded border border-green-200 bg-green-50/50">
-            Thank you. Your order has been received. You can check its status below by entering your email.
+        {success && !orderStatus && (
+          <Alert color="green" title="Thank you" className="mb-6 rounded border border-green-200 bg-green-50/50">
+            We&apos;re confirming your payment with the bank. You can check your order below by entering your email.
           </Alert>
         )}
 
@@ -79,16 +95,23 @@ function OrdersContent() {
 
         {intentRef && statusLoading && <Skeleton height={80} className="rounded mb-4" />}
         {intentRef && orderStatus && (
-          <Paper p="md" className="store-classic-paper mb-6">
-            <Text size="sm" className="text-stone-500">
-              Order reference: {orderStatus.intentReference}
-            </Text>
-            <Text fw={600} className="text-stone-800 mt-1">Status: {orderStatus.status}</Text>
-            <Text size="sm" className="text-stone-600">Payment: {orderStatus.paymentStatus}</Text>
-            {orderStatus.orderReference && (
-              <Text size="sm" className="text-stone-600">Order ref: {orderStatus.orderReference}</Text>
-            )}
-          </Paper>
+          <Alert
+            color={orderStatus.status === "order_created" ? "green" : confirming ? "gray" : "red"}
+            title={
+              orderStatus.status === "order_created"
+                ? "Order placed"
+                : confirming
+                  ? "Confirming your payment…"
+                  : "This order didn't go through"
+            }
+            className="mb-6 rounded border border-stone-200"
+          >
+            {orderStatus.status === "order_created"
+              ? `Thank you. Your order${orderStatus.orderReference ? ` ${orderStatus.orderReference}` : ""} has been sent to the store.`
+              : confirming
+                ? "This usually takes a few seconds. You can leave this page; we'll email you."
+                : orderStatus.failureReason || "No money was taken for this order. Please try again."}
+          </Alert>
         )}
 
         {submittedEmail && ordersLoading && (
@@ -98,29 +121,36 @@ function OrdersContent() {
           </Stack>
         )}
 
-        {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length === 0 && (
+        {submittedEmail && !ordersLoading && orders.length === 0 && (
           <Paper p="md" className="store-classic-paper">
             <Text className="text-stone-500">No orders found for this email.</Text>
           </Paper>
         )}
 
-        {submittedEmail && !ordersLoading && Array.isArray(orders) && orders.length > 0 && (
+        {submittedEmail && !ordersLoading && orders.length > 0 && (
           <Stack gap="sm">
             <Text fw={600} className="text-stone-800 font-serif">Orders</Text>
-            {orders.map((order: { id?: string; reference?: string; status?: string; createdAt?: string }, i: number) => (
+            {orders.map((order, i) => (
               <Paper key={order.id ?? i} p="md" className="store-classic-paper">
-                <Group justify="space-between">
-                  <div>
+                <Group justify="space-between" align="flex-start" wrap="nowrap">
+                  <div className="min-w-0">
                     <Text size="sm" className="text-stone-500">
-                      {order.reference ?? order.id ?? `Order #${i + 1}`}
+                      {order.orderNumber || `Order #${i + 1}`}
+                      {order.itemCount ? ` · ${order.itemCount} item${order.itemCount === 1 ? "" : "s"}` : ""}
                     </Text>
-                    <Text fw={500} className="text-stone-800">{order.status ?? "—"}</Text>
+                    <Text fw={500} className="text-stone-800">{humanise(order.status)}</Text>
+                    <Text size="xs" className="text-stone-500">Payment: {humanise(order.paymentStatus)}</Text>
                   </div>
-                  {order.createdAt && (
-                    <Text size="xs" className="text-stone-500">
-                      {new Date(order.createdAt).toLocaleDateString()}
-                    </Text>
-                  )}
+                  <div className="text-right shrink-0">
+                    {typeof order.totalAmount === "number" && (
+                      <Text fw={600} className="text-stone-800">{formatPrice(order.totalAmount)}</Text>
+                    )}
+                    {order.createdAt && (
+                      <Text size="xs" className="text-stone-500">
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </Text>
+                    )}
+                  </div>
                 </Group>
               </Paper>
             ))}

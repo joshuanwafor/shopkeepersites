@@ -9,6 +9,7 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaAdminMarketsControllerListV1**](#usedishaadminmarketscontrollerlistv1) | **GET** /v1/usedisha/usedisha/admin/markets | List markets (any status)|
 |[**usedishaAdminMarketsControllerMembershipsV1**](#usedishaadminmarketscontrollermembershipsv1) | **GET** /v1/usedisha/usedisha/admin/markets/memberships | Membership moderation queue|
 |[**usedishaAdminMarketsControllerReviewV1**](#usedishaadminmarketscontrollerreviewv1) | **PATCH** /v1/usedisha/usedisha/admin/markets/memberships/{id}/review | Approve or reject a branch listing|
+|[**usedishaAdminMarketsControllerSetDeliveryConfigV1**](#usedishaadminmarketscontrollersetdeliveryconfigv1) | **PUT** /v1/usedisha/usedisha/admin/markets/{id}/delivery-config | Configure bulk market delivery|
 |[**usedishaAdminMarketsControllerUpdateV1**](#usedishaadminmarketscontrollerupdatev1) | **PATCH** /v1/usedisha/usedisha/admin/markets/{id} | Update a market|
 
 # **usedishaAdminMarketsControllerCreateV1**
@@ -140,7 +141,8 @@ let state: string; //Filter by state (optional) (default to undefined)
 let city: string; //Filter by city (optional) (default to undefined)
 let lga: string; //Filter by LGA (optional) (default to undefined)
 let type: 'general' | 'food' | 'electronics' | 'fashion' | 'building_materials' | 'agriculture' | 'auto_parts'; //Filter by market type (optional) (default to undefined)
-let featured: boolean; //Return only featured markets (optional) (default to undefined)
+let featured: boolean; //true = only featured markets, false = only non-featured (optional) (default to undefined)
+let ids: string; //Only these markets: comma-separated ObjectIds, at most 24. Order is not guaranteed. (optional) (default to undefined)
 let search: string; //Search by market name or description (optional) (default to undefined)
 let status: 'active' | 'inactive'; //Filter by status (admin only) (optional) (default to undefined)
 
@@ -154,6 +156,7 @@ const { status, data } = await apiInstance.usedishaAdminMarketsControllerListV1(
     lga,
     type,
     featured,
+    ids,
     search,
     status
 );
@@ -171,7 +174,8 @@ const { status, data } = await apiInstance.usedishaAdminMarketsControllerListV1(
 | **city** | [**string**] | Filter by city | (optional) defaults to undefined|
 | **lga** | [**string**] | Filter by LGA | (optional) defaults to undefined|
 | **type** | [**&#39;general&#39; | &#39;food&#39; | &#39;electronics&#39; | &#39;fashion&#39; | &#39;building_materials&#39; | &#39;agriculture&#39; | &#39;auto_parts&#39;**]**Array<&#39;general&#39; &#124; &#39;food&#39; &#124; &#39;electronics&#39; &#124; &#39;fashion&#39; &#124; &#39;building_materials&#39; &#124; &#39;agriculture&#39; &#124; &#39;auto_parts&#39;>** | Filter by market type | (optional) defaults to undefined|
-| **featured** | [**boolean**] | Return only featured markets | (optional) defaults to undefined|
+| **featured** | [**boolean**] | true &#x3D; only featured markets, false &#x3D; only non-featured | (optional) defaults to undefined|
+| **ids** | [**string**] | Only these markets: comma-separated ObjectIds, at most 24. Order is not guaranteed. | (optional) defaults to undefined|
 | **search** | [**string**] | Search by market name or description | (optional) defaults to undefined|
 | **status** | [**&#39;active&#39; | &#39;inactive&#39;**]**Array<&#39;active&#39; &#124; &#39;inactive&#39;>** | Filter by status (admin only) | (optional) defaults to undefined|
 
@@ -312,6 +316,63 @@ const { status, data } = await apiInstance.usedishaAdminMarketsControllerReviewV
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | Updated membership |  -  |
+|**401** | Missing or invalid JWT token |  -  |
+|**403** | Caller is not a platform administrator |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminMarketsControllerSetDeliveryConfigV1**
+> Market usedishaAdminMarketsControllerSetDeliveryConfigV1(updateMarketDeliveryConfigDto)
+
+Sets zones, runs, hub and minimums for a market. Replaces the whole block; set `enabled: false` to stop new orders joining runs (in-flight runs are unaffected).
+
+### Example
+
+```typescript
+import {
+    UsedishaSystemAdminMarketsApi,
+    Configuration,
+    UpdateMarketDeliveryConfigDto
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaSystemAdminMarketsApi(configuration);
+
+let id: string; //Market ID or slug (default to undefined)
+let updateMarketDeliveryConfigDto: UpdateMarketDeliveryConfigDto; //
+
+const { status, data } = await apiInstance.usedishaAdminMarketsControllerSetDeliveryConfigV1(
+    id,
+    updateMarketDeliveryConfigDto
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **updateMarketDeliveryConfigDto** | **UpdateMarketDeliveryConfigDto**|  | |
+| **id** | [**string**] | Market ID or slug | defaults to undefined|
+
+
+### Return type
+
+**Market**
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Updated market |  -  |
 |**401** | Missing or invalid JWT token |  -  |
 |**403** | Caller is not a platform administrator |  -  |
 

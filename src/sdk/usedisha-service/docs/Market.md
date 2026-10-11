@@ -20,6 +20,7 @@ Name | Type | Description | Notes
 **status** | **string** |  | [default to StatusEnum_Active]
 **featured** | **boolean** | Promoted/featured market | [optional] [default to false]
 **storeCount** | **number** | Number of approved stores in this market | [optional] [default to 0]
+**deliveryConfig** | [**MarketDeliveryConfig**](MarketDeliveryConfig.md) | Bulk market-delivery settings for this market | [optional] [default to undefined]
 **createdBy** | **string** | ID of the admin who created the market | [optional] [default to undefined]
 **updatedBy** | **string** | ID of the admin who last updated the market | [optional] [default to undefined]
 **createdAt** | **string** |  | [optional] [readonly] [default to undefined]
@@ -46,6 +47,7 @@ const instance: Market = {
     status,
     featured,
     storeCount,
+    deliveryConfig,
     createdBy,
     updatedBy,
     createdAt,
