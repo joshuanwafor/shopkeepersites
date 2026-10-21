@@ -17,14 +17,17 @@ import {
 import { useForm } from "@mantine/form";
 import { useSearchParams } from "next/navigation";
 import { StoreLayout } from "@/components/store/StoreLayout";
+import { useCart } from "@/context/cart-context";
 import {
   useStorefrontProfile,
   useStorefrontQueryString,
   useOrdersByEmail,
   useOrderStatus,
   readPendingCheckout,
+  forgetPendingCheckout,
 } from "@/hooks/use-storefront";
 import { formatPrice } from "@/hooks";
+import { formatReadyIn, preparationTimeOf } from "@/lib/preparation-time";
 
 /** Plain words for the API's status values (e.g. "payment_completed" → "Payment completed"). */
 function humanise(value?: string) {
@@ -62,6 +65,16 @@ function OrdersContent() {
   const orderStatus = statusRes?.data;
   const confirming =
     !!orderStatus && !["order_created", "failed", "expired", "cancelled"].includes(orderStatus.status);
+  const preparation = preparationTimeOf(profile);
+
+  // The cart this tab paid for is now an order: empty it, once. A failed payment keeps it to try again.
+  const { clearCart } = useCart();
+  const orderCreated = orderStatus?.status === "order_created";
+  useEffect(() => {
+    if (!orderCreated || !intentRef || readPendingCheckout() !== intentRef) return;
+    clearCart();
+    forgetPendingCheckout();
+  }, [orderCreated, intentRef, clearCart]);
 
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
@@ -107,7 +120,9 @@ function OrdersContent() {
             className="mb-6 rounded border border-stone-200"
           >
             {orderStatus.status === "order_created"
-              ? `Thank you. Your order${orderStatus.orderReference ? ` ${orderStatus.orderReference}` : ""} has been sent to the store.`
+              ? `Thank you. Your order${orderStatus.orderReference ? ` ${orderStatus.orderReference}` : ""} has been sent to the store.${
+                  preparation ? ` ${formatReadyIn(preparation)} once the store accepts it.` : ""
+                }`
               : confirming
                 ? "This usually takes a few seconds. You can leave this page; we'll email you."
                 : orderStatus.failureReason || "No money was taken for this order. Please try again."}

@@ -141,8 +141,10 @@ export function useValidateCart() {
   return useMutation({
     mutationFn: (body: UsedishaValidateCartDto) =>
       usedishaCheckoutApi.usedishaCheckoutControllerValidateCartV1(body),
+    // Stock may have moved: refresh the products, not the quote being paid.
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["storefront"] });
+      queryClient.invalidateQueries({ queryKey: ["storefront", "products"] });
+      queryClient.invalidateQueries({ queryKey: ["storefront", "product"] });
     },
   });
 }
@@ -178,6 +180,9 @@ export function useOrderStatus(intentReference: string | null) {
 
 const PENDING_CHECKOUT_KEY = "ud_pending_checkout";
 
+/** A cart line as checkout takes it: the product, and the variant when one was chosen. */
+export type CheckoutLine = Pick<UsedishaCheckoutItemDto, "productId" | "variantId" | "quantity">;
+
 /** Keep the checkout we're sending the shopper to Paystack for, so the return page can follow it. */
 export function rememberPendingCheckout(intentReference: string | undefined) {
   if (!intentReference || typeof window === "undefined") return;
@@ -195,6 +200,16 @@ export function readPendingCheckout(): string | null {
     return window.sessionStorage.getItem(PENDING_CHECKOUT_KEY);
   } catch {
     return null;
+  }
+}
+
+/** The pending checkout became an order (or failed for good): nothing left to follow. */
+export function forgetPendingCheckout() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(PENDING_CHECKOUT_KEY);
+  } catch {
+    /* storage unavailable */
   }
 }
 
@@ -217,7 +232,7 @@ export function useOrdersByEmail(email: string | null) {
  * backend provider (distance-based when coordinates are supplied).
  */
 export function useEstimateFees(params: {
-  items: Array<{ productId: string; quantity: number }>;
+  items: CheckoutLine[];
   deliveryMethod: DeliveryMethod;
   userLat?: number;
   userLng?: number;
@@ -234,10 +249,7 @@ export function useEstimateFees(params: {
     queryFn: () =>
       usedishaCheckoutApi.usedishaCheckoutControllerEstimateFeesV1({
         domain,
-        items: params.items.map((i) => ({
-          productId: i.productId,
-          quantity: i.quantity,
-        })),
+        items: params.items.map(toCheckoutItem),
         deliveryMethod: params.deliveryMethod,
         userLat: params.userLat,
         userLng: params.userLng,
@@ -289,9 +301,17 @@ export function useTrackStoreView(storeId: string | undefined) {
   }, [storeId]);
 }
 
+function toCheckoutItem(line: CheckoutLine): UsedishaCheckoutItemDto {
+  return {
+    productId: line.productId,
+    ...(line.variantId && { variantId: line.variantId }),
+    quantity: line.quantity,
+  };
+}
+
 export function buildCheckoutPayload(
   domain: string,
-  items: Array<{ productId: string; quantity: number }>,
+  items: CheckoutLine[],
   customer: UsedishaCheckoutCustomerDto,
   opts: {
     deliveryMethod: DeliveryMethod;
@@ -305,10 +325,7 @@ export function buildCheckoutPayload(
     marketDeliveryWindow?: string;
   }
 ): UsedishaInitiateCheckoutDto {
-  const dtoItems: UsedishaCheckoutItemDto[] = items.map((i) => ({
-    productId: i.productId,
-    quantity: i.quantity,
-  }));
+  const dtoItems = items.map(toCheckoutItem);
   return {
     domain,
     customer,

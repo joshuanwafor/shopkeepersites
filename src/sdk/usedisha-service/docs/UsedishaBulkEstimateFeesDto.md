@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **userLat** | **number** | Customer latitude — required for platformDelivery fee quoting | [optional] [default to undefined]
 **userCity** | **string** | Customer\&#39;s delivery city — used for zone-based businessDelivery fees when coordinates are unavailable | [optional] [default to undefined]
 **userState** | **string** | Customer\&#39;s delivery state — used for zone-based businessDelivery fees when coordinates are unavailable | [optional] [default to undefined]
+**orderSource** | **string** | Where the orders will be placed. &#x60;marketplace&#x60; (ShopCentral) is held to the methods the platform runs: pickup, platformDelivery and, where the store is in a market, marketDelivery — never the store\&#39;s own businessDelivery. Send the same value as on checkout. Defaults to &#x60;storefront&#x60;. | [optional] [default to OrderSourceEnum_Storefront]
 
 ## Example
 
@@ -22,6 +23,7 @@ const instance: UsedishaBulkEstimateFeesDto = {
     userLat,
     userCity,
     userState,
+    orderSource,
 };
 ```
 

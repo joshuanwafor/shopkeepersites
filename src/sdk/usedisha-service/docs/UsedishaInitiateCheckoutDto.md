@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **shippingAddress** | [**Address**](Address.md) | Shipping address | [optional] [default to undefined]
 **customerNotes** | **string** | Customer notes for the order | [optional] [default to undefined]
 **deliveryMethod** | **string** | How the order will be fulfilled. &#x60;pickup&#x60; &#x3D; collect in store (free). &#x60;platformDelivery&#x60; &#x3D; platform arranges delivery (fee quoted by provider). &#x60;businessDelivery&#x60; &#x3D; business delivers (merchant flat fee). | [default to undefined]
-**packageClass** | **string** | Customer-selected package/handling class. Adjusts the delivery fee. Defaults to &#x60;parcel&#x60;. | [optional] [default to PackageClassEnum_Parcel]
+**packageClass** | **string** | Ignored: the delivery class is worked out from the items (product setting, store default, size and weight). Accepted so older apps still validate. | [optional] [default to undefined]
 **marketDeliveryWindow** | **string** | Market-delivery run to join, by label (e.g. \&quot;Afternoon run\&quot;). Optional on estimate-fees (the server picks the next run and reports it back), but REQUIRED on checkout when deliveryMethod is &#x60;marketDelivery&#x60; — an unpinned checkout would place the customer on a different run from the one quoted. A stale run is rejected with code &#x60;MARKET_RUN_EXPIRED&#x60;; a missing one with &#x60;MARKET_RUN_REQUIRED&#x60;. Re-quote and confirm with the customer. | [optional] [default to undefined]
 **userLng** | **number** | Customer longitude — required for platformDelivery to quote the delivery fee | [optional] [default to undefined]
 **userLat** | **number** | Customer latitude — required for EXPRESS to calculate the delivery fee | [optional] [default to undefined]

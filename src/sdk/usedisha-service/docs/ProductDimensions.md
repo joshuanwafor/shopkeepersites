@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **length** | **number** | Length of the product | [default to undefined]
 **width** | **number** | Width of the product | [default to undefined]
 **height** | **number** | Height of the product | [default to undefined]
-**weight** | **number** | Weight of the product | [default to undefined]
+**weight** | **number** | Weight of the product, in kg | [default to undefined]
 
 ## Example
 

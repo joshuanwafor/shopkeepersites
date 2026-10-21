@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Text,
   Group,
@@ -13,6 +13,8 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import type { StorefrontProfileResponse } from "@/sdk/usedisha-service";
+import { formatReadyIn, preparationTimeOf } from "@/lib/preparation-time";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 const SOCIAL_LABELS: Record<string, string> = {
   whatsapp: "WhatsApp",
@@ -38,19 +40,18 @@ function isProbablyHtml(s: string) {
   return /<[a-z][\s\S]*>/i.test(s.trim());
 }
 
-/** Strips `<script>` / `<style>` blocks before injecting HTML. */
-function stripScriptsAndStyles(html: string): string {
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "");
+/** The store's HTML, made safe in the browser (it needs DOMParser): empty until then. */
+function useSanitizedHtml(html: string): string {
+  const [safe, setSafe] = useState("");
+  useEffect(() => {
+    setSafe(sanitizeHtml(html));
+  }, [html]);
+  return safe;
 }
 
-/** Uses `<body>` inner HTML when the string is a full document; otherwise uses the fragment as-is. */
-function extractRenderableHtml(html: string): string {
-  const t = html.trim();
-  const bodyMatch = t.match(/<body[^>]*>([\s\S]*)<\/body>/i);
-  if (bodyMatch) return bodyMatch[1].trim();
-  return t;
+function HtmlDocument({ html }: { html: string }) {
+  const safe = useSanitizedHtml(html);
+  return <div className="text-sm text-stone-700 pr-2" dangerouslySetInnerHTML={{ __html: safe }} />;
 }
 
 function LegalDocumentPanel({ title, body }: { title: string; body: string }) {
@@ -75,17 +76,13 @@ function LegalDocumentPanel({ title, body }: { title: string; body: string }) {
   }
 
   if (isProbablyHtml(trimmed)) {
-    const safe = stripScriptsAndStyles(extractRenderableHtml(trimmed));
     return (
       <Box>
         <Text size="sm" fw={600} className="text-stone-800 mb-2">
           {title}
         </Text>
         <ScrollArea mah={420} type="hover" offsetScrollbars className="max-h-[min(50vh,420px)]">
-          <div
-            className="text-sm text-stone-700 pr-2"
-            dangerouslySetInnerHTML={{ __html: safe }}
-          />
+          <HtmlDocument html={trimmed} />
         </ScrollArea>
       </Box>
     );
@@ -112,6 +109,7 @@ function StoreIntro({
   profile: StorefrontProfileResponse;
   logo: string | undefined;
 }) {
+  const preparation = preparationTimeOf(profile);
   return (
     <Group align="flex-start" gap="md" className="flex-nowrap">
       {logo && (
@@ -139,6 +137,11 @@ function StoreIntro({
         {profile.description && (
           <Text mt="sm" className="text-stone-600 max-w-2xl text-[15px] sm:text-base leading-relaxed">
             {profile.description}
+          </Text>
+        )}
+        {preparation && (
+          <Text size="sm" mt="sm" className="text-stone-500">
+            {formatReadyIn(preparation)} once the store accepts your order
           </Text>
         )}
       </div>

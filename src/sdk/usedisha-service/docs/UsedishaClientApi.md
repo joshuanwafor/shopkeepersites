@@ -24,6 +24,8 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaClientControllerSubmitClaimV1**](#usedishaclientcontrollersubmitclaimv1) | **POST** /v1/usedisha/usedisha/store/{id}/claim | Submit a claim to take ownership of a storefront|
 |[**usedishaClientControllerUploadClaimDocumentV1**](#usedishaclientcontrolleruploadclaimdocumentv1) | **POST** /v1/usedisha/usedisha/store/{id}/claim-document | Upload a registration document for a store claim|
 |[**usedishaShopmenuProductsControllerProductsV1**](#usedishashopmenuproductscontrollerproductsv1) | **GET** /v1/usedisha/usedisha/shopmenu/products | Products for a ShopCentral home section|
+|[**usedishaShopmenuServiceAreasControllerJoinV1**](#usedishashopmenuserviceareascontrollerjoinv1) | **POST** /v1/usedisha/usedisha/shopmenu/waitlist | Join the waitlist for a state|
+|[**usedishaShopmenuServiceAreasControllerListV1**](#usedishashopmenuserviceareascontrollerlistv1) | **GET** /v1/usedisha/usedisha/shopmenu/service-areas | Where ShopCentral trades|
 
 # **usedishaClientControllerCreateStorefrontReviewV1**
 > CreateStorefrontReviewResponse usedishaClientControllerCreateStorefrontReviewV1(createStorefrontReviewDto)
@@ -83,7 +85,7 @@ No authorization required
 # **usedishaClientControllerGetHomeLayoutV1**
 > usedishaClientControllerGetHomeLayoutV1()
 
-Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections for this shopper: section audience (states, excludeStates, areaStatus, shoppers, locationKnown, and platforms when sent), serving rules and text tokens are applied here; `modes` is left to the client. Section types newer than the client’s `contract` are left out. `sections` is null when the default is chosen and has none. `area` is the shopper\'s service area. All query parameters are optional; invalid values count as unknown. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
 
 ### Example
 
@@ -96,16 +98,22 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsedishaClientApi(configuration);
 
+let locationKnown: 'true' | 'false'; //The shopper has an address, a saved area or a pin. Omitted: true when state is sent. (optional) (default to undefined)
+let city: any; //The shopper\'s city or area (≤ 40): the {city} token and city targeting (optional) (default to undefined)
 let shopper: 'guest' | 'new' | 'returning'; // (optional) (default to undefined)
 let state: any; //Nigerian state of the delivery address, e.g. Lagos or FCT (optional) (default to undefined)
-let platform: 'ios' | 'android'; // (optional) (default to undefined)
+let platform: 'ios' | 'android' | 'web'; // (optional) (default to undefined)
 let mode: any; //\'all\', \'mall\' or a shopping category (optional) (default to undefined)
+let contract: number; //The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2. (optional) (default to undefined)
 
 const { status, data } = await apiInstance.usedishaClientControllerGetHomeLayoutV1(
+    locationKnown,
+    city,
     shopper,
     state,
     platform,
-    mode
+    mode,
+    contract
 );
 ```
 
@@ -113,10 +121,13 @@ const { status, data } = await apiInstance.usedishaClientControllerGetHomeLayout
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **locationKnown** | [**&#39;true&#39; | &#39;false&#39;**]**Array<&#39;true&#39; &#124; &#39;false&#39;>** | The shopper has an address, a saved area or a pin. Omitted: true when state is sent. | (optional) defaults to undefined|
+| **city** | **any** | The shopper\&#39;s city or area (≤ 40): the {city} token and city targeting | (optional) defaults to undefined|
 | **shopper** | [**&#39;guest&#39; | &#39;new&#39; | &#39;returning&#39;**]**Array<&#39;guest&#39; &#124; &#39;new&#39; &#124; &#39;returning&#39;>** |  | (optional) defaults to undefined|
 | **state** | **any** | Nigerian state of the delivery address, e.g. Lagos or FCT | (optional) defaults to undefined|
-| **platform** | [**&#39;ios&#39; | &#39;android&#39;**]**Array<&#39;ios&#39; &#124; &#39;android&#39;>** |  | (optional) defaults to undefined|
+| **platform** | [**&#39;ios&#39; | &#39;android&#39; | &#39;web&#39;**]**Array<&#39;ios&#39; &#124; &#39;android&#39; &#124; &#39;web&#39;>** |  | (optional) defaults to undefined|
 | **mode** | **any** | \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category | (optional) defaults to undefined|
+| **contract** | [**number**] | The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2. | (optional) defaults to undefined|
 
 
 ### Return type
@@ -136,7 +147,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | { templateId, version, updatedAt, sections: HomeSection[] | null } |  -  |
+|**200** | { templateId, version, updatedAt, sections: HomeSection[] | null, area: { status, state?, city?, cities?, launchLabel?, deliveryFrom?, freeDeliveryOver? } } |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -893,6 +904,8 @@ let featured: boolean; //true = only featured/promoted stores, false = only non-
 let ids: string; //Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed. (optional) (default to undefined)
 let sellerType: 'retailer' | 'wholesaler' | 'manufacturer' | 'distributor'; //Only return stores of this seller type (e.g. wholesaler) (optional) (default to undefined)
 let badges: Array<'verified' | 'official' | 'top_rated' | 'fast_delivery' | 'popular' | 'premium' | 'new' | 'mall_store'>; //Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list. (optional) (default to undefined)
+let hasDeal: boolean; //true = only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter. (optional) (default to undefined)
+let sort: 'newest'; //newest = most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat). (optional) (default to undefined)
 
 const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCategoryV1(
     category,
@@ -909,7 +922,9 @@ const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCa
     featured,
     ids,
     sellerType,
-    badges
+    badges,
+    hasDeal,
+    sort
 );
 ```
 
@@ -932,6 +947,8 @@ const { status, data } = await apiInstance.usedishaClientControllerGetStoresByCa
 | **ids** | [**string**] | Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed. | (optional) defaults to undefined|
 | **sellerType** | [**&#39;retailer&#39; | &#39;wholesaler&#39; | &#39;manufacturer&#39; | &#39;distributor&#39;**]**Array<&#39;retailer&#39; &#124; &#39;wholesaler&#39; &#124; &#39;manufacturer&#39; &#124; &#39;distributor&#39;>** | Only return stores of this seller type (e.g. wholesaler) | (optional) defaults to undefined|
 | **badges** | **Array<&#39;verified&#39; &#124; &#39;official&#39; &#124; &#39;top_rated&#39; &#124; &#39;fast_delivery&#39; &#124; &#39;popular&#39; &#124; &#39;premium&#39; &#124; &#39;new&#39; &#124; &#39;mall_store&#39;>** | Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list. | (optional) defaults to undefined|
+| **hasDeal** | [**boolean**] | true &#x3D; only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter. | (optional) defaults to undefined|
+| **sort** | [**&#39;newest&#39;**]**Array<&#39;newest&#39;>** | newest &#x3D; most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat). | (optional) defaults to undefined|
 
 
 ### Return type
@@ -951,7 +968,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | Paginated list of Shopmenu stores |  -  |
+|**200** | Paginated list of Shopmenu stores. Each carries &#x60;activeDeal&#x60; when it has a deal running on ShopCentral, and &#x60;distanceKm&#x60; (to its nearest branch with a location) when &#x60;lng&#x60; + &#x60;lat&#x60; are sent. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -1125,7 +1142,7 @@ No authorization required
 # **usedishaShopmenuProductsControllerProductsV1**
 > usedishaShopmenuProductsControllerProductsV1()
 
-Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+Either `ids` (picked products, in that order), `storeId` (that store’s products) or `source=popular` (the most bought on ShopCentral lately, best first; the ranking is kept for an hour per state). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. With `state`, only products whose store sells there. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
 
 ### Example
 
@@ -1138,14 +1155,18 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsedishaClientApi(configuration);
 
+let source: 'popular'; //popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in `state` (nationwide without one). Not with ids or storeId. (optional) (default to undefined)
 let ids: string; //Picked products, comma-separated, returned in this order (optional) (default to undefined)
 let storeId: string; //One store\'s products (storefront id) (optional) (default to undefined)
-let limit: number; //How many for storeId (default 10) (optional) (default to undefined)
+let limit: number; //How many for storeId and popular (default 10) (optional) (default to undefined)
+let state: string; //Only products whose store sells in this state (a section with area \'state\'): an active branch there, or its default branch\'s location (optional) (default to undefined)
 
 const { status, data } = await apiInstance.usedishaShopmenuProductsControllerProductsV1(
+    source,
     ids,
     storeId,
-    limit
+    limit,
+    state
 );
 ```
 
@@ -1153,9 +1174,11 @@ const { status, data } = await apiInstance.usedishaShopmenuProductsControllerPro
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **source** | [**&#39;popular&#39;**]**Array<&#39;popular&#39;>** | popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in &#x60;state&#x60; (nationwide without one). Not with ids or storeId. | (optional) defaults to undefined|
 | **ids** | [**string**] | Picked products, comma-separated, returned in this order | (optional) defaults to undefined|
 | **storeId** | [**string**] | One store\&#39;s products (storefront id) | (optional) defaults to undefined|
-| **limit** | [**number**] | How many for storeId (default 10) | (optional) defaults to undefined|
+| **limit** | [**number**] | How many for storeId and popular (default 10) | (optional) defaults to undefined|
+| **state** | [**string**] | Only products whose store sells in this state (a section with area \&#39;state\&#39;): an active branch there, or its default branch\&#39;s location | (optional) defaults to undefined|
 
 
 ### Return type
@@ -1176,6 +1199,105 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | { products: [{ productId, name, price, imageUrl, storeId, storeName, domain, branchId }] } |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaShopmenuServiceAreasControllerJoinV1**
+> usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request)
+
+Needs a phone or an email, or a sign-in (the account is used when neither is sent). Phones are stored as +234…, emails lowercased. Joining again with the same phone, email or account returns 200 `{ joined: true, alreadyJoined: true }`; a new entry is 201 `{ joined: true }`. 400 for an unknown state or a bad phone or email; 429 after 10 requests a minute from one address.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration,
+    UsedishaShopmenuServiceAreasControllerJoinV1Request
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+let usedishaShopmenuServiceAreasControllerJoinV1Request: UsedishaShopmenuServiceAreasControllerJoinV1Request; //
+
+const { status, data } = await apiInstance.usedishaShopmenuServiceAreasControllerJoinV1(
+    usedishaShopmenuServiceAreasControllerJoinV1Request
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **usedishaShopmenuServiceAreasControllerJoinV1Request** | **UsedishaShopmenuServiceAreasControllerJoinV1Request**|  | |
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { joined: true, alreadyJoined: true } |  -  |
+|**201** | { joined: true } |  -  |
+|**400** | Unknown state, or bad phone or email |  -  |
+|**429** | Too many requests from this address |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaShopmenuServiceAreasControllerListV1**
+> usedishaShopmenuServiceAreasControllerListV1()
+
+Every service area, live first, then pilot and coming soon: for the \"choose your area\" picker.
+
+### Example
+
+```typescript
+import {
+    UsedishaClientApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaClientApi(configuration);
+
+const { status, data } = await apiInstance.usedishaShopmenuServiceAreasControllerListV1();
+```
+
+### Parameters
+This endpoint does not have any parameters.
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { areas: [{ state, status, cities, launchLabel? }] } |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

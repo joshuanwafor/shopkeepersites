@@ -1,0 +1,24 @@
+# ProductDealResponse
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**id** | **string** |  | [default to undefined]
+**_short** | **string** |  | [default to undefined]
+**label** | **string** |  | [default to undefined]
+
+## Example
+
+```typescript
+import { ProductDealResponse } from './api';
+
+const instance: ProductDealResponse = {
+    id,
+    _short,
+    label,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

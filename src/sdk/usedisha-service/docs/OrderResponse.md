@@ -21,6 +21,8 @@ Name | Type | Description | Notes
 **rating** | [**OrderRatingSummaryResponse**](OrderRatingSummaryResponse.md) | This customer\&#39;s rating for the order, or null if not yet rated | [optional] [default to undefined]
 **notes** | **string** |  | [optional] [default to undefined]
 **customerNotes** | **string** |  | [optional] [default to undefined]
+**estimatedReadyAt** | **string** | When the order should be ready: when the store accepted it plus its preparation time | [optional] [default to undefined]
+**preparationTime** | **object** | The store\&#39;s preparation time when the order was placed, in minutes | [optional] [default to undefined]
 **createdAt** | **string** |  | [default to undefined]
 **updatedAt** | **string** |  | [default to undefined]
 
@@ -46,6 +48,8 @@ const instance: OrderResponse = {
     rating,
     notes,
     customerNotes,
+    estimatedReadyAt,
+    preparationTime,
     createdAt,
     updatedAt,
 };

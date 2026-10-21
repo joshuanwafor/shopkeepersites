@@ -9,6 +9,8 @@ Name | Type | Description | Notes
 **platform** | **string** |  | [default to undefined]
 **state** | **string** |  | [optional] [default to undefined]
 **shopper** | **string** |  | [default to undefined]
+**city** | **string** |  | [optional] [default to undefined]
+**locationKnown** | **boolean** |  | [optional] [default to undefined]
 **at** | **string** |  | [optional] [default to undefined]
 **includeDrafts** | **boolean** |  | [optional] [default to undefined]
 
@@ -22,6 +24,8 @@ const instance: UsedishaSystemAdminControllerResolveHomeTemplateV1Request = {
     platform,
     state,
     shopper,
+    city,
+    locationKnown,
     at,
     includeDrafts,
 };

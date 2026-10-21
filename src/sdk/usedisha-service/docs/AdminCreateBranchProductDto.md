@@ -21,6 +21,9 @@ Name | Type | Description | Notes
 **reorderLevel** | **number** | Minimum stock level before a reorder is triggered. | [optional] [default to undefined]
 **supplierId** | **string** | Default supplier this product is bought from. References a Customer with type \&quot;supplier\&quot;, so a supplier keeps one contact record across purchases, stock receipts and reporting. | [optional] [default to undefined]
 **supplierName** | **string** | Supplier name captured at the time of tagging. Denormalised so historic records still read correctly if the supplier is later renamed or removed. | [optional] [default to undefined]
+**dimensions** | [**ProductDimensions**](ProductDimensions.md) | Product dimensions (L x W x H) in cm, and weight in kg. Delivery uses them to tell bulky orders. | [optional] [default to undefined]
+**packageClass** | **string** | How the product has to be delivered: consumable (food, perishables: fast), fragile, bulky or document. Unset uses the store\&#39;s default, else parcel. Size and weight can still make an order bulky. | [optional] [default to undefined]
+**perishability** | **string** | How long it keeps, which decides how far it can be delivered: none (anywhere), short (a few days: bread, produce), chilled or frozen (cold-packed), same_day (cooked food: never leaves its area). Unset uses the store\&#39;s default; a consumable with none set keeps a few days. | [optional] [default to undefined]
 **expirationDate** | **string** | Expiration date of the product | [optional] [default to undefined]
 **trackExpiration** | **boolean** | Whether to track expiration date | [optional] [default to undefined]
 **type** | **string** | Type of the product. | [optional] [default to undefined]
@@ -50,6 +53,9 @@ const instance: AdminCreateBranchProductDto = {
     reorderLevel,
     supplierId,
     supplierName,
+    dimensions,
+    packageClass,
+    perishability,
     expirationDate,
     trackExpiration,
     type,

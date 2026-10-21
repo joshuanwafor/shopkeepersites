@@ -4,6 +4,10 @@ All URIs are relative to *http://localhost:3000*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
+|[**usedishaAdminServiceAreasControllerListV1**](#usedishaadminserviceareascontrollerlistv1) | **GET** /v1/usedisha/usedisha/admin/settings/service-areas | ShopCentral service areas|
+|[**usedishaAdminServiceAreasControllerRemoveV1**](#usedishaadminserviceareascontrollerremovev1) | **DELETE** /v1/usedisha/usedisha/admin/settings/service-areas/{state} | Remove a state\&#39;s service area|
+|[**usedishaAdminServiceAreasControllerUpsertV1**](#usedishaadminserviceareascontrollerupsertv1) | **PUT** /v1/usedisha/usedisha/admin/settings/service-areas/{state} | Create or replace a state\&#39;s service area|
+|[**usedishaAdminServiceAreasControllerWaitlistV1**](#usedishaadminserviceareascontrollerwaitlistv1) | **GET** /v1/usedisha/usedisha/admin/settings/service-areas/{state}/waitlist | A state\&#39;s waitlist|
 |[**usedishaSystemAdminControllerApproveClaimV1**](#usedishasystemadmincontrollerapproveclaimv1) | **PATCH** /v1/usedisha/usedisha/admin/claims/{claimId}/approve | Approve a claim and transfer the business to the claimer|
 |[**usedishaSystemAdminControllerAwardBadgesV1**](#usedishasystemadmincontrollerawardbadgesv1) | **POST** /v1/usedisha/usedisha/admin/stores/{id}/badges | Award trust badges to a storefront|
 |[**usedishaSystemAdminControllerCreateHomeTemplateV1**](#usedishasystemadmincontrollercreatehometemplatev1) | **POST** /v1/usedisha/usedisha/admin/settings/home-templates | Create a ShopCentral home template|
@@ -37,6 +41,215 @@ All URIs are relative to *http://localhost:3000*
 |[**usedishaSystemAdminControllerSetStatusV1**](#usedishasystemadmincontrollersetstatusv1) | **PATCH** /v1/usedisha/usedisha/admin/stores/{id}/status | Suspend / reactivate a storefront|
 |[**usedishaSystemAdminControllerStorefrontQueueCountsV1**](#usedishasystemadmincontrollerstorefrontqueuecountsv1) | **GET** /v1/usedisha/usedisha/admin/stores/queues | Storefront counts per review queue|
 |[**usedishaSystemAdminControllerUpdateCommissionConfigV1**](#usedishasystemadmincontrollerupdatecommissionconfigv1) | **PATCH** /v1/usedisha/usedisha/admin/settings/commission | Update platform commission rates|
+
+# **usedishaAdminServiceAreasControllerListV1**
+> usedishaAdminServiceAreasControllerListV1()
+
+Every area, live → pilot → coming_soon, then by state, each with `waitlistCount`; and `notServedWaitlist: [{ state, count }]` for states with no area, biggest first.
+
+### Example
+
+```typescript
+import {
+    UsedishaSystemAdminApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaSystemAdminApi(configuration);
+
+const { status, data } = await apiInstance.usedishaAdminServiceAreasControllerListV1();
+```
+
+### Parameters
+This endpoint does not have any parameters.
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { areas, notServedWaitlist } |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminServiceAreasControllerRemoveV1**
+> usedishaAdminServiceAreasControllerRemoveV1()
+
+The state becomes not served. Clears the home-layout cache.
+
+### Example
+
+```typescript
+import {
+    UsedishaSystemAdminApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaSystemAdminApi(configuration);
+
+let state: string; //A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) (default to undefined)
+
+const { status, data } = await apiInstance.usedishaAdminServiceAreasControllerRemoveV1(
+    state
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **state** | [**string**] | A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { state, deleted: true } |  -  |
+|**404** | The state has no area |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminServiceAreasControllerUpsertV1**
+> usedishaAdminServiceAreasControllerUpsertV1(usedishaAdminServiceAreasControllerUpsertV1Request)
+
+Fields left out are cleared. 400 with paths on validation errors. Clears the home-layout cache.
+
+### Example
+
+```typescript
+import {
+    UsedishaSystemAdminApi,
+    Configuration,
+    UsedishaAdminServiceAreasControllerUpsertV1Request
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaSystemAdminApi(configuration);
+
+let state: string; //A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) (default to undefined)
+let usedishaAdminServiceAreasControllerUpsertV1Request: UsedishaAdminServiceAreasControllerUpsertV1Request; //
+
+const { status, data } = await apiInstance.usedishaAdminServiceAreasControllerUpsertV1(
+    state,
+    usedishaAdminServiceAreasControllerUpsertV1Request
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **usedishaAdminServiceAreasControllerUpsertV1Request** | **UsedishaAdminServiceAreasControllerUpsertV1Request**|  | |
+| **state** | [**string**] | A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | The saved area, with waitlistCount |  -  |
+|**400** | Unknown state or invalid body |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaAdminServiceAreasControllerWaitlistV1**
+> usedishaAdminServiceAreasControllerWaitlistV1()
+
+Newest first; `limit` 1–100 (default 20). Any state, with an area or not. Paginated like other admin lists: { data, totalCount, page, limit, totalPages, … }.
+
+### Example
+
+```typescript
+import {
+    UsedishaSystemAdminApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaSystemAdminApi(configuration);
+
+let state: string; //A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) (default to undefined)
+let page: string; // (default to undefined)
+let limit: string; // (default to undefined)
+
+const { status, data } = await apiInstance.usedishaAdminServiceAreasControllerWaitlistV1(
+    state,
+    page,
+    limit
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **state** | [**string**] | A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive) | defaults to undefined|
+| **page** | [**string**] |  | defaults to undefined|
+| **limit** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** |  |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **usedishaSystemAdminControllerApproveClaimV1**
 > usedishaSystemAdminControllerApproveClaimV1()
@@ -1155,7 +1368,7 @@ const { status, data } = await apiInstance.usedishaSystemAdminControllerRequestK
 # **usedishaSystemAdminControllerResolveHomeTemplateV1**
 > usedishaSystemAdminControllerResolveHomeTemplateV1(usedishaSystemAdminControllerResolveHomeTemplateV1Request)
 
-Runs the public endpoint\'s matcher. `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
+Runs the public endpoint\'s matcher, area status included (from `state` and the service areas). `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
 
 ### Example
 

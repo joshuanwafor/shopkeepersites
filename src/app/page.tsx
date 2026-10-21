@@ -19,6 +19,7 @@ import { StoreLayout } from "@/components/store/StoreLayout";
 import { StorefrontInfo } from "@/components/store/StorefrontInfo";
 import { ProductCard } from "@/components/store/ProductCard";
 import { ProductModal } from "@/components/store/ProductModal";
+import { dealBannerText, storeActiveDeal } from "@/lib/deals";
 import {
   useStorefrontProfile,
   useStorefrontProducts,
@@ -65,6 +66,8 @@ function HomeContent() {
   const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
+  const deal = storeActiveDeal(profile);
+  const dealText = deal ? dealBannerText(deal) : undefined;
   // Records a session-aware store view once the storefront resolves (fire-and-forget).
   useTrackStoreView(profile?.id);
   const products = productsRes?.data?.products ?? EMPTY_PRODUCTS;
@@ -115,6 +118,16 @@ function HomeContent() {
           <header className="mb-6 sm:mb-8">
             <StorefrontInfo profile={profile} />
           </header>
+        )}
+        {dealText && (
+          <div role="note" className="mb-6 sm:mb-8 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 sm:px-5">
+            <Text fw={600} className="text-emerald-900">
+              {dealText.title}
+            </Text>
+            <Text size="sm" className="text-emerald-800/80 mt-0.5">
+              {dealText.detail}
+            </Text>
+          </div>
         )}
         {hasStoreError && (
           <Alert color="red" title="Error" className="rounded border border-red-200">

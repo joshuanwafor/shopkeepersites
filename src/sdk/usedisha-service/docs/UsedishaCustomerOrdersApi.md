@@ -4,10 +4,117 @@ All URIs are relative to *http://localhost:3000*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
+|[**usedishaCustomerOrderAgainControllerListV1**](#usedishacustomerorderagaincontrollerlistv1) | **GET** /v1/usedisha/usedisha/customer/order-again | My orders to order again|
+|[**usedishaCustomerOrderAgainControllerReorderV1**](#usedishacustomerorderagaincontrollerreorderv1) | **GET** /v1/usedisha/usedisha/customer/orders/{orderId}/reorder | One of my orders as a cart today|
 |[**usedishaCustomerOrdersControllerCancelMyOrderV1**](#usedishacustomerorderscontrollercancelmyorderv1) | **PUT** /v1/usedisha/usedisha/customer/orders/{orderId}/cancel | Cancel an order|
 |[**usedishaCustomerOrdersControllerGetMyOrderV1**](#usedishacustomerorderscontrollergetmyorderv1) | **GET** /v1/usedisha/usedisha/customer/orders/{orderId} | Get one of my orders|
 |[**usedishaCustomerOrdersControllerListMyOrdersV1**](#usedishacustomerorderscontrollerlistmyordersv1) | **GET** /v1/usedisha/usedisha/customer/orders | List my orders|
 |[**usedishaCustomerOrdersControllerRateMyOrderV1**](#usedishacustomerorderscontrollerratemyorderv1) | **POST** /v1/usedisha/usedisha/customer/orders/{orderId}/rate | Rate an order|
+
+# **usedishaCustomerOrderAgainControllerListV1**
+> usedishaCustomerOrderAgainControllerListV1()
+
+The caller’s delivered or completed ShopCentral orders, newest first, skipping stores no longer listed on ShopCentral. For the home’s order_again section.
+
+### Example
+
+```typescript
+import {
+    UsedishaCustomerOrdersApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaCustomerOrdersApi(configuration);
+
+let limit: number; //How many orders (1–10, default 5) (optional) (default to undefined)
+
+const { status, data } = await apiInstance.usedishaCustomerOrderAgainControllerListV1(
+    limit
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **limit** | [**number**] | How many orders (1–10, default 5) | (optional) defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { orders: [{ orderId, orderNumber?, placedAt, storeId, domain, storeName, storeLogo?, itemCount, summary, total (₦) }] } |  -  |
+|**401** | Missing or invalid JWT token |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **usedishaCustomerOrderAgainControllerReorderV1**
+> usedishaCustomerOrderAgainControllerReorderV1()
+
+Each item of the caller’s order at today’s price, with `available` and, when it can’t be bought, a `reason`: unavailable, out_of_stock, store_not_taking_orders or not_listed. The same checks as checkout. Nothing is written: the client adds the available items to its cart.
+
+### Example
+
+```typescript
+import {
+    UsedishaCustomerOrdersApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UsedishaCustomerOrdersApi(configuration);
+
+let orderId: string; //MongoDB order ID (default to undefined)
+
+const { status, data } = await apiInstance.usedishaCustomerOrderAgainControllerReorderV1(
+    orderId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **orderId** | [**string**] | MongoDB order ID | defaults to undefined|
+
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+[bearer](../README.md#bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: Not defined
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | { storeId, domain, storeName, branchId, items: [{ productId, variantId?, name, variantName?, imageUrl?, quantity, unitPrice (₦), available, reason? }] } |  -  |
+|**401** | Missing or invalid JWT token |  -  |
+|**404** | Order not found, not the caller’s, or its store no longer exists |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **usedishaCustomerOrdersControllerCancelMyOrderV1**
 > OrderResponse usedishaCustomerOrdersControllerCancelMyOrderV1(cancelOrderDto)
