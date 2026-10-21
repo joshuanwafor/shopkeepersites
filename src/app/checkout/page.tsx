@@ -25,7 +25,15 @@ import {
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from "@mantine/hooks";
 import { StoreLayout } from "@/components/store/StoreLayout";
-import { useCart } from "@/context/cart-context";
+import {
+  cartLineKey,
+  cartLineMax,
+  cartLineName,
+  cartLinePhoto,
+  cartLineUnitPrice,
+  useCart,
+} from "@/context/cart-context";
+import { formatPrice } from "@/hooks";
 import {
   useStorefrontProfile,
   useStorefrontDomain,
@@ -37,7 +45,9 @@ import {
   rememberPendingCheckout,
   type DeliveryMethod,
 } from "@/hooks/use-storefront";
-import { apiError } from "@/lib/api-error";
+import { apiError, DELIVERY_UNAVAILABLE } from "@/lib/api-error";
+import { discountLine } from "@/lib/deals";
+import { formatPreparationTime, preparationTimeOf } from "@/lib/preparation-time";
 
 const METHOD_META: Record<DeliveryMethod, { label: string; hint: string }> = {
   pickup: { label: "Pickup", hint: "Collect in store — no delivery fee" },
@@ -56,13 +66,6 @@ function formatRunTime(iso?: string) {
   return date.toLocaleString("en-NG", { weekday: "short", hour: "numeric", minute: "2-digit" });
 }
 const DEFAULT_METHODS: DeliveryMethod[] = ["pickup", "platformDelivery"];
-
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(amount);
-}
 
 function SummaryRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -129,11 +132,18 @@ function CheckoutContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supportedMethods.join(",")]);
 
+  // What checkout prices: each line's product, and its variant when one was chosen.
+  const checkoutLines = items.map((i) => ({
+    productId: i.product.id,
+    variantId: i.variant?.id,
+    quantity: i.quantity,
+  }));
+
   // Without coordinates, store delivery is priced by the city and state typed in.
   const [debouncedCity] = useDebouncedValue(form.values.city.trim(), 600);
   const [debouncedState] = useDebouncedValue(form.values.state.trim(), 600);
   const feesQuery = useEstimateFees({
-    items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+    items: checkoutLines,
     deliveryMethod,
     userLat: coords?.lat,
     userLng: coords?.lng,
@@ -141,14 +151,26 @@ function CheckoutContent() {
     userState: needsAddress ? debouncedState : undefined,
   });
   const fees = feesQuery.data?.data;
-  const feesError = feesQuery.isError
-    ? apiError(feesQuery.error, "We couldn't price delivery. Check the address and try again.").message
+  const feesFailure = feesQuery.isError
+    ? apiError(feesQuery.error, "We couldn't price delivery. Check the address and try again.")
     : null;
+  const feesError = feesFailure?.message ?? null;
+  // Too far for the method chosen, or food that won't keep for the trip: the
+  // API names the products, and pickup (when offered) still works.
+  const deliveryUnavailable = feesFailure?.code === DELIVERY_UNAVAILABLE;
+  const undeliverableNames = new Set(deliveryUnavailable ? feesFailure?.items ?? [] : []);
+  const undeliverableLines = items.filter((i) => undeliverableNames.has(i.product.name));
+  const canSwitchToPickup = deliveryUnavailable && deliveryMethod !== "pickup" && supportedMethods.includes("pickup");
+  const discount = discountLine(fees);
+  const preparation = preparationTimeOf(profile);
   // Market delivery joins a scheduled run; the quote names it and checkout pins it.
   const marketRun = deliveryMethod === "marketDelivery" ? fees?.marketDelivery : undefined;
+  // Only once the current quote is in: the total shown is the total charged.
   const canPay =
     !notTakingOrders &&
     supportedMethods.length > 0 &&
+    !!fees &&
+    !feesQuery.isFetching &&
     !feesQuery.isError &&
     (deliveryMethod !== "marketDelivery" || Boolean(marketRun?.windowLabel));
 
@@ -194,7 +216,7 @@ function CheckoutContent() {
 
     const payload = buildCheckoutPayload(
       domain,
-      items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+      checkoutLines,
       {
         email: values.email,
         fullName: values.fullName || undefined,
@@ -237,6 +259,10 @@ function CheckoutContent() {
         void feesQuery.refetch();
         setCheckoutError(`${message} We've updated the delivery run — check the new time and pay again.`);
         return;
+      }
+      if (code === DELIVERY_UNAVAILABLE) {
+        // Delivery changed since the quote: re-quote so the details step shows what to do.
+        void feesQuery.refetch();
       }
       setCheckoutError(message);
     }
@@ -301,26 +327,41 @@ function CheckoutContent() {
                   Your items ({totalItems})
                 </Text>
                 <Stack gap="sm">
-                  {items.map((item) => (
-                    <Group key={item.product.id} justify="space-between" wrap="nowrap" align="flex-start" className="py-2 border-b border-stone-100 last:border-0">
+                  {items.map((item) => {
+                    const key = cartLineKey(item);
+                    const name = cartLineName(item);
+                    const photo = cartLinePhoto(item);
+                    const unitPrice = cartLineUnitPrice(item);
+                    return (
+                    <Group key={key} justify="space-between" wrap="nowrap" align="flex-start" className="py-2 border-b border-stone-100 last:border-0">
                       <Group gap="sm" wrap="nowrap" className="min-w-0 flex-1">
                         <Box w={52} h={52} className="bg-stone-100 rounded-lg overflow-hidden shrink-0 flex items-center justify-center p-1">
-                          {item.product.primaryPhoto ? (
-                            <Image src={item.product.primaryPhoto} alt="" w="100%" h="100%" fit="contain" />
+                          {photo ? (
+                            <Image src={photo} alt="" w="100%" h="100%" fit="contain" />
                           ) : null}
                         </Box>
                         <div className="min-w-0">
                           <Text size="sm" fw={500} className="text-stone-800">
                             {item.product.name}
                           </Text>
+                          {item.variant?.title && (
+                            <Text size="xs" className="text-stone-500">
+                              {item.variant.title}
+                            </Text>
+                          )}
+                          {undeliverableNames.has(item.product.name) && (
+                            <Text size="xs" className="text-rose-700">
+                              Can&apos;t be delivered to this address
+                            </Text>
+                          )}
                           <Group gap={8} mt={4}>
                             <ActionIcon
                               variant="subtle"
                               color="gray"
                               radius="sm"
                               className="border border-stone-300 text-stone-700 hover:bg-stone-100"
-                              aria-label={`Decrease quantity of ${item.product.name}`}
-                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              aria-label={`Decrease quantity of ${name}`}
+                              onClick={() => updateQuantity(key, item.quantity - 1)}
                             >
                               -
                             </ActionIcon>
@@ -332,37 +373,45 @@ function CheckoutContent() {
                               color="gray"
                               radius="sm"
                               className="border border-stone-300 text-stone-700 hover:bg-stone-100"
-                              aria-label={`Increase quantity of ${item.product.name}`}
-                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              aria-label={`Increase quantity of ${name}`}
+                              disabled={item.quantity >= cartLineMax(item)}
+                              onClick={() => updateQuantity(key, item.quantity + 1)}
                             >
                               +
                             </ActionIcon>
                             <Text size="xs" className="text-stone-500 ml-1">
-                              × {formatPrice(item.product.amount)}
+                              × {formatPrice(unitPrice)}
                             </Text>
                           </Group>
                         </div>
                       </Group>
                       <Stack gap={4} align="flex-end" className="shrink-0">
                         <Text fw={600} className="text-stone-700">
-                          {formatPrice(item.product.amount * item.quantity)}
+                          {formatPrice(unitPrice * item.quantity)}
                         </Text>
                         <Button
                           variant="subtle"
                           size="compact-xs"
                           className="text-stone-500 hover:bg-stone-100"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => removeItem(key)}
                         >
                           Remove
                         </Button>
                       </Stack>
                     </Group>
-                  ))}
+                    );
+                  })}
                 </Stack>
                 <Group justify="space-between" mt="md" className="pt-4 border-t border-stone-200">
                   <Text size="sm" className="text-stone-500">Subtotal</Text>
                   <Text fw={700} className="text-stone-800">{formatPrice(totalAmount)}</Text>
                 </Group>
+                {discount && (
+                  <Group justify="space-between" mt={6}>
+                    <Text size="sm" className="text-emerald-700">{discount.label}</Text>
+                    <Text size="sm" fw={600} className="text-emerald-700">−{formatPrice(discount.amount)}</Text>
+                  </Group>
+                )}
               </Paper>
             </Stepper.Step>
 
@@ -444,6 +493,32 @@ function CheckoutContent() {
                   {feesError && (
                     <Alert color="red" className="mt-3 rounded border border-red-200">
                       {feesError}
+                      {(canSwitchToPickup || undeliverableLines.length > 0) && (
+                        <Group gap="xs" mt="sm">
+                          {canSwitchToPickup && (
+                            <Button
+                              type="button"
+                              size="compact-sm"
+                              variant="default"
+                              className="border-stone-300 text-stone-700"
+                              onClick={() => form.setFieldValue("deliveryMethod", "pickup")}
+                            >
+                              Choose pickup
+                            </Button>
+                          )}
+                          {undeliverableLines.length > 0 && (
+                            <Button
+                              type="button"
+                              size="compact-sm"
+                              variant="default"
+                              className="border-stone-300 text-stone-700"
+                              onClick={() => undeliverableLines.forEach((line) => removeItem(cartLineKey(line)))}
+                            >
+                              {undeliverableLines.length === 1 ? `Remove ${undeliverableLines[0].product.name}` : "Remove those items"}
+                            </Button>
+                          )}
+                        </Group>
+                      )}
                     </Alert>
                   )}
 
@@ -501,12 +576,12 @@ function CheckoutContent() {
                   <Text fw={600} className="text-stone-800 font-serif mb-3">Order summary</Text>
                   <Stack gap={6}>
                     {items.map((item) => (
-                      <Group key={item.product.id} justify="space-between" wrap="nowrap" gap="md">
+                      <Group key={cartLineKey(item)} justify="space-between" wrap="nowrap" gap="md">
                         <Text size="sm" className="text-stone-600 truncate">
-                          {item.product.name} <span className="text-stone-400">× {item.quantity}</span>
+                          {cartLineName(item)} <span className="text-stone-400">× {item.quantity}</span>
                         </Text>
                         <Text size="sm" className="text-stone-700 shrink-0">
-                          {formatPrice(item.product.amount * item.quantity)}
+                          {formatPrice(cartLineUnitPrice(item) * item.quantity)}
                         </Text>
                       </Group>
                     ))}
@@ -537,10 +612,18 @@ function CheckoutContent() {
                         <Text size="sm" className="text-stone-700">{formatPrice(fees.serviceFee)}</Text>
                       </Group>
                     )}
+                    {discount && (
+                      <Group justify="space-between">
+                        <Text size="sm" className="text-emerald-700">{discount.label}</Text>
+                        <Text size="sm" className="text-emerald-700">−{formatPrice(discount.amount)}</Text>
+                      </Group>
+                    )}
                     <Divider className="border-stone-200" />
                     <Group justify="space-between">
                       <Text fw={700} className="text-stone-800">Total</Text>
-                      <Text fw={700} className="text-stone-800 text-lg">{formatPrice(fees?.totalAmount ?? totalAmount)}</Text>
+                      <Text fw={700} className="text-stone-800 text-lg">
+                        {feesQuery.isFetching ? <Loader size="xs" color="gray" /> : formatPrice(fees?.totalAmount ?? totalAmount)}
+                      </Text>
                     </Group>
                   </Stack>
                 </Paper>
@@ -553,6 +636,12 @@ function CheckoutContent() {
                     {form.values.phone && <SummaryRow label="Phone" value={form.values.phone} />}
                     <SummaryRow label="Method" value={METHOD_META[deliveryMethod]?.label ?? deliveryMethod} />
                     {marketRun?.windowLabel && <SummaryRow label="Delivery run" value={marketRun.windowLabel} />}
+                    {preparation && (
+                      <SummaryRow
+                        label="Preparation"
+                        value={`${formatPreparationTime(preparation)} once the store accepts it`}
+                      />
+                    )}
                     {needsAddress && (
                       <SummaryRow
                         label="Ship to"
@@ -567,6 +656,14 @@ function CheckoutContent() {
                   </Stack>
                 </Paper>
 
+                {feesError && !checkoutError && (
+                  <Alert color="red" className="rounded border border-red-200">
+                    {feesError}{" "}
+                    <button type="button" className="underline" onClick={() => setActive(1)}>
+                      Change delivery
+                    </button>
+                  </Alert>
+                )}
                 {checkoutError && (
                   <Alert color="red" className="rounded border border-red-200">
                     {checkoutError}

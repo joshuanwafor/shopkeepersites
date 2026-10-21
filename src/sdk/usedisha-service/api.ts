@@ -361,6 +361,18 @@ export interface AdminCreateBranchProductDto {
      */
     'supplierName'?: string;
     /**
+     * Product dimensions (L x W x H) in cm, and weight in kg. Delivery uses them to tell bulky orders.
+     */
+    'dimensions'?: ProductDimensions;
+    /**
+     * How the product has to be delivered: consumable (food, perishables: fast), fragile, bulky or document. Unset uses the store\'s default, else parcel. Size and weight can still make an order bulky.
+     */
+    'packageClass'?: AdminCreateBranchProductDtoPackageClassEnum | null;
+    /**
+     * How long it keeps, which decides how far it can be delivered: none (anywhere), short (a few days: bread, produce), chilled or frozen (cold-packed), same_day (cooked food: never leaves its area). Unset uses the store\'s default; a consumable with none set keeps a few days.
+     */
+    'perishability'?: AdminCreateBranchProductDtoPerishabilityEnum | null;
+    /**
      * Expiration date of the product
      */
     'expirationDate'?: string;
@@ -386,6 +398,24 @@ export interface AdminCreateBranchProductDto {
     'brand'?: string;
 }
 
+export const AdminCreateBranchProductDtoPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type AdminCreateBranchProductDtoPackageClassEnum = typeof AdminCreateBranchProductDtoPackageClassEnum[keyof typeof AdminCreateBranchProductDtoPackageClassEnum];
+export const AdminCreateBranchProductDtoPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type AdminCreateBranchProductDtoPerishabilityEnum = typeof AdminCreateBranchProductDtoPerishabilityEnum[keyof typeof AdminCreateBranchProductDtoPerishabilityEnum];
 export const AdminCreateBranchProductDtoTypeEnum = {
     Physical: 'physical',
     UniqueInstance: 'unique_instance',
@@ -709,6 +739,18 @@ export interface AdminStorefrontListItem {
      */
     'estimatedDeliveryTime'?: string;
     /**
+     * How long an order takes to be ready once accepted; null clears it. Shoppers see it on ShopCentral, and orders get an estimated ready time from it.
+     */
+    'preparationTime'?: UsedishaPreparationTime | null;
+    /**
+     * How the store\'s products are delivered unless a product says otherwise: consumable (food, perishables: fast), fragile, bulky, document or parcel. Unset: worked out from the store\'s categories (a restaurant is consumable), else parcel.
+     */
+    'defaultPackageClass'?: AdminStorefrontListItemDefaultPackageClassEnum | null;
+    /**
+     * How long the store\'s products keep unless a product says otherwise (see Perishability). Unset: worked out from the store\'s categories (a restaurant\'s food is same-day), else none.
+     */
+    'defaultPerishability'?: AdminStorefrontListItemDefaultPerishabilityEnum | null;
+    /**
      * Price tier
      */
     'priceRange'?: AdminStorefrontListItemPriceRangeEnum;
@@ -791,6 +833,24 @@ export const AdminStorefrontListItemSellerTypesEnum = {
 } as const;
 
 export type AdminStorefrontListItemSellerTypesEnum = typeof AdminStorefrontListItemSellerTypesEnum[keyof typeof AdminStorefrontListItemSellerTypesEnum];
+export const AdminStorefrontListItemDefaultPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type AdminStorefrontListItemDefaultPackageClassEnum = typeof AdminStorefrontListItemDefaultPackageClassEnum[keyof typeof AdminStorefrontListItemDefaultPackageClassEnum];
+export const AdminStorefrontListItemDefaultPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type AdminStorefrontListItemDefaultPerishabilityEnum = typeof AdminStorefrontListItemDefaultPerishabilityEnum[keyof typeof AdminStorefrontListItemDefaultPerishabilityEnum];
 export const AdminStorefrontListItemPriceRangeEnum = {
     Budget: 'budget',
     Mid: 'mid',
@@ -1030,6 +1090,18 @@ export interface AdminUpdateUsedishaProfileDto {
      */
     'estimatedDeliveryTime'?: string;
     /**
+     * How long an order takes to be ready once accepted; null clears it. Shoppers see it on ShopCentral, and orders get an estimated ready time from it.
+     */
+    'preparationTime'?: UsedishaPreparationTime | null;
+    /**
+     * How the store\'s products are delivered unless a product says otherwise: consumable (food, perishables: fast), fragile, bulky, document or parcel. Unset: worked out from the store\'s categories (a restaurant is consumable), else parcel.
+     */
+    'defaultPackageClass'?: AdminUpdateUsedishaProfileDtoDefaultPackageClassEnum | null;
+    /**
+     * How long the store\'s products keep unless a product says otherwise (see Perishability). Unset: worked out from the store\'s categories (a restaurant\'s food is same-day), else none.
+     */
+    'defaultPerishability'?: AdminUpdateUsedishaProfileDtoDefaultPerishabilityEnum | null;
+    /**
      * Price tier
      */
     'priceRange'?: AdminUpdateUsedishaProfileDtoPriceRangeEnum;
@@ -1069,6 +1141,24 @@ export const AdminUpdateUsedishaProfileDtoSellerTypesEnum = {
 } as const;
 
 export type AdminUpdateUsedishaProfileDtoSellerTypesEnum = typeof AdminUpdateUsedishaProfileDtoSellerTypesEnum[keyof typeof AdminUpdateUsedishaProfileDtoSellerTypesEnum];
+export const AdminUpdateUsedishaProfileDtoDefaultPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type AdminUpdateUsedishaProfileDtoDefaultPackageClassEnum = typeof AdminUpdateUsedishaProfileDtoDefaultPackageClassEnum[keyof typeof AdminUpdateUsedishaProfileDtoDefaultPackageClassEnum];
+export const AdminUpdateUsedishaProfileDtoDefaultPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type AdminUpdateUsedishaProfileDtoDefaultPerishabilityEnum = typeof AdminUpdateUsedishaProfileDtoDefaultPerishabilityEnum[keyof typeof AdminUpdateUsedishaProfileDtoDefaultPerishabilityEnum];
 export const AdminUpdateUsedishaProfileDtoPriceRangeEnum = {
     Budget: 'budget',
     Mid: 'mid',
@@ -1535,6 +1625,48 @@ export const CreateMarketDtoTypeEnum = {
 
 export type CreateMarketDtoTypeEnum = typeof CreateMarketDtoTypeEnum[keyof typeof CreateMarketDtoTypeEnum];
 
+export interface CreatePayLinkDto {
+    /**
+     * Stores to order from (1–10), each once
+     */
+    'stores': Array<UsedishaBulkCheckoutStoreDto>;
+    /**
+     * Customer details (email required). Optional for authenticated shoppers — identity is then sourced from the JWT. Required for guest checkout.
+     */
+    'customer'?: UsedishaCheckoutCustomerDto;
+    /**
+     * Shipping address, shared by every order
+     */
+    'shippingAddress'?: Address;
+    /**
+     * Customer longitude — required for platformDelivery fee quoting
+     */
+    'userLng'?: number;
+    /**
+     * Customer latitude — required for platformDelivery fee quoting
+     */
+    'userLat'?: number;
+    /**
+     * Where the orders originated. Defaults to `storefront`, as in the single-store checkout.
+     */
+    'orderSource'?: CreatePayLinkDtoOrderSourceEnum;
+    /**
+     * Free-form marketplace tag — set when orderSource is marketplace.
+     */
+    'marketplaceId'?: string;
+    /**
+     * A note shown to the payer
+     */
+    'message'?: string;
+}
+
+export const CreatePayLinkDtoOrderSourceEnum = {
+    Storefront: 'storefront',
+    Marketplace: 'marketplace'
+} as const;
+
+export type CreatePayLinkDtoOrderSourceEnum = typeof CreatePayLinkDtoOrderSourceEnum[keyof typeof CreatePayLinkDtoOrderSourceEnum];
+
 export interface CreateStorefrontReviewDto {
     /**
      * Customer full name
@@ -1709,6 +1841,14 @@ export interface CustomerCartLineDto {
      */
     'productId': string;
     /**
+     * Variant id, for a product sold by variant. Each variant is its own line.
+     */
+    'variantId'?: string;
+    /**
+     * The variant, for display
+     */
+    'variantTitle'?: string;
+    /**
      * Product name, for display
      */
     'title': string;
@@ -1755,6 +1895,14 @@ export interface CustomerCartLineResponseDto {
      */
     'productId': string;
     /**
+     * Variant id, for a product sold by variant. Each variant is its own line.
+     */
+    'variantId'?: string;
+    /**
+     * The variant, for display
+     */
+    'variantTitle'?: string;
+    /**
      * Product name, for display
      */
     'title': string;
@@ -1771,7 +1919,7 @@ export interface CustomerCartLineResponseDto {
      */
     'imageUrl'?: string;
     /**
-     * Line id: `storeId:productId`
+     * Line id: `storeId:productId`, or `storeId:productId:variantId` for a variant
      */
     'id': string;
 }
@@ -1835,6 +1983,68 @@ export interface DeliverOrderDto {
      */
     'photoUrl'?: string;
 }
+export interface DeliveryRateCardSectionsDto {
+    'local'?: LocalDeliveryRatesDto;
+    'longDistance'?: LongDistanceDeliveryRatesDto;
+    'perishability'?: PerishabilityRulesDto;
+    'handlingSurcharges'?: HandlingSurchargesDto;
+    'estimatedKgByClass'?: EstimatedWeightsDto;
+}
+export interface DeliveryRouteDto {
+    /**
+     * Door to door, up to the weight threshold
+     */
+    'fee': number;
+    /**
+     * Naira per kg over the threshold
+     */
+    'perKg': number;
+    /**
+     * Hours on the road, store to door
+     */
+    'transitHours': number;
+    'from': string;
+    /**
+     * The same state for a long same-state trip
+     */
+    'to': string;
+    /**
+     * Also prices the way back
+     */
+    'twoWay': boolean;
+    /**
+     * Paused routes are kept but not offered
+     */
+    'active'?: boolean;
+}
+export interface DeliveryRoutePriceDto {
+    /**
+     * Door to door, up to the weight threshold
+     */
+    'fee': number;
+    /**
+     * Naira per kg over the threshold
+     */
+    'perKg': number;
+    /**
+     * Hours on the road, store to door
+     */
+    'transitHours': number;
+}
+export interface DeliveryStateRateDto {
+    /**
+     * The store’s state
+     */
+    'state': string;
+    /**
+     * Naira
+     */
+    'baseFee'?: number;
+    /**
+     * Naira
+     */
+    'perKmRate'?: number;
+}
 export interface DomainAvailabilityResponse {
     'available': boolean;
     'message': string;
@@ -1844,6 +2054,13 @@ export interface EscalateRequestItemDto {
      * What was wrong with the options, for the admin
      */
     'note'?: string;
+}
+export interface EstimatedWeightsDto {
+    'document': number;
+    'parcel': number;
+    'consumable': number;
+    'fragile': number;
+    'bulky': number;
 }
 export interface FavouriteRefDto {
     'entityType': string;
@@ -1935,6 +2152,28 @@ export interface GuestSubmitCustomerRequestDto {
      */
     'deliveryAddress': CustomerRequestAddressDto;
 }
+export interface HandlingSurchargesDto {
+    /**
+     * Naira
+     */
+    'parcel': number;
+    /**
+     * Naira
+     */
+    'document': number;
+    /**
+     * Naira
+     */
+    'consumable': number;
+    /**
+     * Naira
+     */
+    'fragile': number;
+    /**
+     * Naira
+     */
+    'bulky': number;
+}
 export interface ImportCatalogItemDto {
     /**
      * Global-catalog template id
@@ -1990,6 +2229,72 @@ export const InitiateRefundDtoRefundMethodEnum = {
 
 export type InitiateRefundDtoRefundMethodEnum = typeof InitiateRefundDtoRefundMethodEnum[keyof typeof InitiateRefundDtoRefundMethodEnum];
 
+export interface LocalDeliveryRatesDto {
+    /**
+     * Naira
+     */
+    'baseFee': number;
+    /**
+     * Naira per km (straight line)
+     */
+    'perKmRate': number;
+    /**
+     * No delivery costs less
+     */
+    'minFee': number;
+    /**
+     * Farther than this (km) is long distance, or not delivered
+     */
+    'maxKm': number;
+    /**
+     * Free from this subtotal; 0 is off
+     */
+    'freeDeliveryThreshold': number;
+    /**
+     * kg; 0 turns the weight surcharge off
+     */
+    'weightThresholdKg': number;
+    /**
+     * Naira per kg over the threshold
+     */
+    'weightSurchargePerKg': number;
+    'stateRates': Array<DeliveryStateRateDto>;
+    /**
+     * Bulky orders go by car or van, at a multiple of the motorcycle price
+     */
+    'vehicleMultipliers': VehicleMultipliersDto;
+}
+export interface LongDistanceDeliveryRatesDto {
+    /**
+     * Off: no delivery beyond the local area
+     */
+    'enabled': boolean;
+    'routes': Array<DeliveryRouteDto>;
+    /**
+     * For pairs with no route; null means no delivery there
+     */
+    'defaultRoute'?: DeliveryRoutePriceDto | null;
+    /**
+     * kg a route’s fee covers
+     */
+    'weightThresholdKg': number;
+    /**
+     * cm³ per kg for volumetric weight
+     */
+    'volumetricDivisor': number;
+    /**
+     * Packing and waiting for a departure, in hours
+     */
+    'handoverHours': number;
+    /**
+     * Per order with chilled or frozen items
+     */
+    'coldPackFee': number;
+    /**
+     * Percent of the subtotal, for orders with perishables
+     */
+    'perishableCoverPercent': number;
+}
 export interface MarkRequestItemUnavailableDto {
     /**
      * Shown to the customer
@@ -2629,6 +2934,14 @@ export interface OrderResponse {
     'rating'?: OrderRatingSummaryResponse | null;
     'notes'?: string;
     'customerNotes'?: string;
+    /**
+     * When the order should be ready: when the store accepted it plus its preparation time
+     */
+    'estimatedReadyAt'?: string;
+    /**
+     * The store\'s preparation time when the order was placed, in minutes
+     */
+    'preparationTime'?: object;
     'createdAt': string;
     'updatedAt': string;
 }
@@ -2826,6 +3139,171 @@ export interface PaginatedStorefrontsResponse {
     'currentPage': number;
     'totalCount': number;
 }
+export interface PayForLinkDto {
+    'email': string;
+    /**
+     * Shown to the shopper: \"Ada paid for your order\"
+     */
+    'name'?: string;
+    /**
+     * The total the payer was shown (naira). If the price has changed since, nothing is charged and the new total comes back.
+     */
+    'expectedTotal': number;
+}
+export interface PayLinkItemDto {
+    'name': string;
+    'variantTitle'?: string;
+    'quantity': number;
+    /**
+     * Naira
+     */
+    'unitPrice': number;
+    'imageUrl'?: string;
+}
+export interface PayLinkOrderDto {
+    'orderId': string;
+    'orderNumber'?: string;
+    'domain'?: string;
+}
+export interface PayLinkPaidOrderDto {
+    'orderNumber'?: string;
+    'storeName'?: string;
+}
+export interface PayLinkPaymentDto {
+    /**
+     * Paystack page to send the payer to
+     */
+    'paymentUrl': string;
+    'expiresAt': string;
+}
+export interface PayLinkPublicDto {
+    'state': PayLinkPublicDtoStateEnum;
+    /**
+     * The shopper\'s first name
+     */
+    'requesterName': string;
+    'message'?: string;
+    /**
+     * Area the order goes to, e.g. \"Jos, Plateau\"
+     */
+    'deliveryArea'?: string;
+    'expiresAt': string;
+    'stores': Array<PayLinkStoreDto>;
+    /**
+     * What paying costs now (naira); absent unless payable
+     */
+    'totalAmount'?: number;
+    /**
+     * Whether it can be paid right now
+     */
+    'payable': boolean;
+    /**
+     * While someone else is paying: when the link frees up
+     */
+    'payingUntil'?: string;
+    'paidAt'?: string;
+    'orders'?: Array<PayLinkPaidOrderDto>;
+}
+
+export const PayLinkPublicDtoStateEnum = {
+    Open: 'open',
+    Paying: 'paying',
+    Paid: 'paid',
+    Cancelled: 'cancelled',
+    Expired: 'expired'
+} as const;
+
+export type PayLinkPublicDtoStateEnum = typeof PayLinkPublicDtoStateEnum[keyof typeof PayLinkPublicDtoStateEnum];
+
+export interface PayLinkStoreDto {
+    'domain': string;
+    'name': string;
+    'logoUrl'?: string;
+    'deliveryMethod': PayLinkStoreDtoDeliveryMethodEnum;
+    'items': Array<PayLinkItemDto>;
+    /**
+     * Naira; absent when the store can\'t be priced now
+     */
+    'subTotal'?: number;
+    'deliveryFee'?: number;
+    'serviceFee'?: number;
+    'discountAmount'?: number;
+    /**
+     * The store\'s deal, when one applies
+     */
+    'discount'?: UsedishaAppliedDealDto;
+    'totalAmount'?: number;
+    'marketDelivery'?: UsedishaMarketDeliveryDto;
+    /**
+     * Why this store can\'t be paid for now (closed, sold out…)
+     */
+    'problem'?: string;
+}
+
+export const PayLinkStoreDtoDeliveryMethodEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery',
+    MarketDelivery: 'marketDelivery'
+} as const;
+
+export type PayLinkStoreDtoDeliveryMethodEnum = typeof PayLinkStoreDtoDeliveryMethodEnum[keyof typeof PayLinkStoreDtoDeliveryMethodEnum];
+
+export interface PayLinkSummaryDto {
+    'id': string;
+    'url': string;
+    'state': PayLinkSummaryDtoStateEnum;
+    'storeNames': Array<string>;
+    'domains': Array<string>;
+    /**
+     * Total when the link was made (naira)
+     */
+    'quotedTotal': number;
+    'message'?: string;
+    'expiresAt': string;
+    'createdAt'?: string;
+    'paidAt'?: string;
+    /**
+     * Who paid, as they gave it
+     */
+    'paidBy'?: string;
+    'orders': Array<PayLinkOrderDto>;
+    /**
+     * The cart, so the app can tell which lines a paid link covered
+     */
+    'lines': Array<string>;
+}
+
+export const PayLinkSummaryDtoStateEnum = {
+    Open: 'open',
+    Paying: 'paying',
+    Paid: 'paid',
+    Cancelled: 'cancelled',
+    Expired: 'expired'
+} as const;
+
+export type PayLinkSummaryDtoStateEnum = typeof PayLinkSummaryDtoStateEnum[keyof typeof PayLinkSummaryDtoStateEnum];
+
+export interface PerishabilityHoursDto {
+    /**
+     * Hours it keeps on the road
+     */
+    'maxTransitHours': number;
+}
+export interface PerishabilityRulesDto {
+    /**
+     * Bread, fresh produce
+     */
+    'short': PerishabilityHoursDto;
+    /**
+     * Meat, fish, dairy (cold-packed)
+     */
+    'chilled': PerishabilityHoursDto;
+    /**
+     * Frozen goods (cold-packed)
+     */
+    'frozen': PerishabilityHoursDto;
+}
 export interface Product {
     /**
      * Unique identifier for the product, automatically generated by MongoDB.
@@ -2961,9 +3439,17 @@ export interface Product {
      */
     'options'?: Array<ProductOption>;
     /**
-     * Product dimensions (L x W x H) in cm
+     * Product dimensions (L x W x H) in cm, and weight in kg. Delivery uses them to tell bulky orders.
      */
     'dimensions'?: ProductDimensions;
+    /**
+     * How the product has to be delivered: consumable (food, perishables: fast), fragile, bulky or document. Unset uses the store\'s default, else parcel. Size and weight can still make an order bulky.
+     */
+    'packageClass'?: ProductPackageClassEnum | null;
+    /**
+     * How long it keeps, which decides how far it can be delivered: none (anywhere), short (a few days: bread, produce), chilled or frozen (cold-packed), same_day (cooked food: never leaves its area). Unset uses the store\'s default; a consumable with none set keeps a few days.
+     */
+    'perishability'?: ProductPerishabilityEnum | null;
     /**
      * Search keywords for the product
      */
@@ -3014,6 +3500,24 @@ export const ProductAvailabilityEnum = {
 } as const;
 
 export type ProductAvailabilityEnum = typeof ProductAvailabilityEnum[keyof typeof ProductAvailabilityEnum];
+export const ProductPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type ProductPackageClassEnum = typeof ProductPackageClassEnum[keyof typeof ProductPackageClassEnum];
+export const ProductPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type ProductPerishabilityEnum = typeof ProductPerishabilityEnum[keyof typeof ProductPerishabilityEnum];
 export const ProductTypeEnum = {
     Physical: 'physical',
     UniqueInstance: 'unique_instance',
@@ -3024,6 +3528,11 @@ export const ProductTypeEnum = {
 
 export type ProductTypeEnum = typeof ProductTypeEnum[keyof typeof ProductTypeEnum];
 
+export interface ProductDealResponse {
+    'id': string;
+    'short': string;
+    'label': string;
+}
 export interface ProductDimensions {
     /**
      * Length of the product
@@ -3038,7 +3547,7 @@ export interface ProductDimensions {
      */
     'height': number;
     /**
-     * Weight of the product
+     * Weight of the product, in kg
      */
     'weight': number;
 }
@@ -3415,6 +3924,10 @@ export interface RequestCheckoutStoreDto {
      */
     'storefrontId': string;
     'deliveryMethod': RequestCheckoutStoreDtoDeliveryMethodEnum;
+    /**
+     * Ignored: the delivery class is worked out from the items (product setting, store default, size and weight). Accepted so older apps still validate.
+     * @deprecated
+     */
     'packageClass'?: RequestCheckoutStoreDtoPackageClassEnum;
     /**
      * Market-delivery run label (required on checkout for marketDelivery)
@@ -3436,6 +3949,7 @@ export const RequestCheckoutStoreDtoDeliveryMethodEnum = {
 export type RequestCheckoutStoreDtoDeliveryMethodEnum = typeof RequestCheckoutStoreDtoDeliveryMethodEnum[keyof typeof RequestCheckoutStoreDtoDeliveryMethodEnum];
 export const RequestCheckoutStoreDtoPackageClassEnum = {
     Parcel: 'parcel',
+    Consumable: 'consumable',
     Fragile: 'fragile',
     Bulky: 'bulky',
     Document: 'document'
@@ -3479,6 +3993,13 @@ export interface ResolveOrderDisputeDto {
      */
     'resolution': string;
 }
+export interface RestoreDeliveryRateCardDto {
+    /**
+     * The current version, as for a save
+     */
+    'expectedVersion'?: number;
+    'note'?: string;
+}
 export interface ReviewMembershipDto {
     /**
      * Decision — approved or rejected
@@ -3520,6 +4041,26 @@ export interface RolloverResultDto {
      * True when the emptied source run was cancelled
      */
     'sourceCancelled': boolean;
+}
+export interface SaveDeliveryScenarioDto {
+    /**
+     * The store\'s state
+     */
+    'fromState': string;
+    /**
+     * The buyer\'s state
+     */
+    'toState': string;
+    /**
+     * Straight-line km; leave out if unknown
+     */
+    'distanceKm'?: number;
+    /**
+     * Items\' value (naira)
+     */
+    'subtotal': number;
+    'items': Array<SimulationItemDto>;
+    'name': string;
 }
 export interface SendNudgeDto {
     /**
@@ -3571,6 +4112,64 @@ export interface SetupPayoutRecipientDto {
      */
     'bankName'?: string;
 }
+export interface ShopDealResponse {
+    'id': string;
+    /**
+     * The name the store gave the sale
+     */
+    'name': string;
+    /**
+     * What the deal is, for the card line and the store page banner
+     */
+    'label': string;
+    /**
+     * For the badge
+     */
+    'short': string;
+    'type': ShopDealResponseTypeEnum;
+    /**
+     * Percent, or naira for fixed
+     */
+    'value': number;
+    /**
+     * A percentage deal\'s cap (₦)
+     */
+    'maxDiscountAmount'?: number;
+    /**
+     * Nothing comes off until the order\'s items reach this (₦)
+     */
+    'minOrderAmount'?: number;
+    /**
+     * The whole order, or chosen products or categories
+     */
+    'scope': ShopDealResponseScopeEnum;
+    /**
+     * When it ends (ISO), or null for no end date
+     */
+    'endsAt': string | null;
+    /**
+     * Set when the deal runs at one branch of a store that sells from several: that branch. The label then ends \"· Lekki branch only\".
+     */
+    'branchId'?: string;
+    /**
+     * The name of that branch, when it has one
+     */
+    'branchName'?: string;
+}
+
+export const ShopDealResponseTypeEnum = {
+    Percentage: 'percentage',
+    Fixed: 'fixed'
+} as const;
+
+export type ShopDealResponseTypeEnum = typeof ShopDealResponseTypeEnum[keyof typeof ShopDealResponseTypeEnum];
+export const ShopDealResponseScopeEnum = {
+    Order: 'order',
+    Products: 'products'
+} as const;
+
+export type ShopDealResponseScopeEnum = typeof ShopDealResponseScopeEnum[keyof typeof ShopDealResponseScopeEnum];
+
 export interface ShopmenuStoreResponse {
     /**
      * Unique identifier for the storefront
@@ -3616,6 +4215,10 @@ export interface ShopmenuStoreResponse {
      * Delivery methods a customer may actually choose right now. A subset of `supportedDeliveryMethods`: a store either delivers its own orders OR uses platform delivery (incl. bulk market delivery), never both. Prefer this over `supportedDeliveryMethods`, which records the merchant\'s configuration only.
      */
     'availableDeliveryMethods'?: Array<ShopmenuStoreResponseAvailableDeliveryMethodsEnum>;
+    /**
+     * Delivery methods a ShopCentral shopper may choose. ShopCentral orders only go by methods the platform runs: pickup and platformDelivery always, and marketDelivery where the store is in a market — never the store\'s own `businessDelivery`, which is for its own link. ShopCentral clients prefer this over `availableDeliveryMethods` and send `orderSource: marketplace`.
+     */
+    'marketplaceDeliveryMethods'?: Array<ShopmenuStoreResponseMarketplaceDeliveryMethodsEnum>;
     /**
      * Trust/quality badges awarded to this storefront by a platform admin
      */
@@ -3676,6 +4279,10 @@ export interface ShopmenuStoreResponse {
      * Estimated delivery time
      */
     'estimatedDeliveryTime'?: string;
+    /**
+     * How long an order takes to be ready, in minutes
+     */
+    'preparationTime'?: UsedishaPreparationTime;
     'priceRange'?: ShopmenuStoreResponsePriceRangeEnum;
     'tags'?: Array<string>;
     /**
@@ -3703,9 +4310,17 @@ export interface ShopmenuStoreResponse {
      */
     'storeUrl': string;
     /**
+     * The store\'s deal on ShopCentral, when it has one: the biggest saving of its automatic discounts that work online. Checkout applies it (or a bigger one for the cart) by itself.
+     */
+    'activeDeal'?: ShopDealResponse;
+    /**
      * Shopmenu categories this store belongs to
      */
     'categories'?: Array<ShopmenuStoreResponseCategoriesEnum>;
+    /**
+     * Kilometres (1 decimal) to its nearest branch with a location; only when the list was asked with lng + lat
+     */
+    'distanceKm'?: number;
 }
 
 export const ShopmenuStoreResponseSupportedPaymentMethodsEnum = {
@@ -3733,6 +4348,14 @@ export const ShopmenuStoreResponseAvailableDeliveryMethodsEnum = {
 } as const;
 
 export type ShopmenuStoreResponseAvailableDeliveryMethodsEnum = typeof ShopmenuStoreResponseAvailableDeliveryMethodsEnum[keyof typeof ShopmenuStoreResponseAvailableDeliveryMethodsEnum];
+export const ShopmenuStoreResponseMarketplaceDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery',
+    MarketDelivery: 'marketDelivery'
+} as const;
+
+export type ShopmenuStoreResponseMarketplaceDeliveryMethodsEnum = typeof ShopmenuStoreResponseMarketplaceDeliveryMethodsEnum[keyof typeof ShopmenuStoreResponseMarketplaceDeliveryMethodsEnum];
 export const ShopmenuStoreResponseBadgesEnum = {
     Verified: 'verified',
     Official: 'official',
@@ -3779,6 +4402,69 @@ export interface ShoppingListItemDto {
     'name': string;
     'quantity': number;
     'details'?: string;
+}
+export interface SimulateDeliveryDto {
+    'scenarios': Array<SimulationScenarioDto>;
+    /**
+     * Unsaved changes: each scenario is priced with the saved card and with these
+     */
+    'draft'?: DeliveryRateCardSectionsDto;
+}
+export interface SimulationItemDto {
+    'name'?: string;
+    'quantity': number;
+    'packageClass': SimulationItemDtoPackageClassEnum;
+    'perishability': SimulationItemDtoPerishabilityEnum;
+    /**
+     * kg; leave out to estimate it from the class
+     */
+    'weightKg'?: number;
+    /**
+     * cm
+     */
+    'lengthCm'?: number;
+    'widthCm'?: number;
+    'heightCm'?: number;
+}
+
+export const SimulationItemDtoPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type SimulationItemDtoPackageClassEnum = typeof SimulationItemDtoPackageClassEnum[keyof typeof SimulationItemDtoPackageClassEnum];
+export const SimulationItemDtoPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type SimulationItemDtoPerishabilityEnum = typeof SimulationItemDtoPerishabilityEnum[keyof typeof SimulationItemDtoPerishabilityEnum];
+
+export interface SimulationScenarioDto {
+    'name'?: string;
+    /**
+     * The store\'s state
+     */
+    'fromState': string;
+    /**
+     * The buyer\'s state
+     */
+    'toState': string;
+    /**
+     * Straight-line km; leave out if unknown
+     */
+    'distanceKm'?: number;
+    /**
+     * Items\' value (naira)
+     */
+    'subtotal': number;
+    'items': Array<SimulationItemDto>;
 }
 export interface StoreVisitHistoryItemDto {
     'id': string;
@@ -3997,6 +4683,10 @@ export interface StorefrontCategoryResponse {
      */
     'updatedAt': string;
 }
+export interface StorefrontPriceRange {
+    'min': number;
+    'max': number;
+}
 export interface StorefrontProductCategory {
     'id': string;
     'name': string;
@@ -4055,6 +4745,30 @@ export interface StorefrontProductDetailResponse {
      */
     'unit'?: string;
     /**
+     * Bought one variant at a time: the shopper picks one, and checkout gets its `variantId`. Absent for products sold as themselves. The product-level price and stock above stay those of the base product.
+     */
+    'hasVariants'?: boolean;
+    /**
+     * The options to choose from (with hasVariants)
+     */
+    'options'?: Array<StorefrontProductOptionResponse>;
+    /**
+     * Every variant, in the merchant order (with hasVariants)
+     */
+    'variants'?: Array<StorefrontProductVariantResponse>;
+    /**
+     * Lowest and highest variant price, among those in stock when any are (with hasVariants)
+     */
+    'priceRange'?: StorefrontPriceRange;
+    /**
+     * Price under the store\'s deal (₦), shown with `amount` struck through. Only a percentage deal on chosen products or categories with no minimum spend prices a product on its own; others are applied at checkout.
+     */
+    'salePrice'?: number;
+    /**
+     * The store\'s deal on this product (with salePrice)
+     */
+    'deal'?: ProductDealResponse;
+    /**
      * Creation date
      */
     'createdAt': string;
@@ -4078,6 +4792,21 @@ export interface StorefrontProductDetailResponse {
      * Whether that branch takes online orders now; when false checkout refuses the order
      */
     'takingOnlineOrders': boolean;
+}
+export interface StorefrontProductOptionResponse {
+    'name': string;
+    /**
+     * How to show the values: select, multi, text, number, color (values are CSS colours) or size
+     */
+    'type'?: string;
+    /**
+     * Values in display order
+     */
+    'values': Array<string>;
+    /**
+     * For a colour option: each value\'s colour name, for text (the value itself is the swatch)
+     */
+    'valueLabels'?: { [key: string]: string; };
 }
 export interface StorefrontProductResponse {
     /**
@@ -4133,6 +4862,30 @@ export interface StorefrontProductResponse {
      */
     'unit'?: string;
     /**
+     * Bought one variant at a time: the shopper picks one, and checkout gets its `variantId`. Absent for products sold as themselves. The product-level price and stock above stay those of the base product.
+     */
+    'hasVariants'?: boolean;
+    /**
+     * The options to choose from (with hasVariants)
+     */
+    'options'?: Array<StorefrontProductOptionResponse>;
+    /**
+     * Every variant, in the merchant order (with hasVariants)
+     */
+    'variants'?: Array<StorefrontProductVariantResponse>;
+    /**
+     * Lowest and highest variant price, among those in stock when any are (with hasVariants)
+     */
+    'priceRange'?: StorefrontPriceRange;
+    /**
+     * Price under the store\'s deal (₦), shown with `amount` struck through. Only a percentage deal on chosen products or categories with no minimum spend prices a product on its own; others are applied at checkout.
+     */
+    'salePrice'?: number;
+    /**
+     * The store\'s deal on this product (with salePrice)
+     */
+    'deal'?: ProductDealResponse;
+    /**
      * Creation date
      */
     'createdAt': string;
@@ -4140,6 +4893,43 @@ export interface StorefrontProductResponse {
      * Last update date
      */
     'updatedAt': string;
+}
+export interface StorefrontProductVariantResponse {
+    'id': string;
+    /**
+     * Its option values in the product option order
+     */
+    'title': string;
+    'options': Array<StorefrontVariantOptionValue>;
+    /**
+     * Selling price (₦)
+     */
+    'amount': number;
+    /**
+     * Original price, shown struck through (₦)
+     */
+    'compareAtPrice'?: number;
+    /**
+     * Its own photo; else use the product photo
+     */
+    'primaryPhoto'?: string;
+    /**
+     * Price under the store\'s deal (₦), shown with `amount` struck through. Present only when the deal prices it.
+     */
+    'salePrice'?: number;
+    'SKU': string;
+    'availability': string;
+    'stockQuantity': number;
+    /**
+     * Whether stockQuantity limits how many can be bought
+     */
+    'stockTracked': boolean;
+    /**
+     * Whether at least one can be bought now
+     */
+    'inStock': boolean;
+    'minOrderQuantity'?: number;
+    'maxOrderQuantity'?: number;
 }
 export interface StorefrontProfileResponse {
     /**
@@ -4186,6 +4976,10 @@ export interface StorefrontProfileResponse {
      * Delivery methods a customer may actually choose right now. A subset of `supportedDeliveryMethods`: a store either delivers its own orders OR uses platform delivery (incl. bulk market delivery), never both. Prefer this over `supportedDeliveryMethods`, which records the merchant\'s configuration only.
      */
     'availableDeliveryMethods'?: Array<StorefrontProfileResponseAvailableDeliveryMethodsEnum>;
+    /**
+     * Delivery methods a ShopCentral shopper may choose. ShopCentral orders only go by methods the platform runs: pickup and platformDelivery always, and marketDelivery where the store is in a market — never the store\'s own `businessDelivery`, which is for its own link. ShopCentral clients prefer this over `availableDeliveryMethods` and send `orderSource: marketplace`.
+     */
+    'marketplaceDeliveryMethods'?: Array<StorefrontProfileResponseMarketplaceDeliveryMethodsEnum>;
     /**
      * Trust/quality badges awarded to this storefront by a platform admin
      */
@@ -4246,6 +5040,10 @@ export interface StorefrontProfileResponse {
      * Estimated delivery time
      */
     'estimatedDeliveryTime'?: string;
+    /**
+     * How long an order takes to be ready, in minutes
+     */
+    'preparationTime'?: UsedishaPreparationTime;
     'priceRange'?: StorefrontProfileResponsePriceRangeEnum;
     'tags'?: Array<string>;
     /**
@@ -4272,6 +5070,10 @@ export interface StorefrontProfileResponse {
      * Full store URL
      */
     'storeUrl': string;
+    /**
+     * The store\'s deal on ShopCentral, when it has one: the biggest saving of its automatic discounts that work online. Checkout applies it (or a bigger one for the cart) by itself.
+     */
+    'activeDeal'?: ShopDealResponse;
 }
 
 export const StorefrontProfileResponseSupportedPaymentMethodsEnum = {
@@ -4299,6 +5101,14 @@ export const StorefrontProfileResponseAvailableDeliveryMethodsEnum = {
 } as const;
 
 export type StorefrontProfileResponseAvailableDeliveryMethodsEnum = typeof StorefrontProfileResponseAvailableDeliveryMethodsEnum[keyof typeof StorefrontProfileResponseAvailableDeliveryMethodsEnum];
+export const StorefrontProfileResponseMarketplaceDeliveryMethodsEnum = {
+    Pickup: 'pickup',
+    PlatformDelivery: 'platformDelivery',
+    BusinessDelivery: 'businessDelivery',
+    MarketDelivery: 'marketDelivery'
+} as const;
+
+export type StorefrontProfileResponseMarketplaceDeliveryMethodsEnum = typeof StorefrontProfileResponseMarketplaceDeliveryMethodsEnum[keyof typeof StorefrontProfileResponseMarketplaceDeliveryMethodsEnum];
 export const StorefrontProfileResponseBadgesEnum = {
     Verified: 'verified',
     Official: 'official',
@@ -4361,6 +5171,10 @@ export interface StorefrontReviewsResponse {
      */
     'domain': string;
     'reviews': Array<StorefrontReviewItemDto>;
+}
+export interface StorefrontVariantOptionValue {
+    'name': string;
+    'value': string;
 }
 export interface SubmitCustomerRequestDto {
     /**
@@ -4603,6 +5417,18 @@ export interface UpdateCustomerCartLineDto {
      */
     'quantity': number;
 }
+export interface UpdateDeliveryRateCardDto {
+    'local'?: LocalDeliveryRatesDto;
+    'longDistance'?: LongDistanceDeliveryRatesDto;
+    'perishability'?: PerishabilityRulesDto;
+    'handlingSurcharges'?: HandlingSurchargesDto;
+    'estimatedKgByClass'?: EstimatedWeightsDto;
+    /**
+     * The version these changes were made to. If someone has saved since, nothing is saved (409).
+     */
+    'expectedVersion'?: number;
+    'note'?: string;
+}
 export interface UpdateMarketDeliveryConfigDto {
     /**
      * Whether this market offers bulk market delivery
@@ -4812,9 +5638,17 @@ export interface UpdateProductDto {
      */
     'options'?: Array<ProductOption>;
     /**
-     * Product dimensions (L x W x H) in cm
+     * Product dimensions (L x W x H) in cm, and weight in kg. Delivery uses them to tell bulky orders.
      */
     'dimensions'?: ProductDimensions;
+    /**
+     * How the product has to be delivered: consumable (food, perishables: fast), fragile, bulky or document. Unset uses the store\'s default, else parcel. Size and weight can still make an order bulky.
+     */
+    'packageClass'?: UpdateProductDtoPackageClassEnum | null;
+    /**
+     * How long it keeps, which decides how far it can be delivered: none (anywhere), short (a few days: bread, produce), chilled or frozen (cold-packed), same_day (cooked food: never leaves its area). Unset uses the store\'s default; a consumable with none set keeps a few days.
+     */
+    'perishability'?: UpdateProductDtoPerishabilityEnum | null;
     /**
      * Search keywords for the product
      */
@@ -4865,6 +5699,24 @@ export const UpdateProductDtoAvailabilityEnum = {
 } as const;
 
 export type UpdateProductDtoAvailabilityEnum = typeof UpdateProductDtoAvailabilityEnum[keyof typeof UpdateProductDtoAvailabilityEnum];
+export const UpdateProductDtoPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type UpdateProductDtoPackageClassEnum = typeof UpdateProductDtoPackageClassEnum[keyof typeof UpdateProductDtoPackageClassEnum];
+export const UpdateProductDtoPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type UpdateProductDtoPerishabilityEnum = typeof UpdateProductDtoPerishabilityEnum[keyof typeof UpdateProductDtoPerishabilityEnum];
 export const UpdateProductDtoTypeEnum = {
     Physical: 'physical',
     UniqueInstance: 'unique_instance',
@@ -5053,6 +5905,18 @@ export interface UpdateUsedishaDto {
      */
     'estimatedDeliveryTime'?: string;
     /**
+     * How long an order takes to be ready once accepted; null clears it. Shoppers see it on ShopCentral, and orders get an estimated ready time from it.
+     */
+    'preparationTime'?: UsedishaPreparationTime | null;
+    /**
+     * How the store\'s products are delivered unless a product says otherwise: consumable (food, perishables: fast), fragile, bulky, document or parcel. Unset: worked out from the store\'s categories (a restaurant is consumable), else parcel.
+     */
+    'defaultPackageClass'?: UpdateUsedishaDtoDefaultPackageClassEnum | null;
+    /**
+     * How long the store\'s products keep unless a product says otherwise (see Perishability). Unset: worked out from the store\'s categories (a restaurant\'s food is same-day), else none.
+     */
+    'defaultPerishability'?: UpdateUsedishaDtoDefaultPerishabilityEnum | null;
+    /**
      * Price tier
      */
     'priceRange'?: UpdateUsedishaDtoPriceRangeEnum;
@@ -5088,6 +5952,24 @@ export const UpdateUsedishaDtoSellerTypesEnum = {
 } as const;
 
 export type UpdateUsedishaDtoSellerTypesEnum = typeof UpdateUsedishaDtoSellerTypesEnum[keyof typeof UpdateUsedishaDtoSellerTypesEnum];
+export const UpdateUsedishaDtoDefaultPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type UpdateUsedishaDtoDefaultPackageClassEnum = typeof UpdateUsedishaDtoDefaultPackageClassEnum[keyof typeof UpdateUsedishaDtoDefaultPackageClassEnum];
+export const UpdateUsedishaDtoDefaultPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type UpdateUsedishaDtoDefaultPerishabilityEnum = typeof UpdateUsedishaDtoDefaultPerishabilityEnum[keyof typeof UpdateUsedishaDtoDefaultPerishabilityEnum];
 export const UpdateUsedishaDtoPriceRangeEnum = {
     Budget: 'budget',
     Mid: 'mid',
@@ -5234,6 +6116,18 @@ export interface Usedisha {
      */
     'estimatedDeliveryTime'?: string;
     /**
+     * How long an order takes to be ready once accepted; null clears it. Shoppers see it on ShopCentral, and orders get an estimated ready time from it.
+     */
+    'preparationTime'?: UsedishaPreparationTime | null;
+    /**
+     * How the store\'s products are delivered unless a product says otherwise: consumable (food, perishables: fast), fragile, bulky, document or parcel. Unset: worked out from the store\'s categories (a restaurant is consumable), else parcel.
+     */
+    'defaultPackageClass'?: UsedishaDefaultPackageClassEnum | null;
+    /**
+     * How long the store\'s products keep unless a product says otherwise (see Perishability). Unset: worked out from the store\'s categories (a restaurant\'s food is same-day), else none.
+     */
+    'defaultPerishability'?: UsedishaDefaultPerishabilityEnum | null;
+    /**
      * Price tier
      */
     'priceRange'?: UsedishaPriceRangeEnum;
@@ -5312,6 +6206,24 @@ export const UsedishaSellerTypesEnum = {
 } as const;
 
 export type UsedishaSellerTypesEnum = typeof UsedishaSellerTypesEnum[keyof typeof UsedishaSellerTypesEnum];
+export const UsedishaDefaultPackageClassEnum = {
+    Parcel: 'parcel',
+    Consumable: 'consumable',
+    Fragile: 'fragile',
+    Bulky: 'bulky',
+    Document: 'document'
+} as const;
+
+export type UsedishaDefaultPackageClassEnum = typeof UsedishaDefaultPackageClassEnum[keyof typeof UsedishaDefaultPackageClassEnum];
+export const UsedishaDefaultPerishabilityEnum = {
+    None: 'none',
+    Short: 'short',
+    Chilled: 'chilled',
+    Frozen: 'frozen',
+    SameDay: 'same_day'
+} as const;
+
+export type UsedishaDefaultPerishabilityEnum = typeof UsedishaDefaultPerishabilityEnum[keyof typeof UsedishaDefaultPerishabilityEnum];
 export const UsedishaPriceRangeEnum = {
     Budget: 'budget',
     Mid: 'mid',
@@ -5319,6 +6231,21 @@ export const UsedishaPriceRangeEnum = {
 } as const;
 
 export type UsedishaPriceRangeEnum = typeof UsedishaPriceRangeEnum[keyof typeof UsedishaPriceRangeEnum];
+
+export interface UsedishaAdminServiceAreasControllerUpsertV1Request {
+    'status': UsedishaAdminServiceAreasControllerUpsertV1RequestStatusEnum;
+    'cities'?: Array<string>;
+    'launchLabel'?: string;
+    'note'?: string;
+}
+
+export const UsedishaAdminServiceAreasControllerUpsertV1RequestStatusEnum = {
+    Live: 'live',
+    Pilot: 'pilot',
+    ComingSoon: 'coming_soon'
+} as const;
+
+export type UsedishaAdminServiceAreasControllerUpsertV1RequestStatusEnum = typeof UsedishaAdminServiceAreasControllerUpsertV1RequestStatusEnum[keyof typeof UsedishaAdminServiceAreasControllerUpsertV1RequestStatusEnum];
 
 export interface UsedishaAppLayout {
     /**
@@ -5330,6 +6257,47 @@ export interface UsedishaAppLayout {
      */
     'updatedAt': string;
 }
+export interface UsedishaAppliedDealDto {
+    /**
+     * The discount applied
+     */
+    'id': string;
+    /**
+     * The name the store gave the sale
+     */
+    'name': string;
+    /**
+     * What it is, for the summary line \"Discount (label)\"
+     */
+    'label': string;
+    'type': UsedishaAppliedDealDtoTypeEnum;
+    /**
+     * Percent, or naira for fixed
+     */
+    'value': number;
+    /**
+     * The whole order, or chosen products or categories
+     */
+    'scope': UsedishaAppliedDealDtoScopeEnum;
+    /**
+     * What it took off this order (₦)
+     */
+    'amount': number;
+}
+
+export const UsedishaAppliedDealDtoTypeEnum = {
+    Percentage: 'percentage',
+    Fixed: 'fixed'
+} as const;
+
+export type UsedishaAppliedDealDtoTypeEnum = typeof UsedishaAppliedDealDtoTypeEnum[keyof typeof UsedishaAppliedDealDtoTypeEnum];
+export const UsedishaAppliedDealDtoScopeEnum = {
+    Order: 'order',
+    Products: 'products'
+} as const;
+
+export type UsedishaAppliedDealDtoScopeEnum = typeof UsedishaAppliedDealDtoScopeEnum[keyof typeof UsedishaAppliedDealDtoScopeEnum];
+
 export interface UsedishaBranch {
     /**
      * Branch ID reference
@@ -5478,7 +6446,8 @@ export interface UsedishaBulkCheckoutStoreDto {
      */
     'deliveryMethod': UsedishaBulkCheckoutStoreDtoDeliveryMethodEnum;
     /**
-     * Customer-selected package/handling class. Adjusts the delivery fee. Defaults to `parcel`.
+     * Ignored: the delivery class is worked out from the items (product setting, store default, size and weight). Accepted so older apps still validate.
+     * @deprecated
      */
     'packageClass'?: UsedishaBulkCheckoutStoreDtoPackageClassEnum;
     /**
@@ -5505,6 +6474,7 @@ export const UsedishaBulkCheckoutStoreDtoDeliveryMethodEnum = {
 export type UsedishaBulkCheckoutStoreDtoDeliveryMethodEnum = typeof UsedishaBulkCheckoutStoreDtoDeliveryMethodEnum[keyof typeof UsedishaBulkCheckoutStoreDtoDeliveryMethodEnum];
 export const UsedishaBulkCheckoutStoreDtoPackageClassEnum = {
     Parcel: 'parcel',
+    Consumable: 'consumable',
     Fragile: 'fragile',
     Bulky: 'bulky',
     Document: 'document'
@@ -5550,6 +6520,10 @@ export interface UsedishaBulkCheckoutSummaryDto {
      * Discount amount
      */
     'discountAmount'?: number;
+    /**
+     * The store\'s deal, when one applies: biggest saving of its automatic online discounts
+     */
+    'discount'?: UsedishaAppliedDealDto;
     /**
      * Delivery fee (0 for PICKUP)
      */
@@ -5600,7 +6574,19 @@ export interface UsedishaBulkEstimateFeesDto {
      * Customer\'s delivery state — used for zone-based businessDelivery fees when coordinates are unavailable
      */
     'userState'?: string;
+    /**
+     * Where the orders will be placed. `marketplace` (ShopCentral) is held to the methods the platform runs: pickup, platformDelivery and, where the store is in a market, marketDelivery — never the store\'s own businessDelivery. Send the same value as on checkout. Defaults to `storefront`.
+     */
+    'orderSource'?: UsedishaBulkEstimateFeesDtoOrderSourceEnum;
 }
+
+export const UsedishaBulkEstimateFeesDtoOrderSourceEnum = {
+    Storefront: 'storefront',
+    Marketplace: 'marketplace'
+} as const;
+
+export type UsedishaBulkEstimateFeesDtoOrderSourceEnum = typeof UsedishaBulkEstimateFeesDtoOrderSourceEnum[keyof typeof UsedishaBulkEstimateFeesDtoOrderSourceEnum];
+
 export interface UsedishaBulkFeeEstimateResponseDto {
     'stores': Array<UsedishaBulkStoreFeeEstimateDto>;
     /**
@@ -5785,6 +6771,10 @@ export interface UsedishaCheckoutItemDto {
      */
     'productId': string;
     /**
+     * The variant chosen, for a product with variants: it is priced, stocked and named as that variant. Without one the product is sold as itself, as before variants (older apps).
+     */
+    'variantId'?: string;
+    /**
      * Quantity to purchase
      */
     'quantity': number;
@@ -5848,6 +6838,10 @@ export interface UsedishaCheckoutSummaryDto {
      * Discount amount
      */
     'discountAmount'?: number;
+    /**
+     * The store\'s deal, when one applies: biggest saving of its automatic online discounts
+     */
+    'discount'?: UsedishaAppliedDealDto;
     /**
      * Delivery fee (0 for PICKUP)
      */
@@ -6026,7 +7020,8 @@ export interface UsedishaEstimateFeesDto {
      */
     'deliveryMethod': UsedishaEstimateFeesDtoDeliveryMethodEnum;
     /**
-     * Customer-selected package/handling class. Adjusts the delivery fee. Defaults to `parcel`.
+     * Ignored: the delivery class is worked out from the items (product setting, store default, size and weight). Accepted so older apps still validate.
+     * @deprecated
      */
     'packageClass'?: UsedishaEstimateFeesDtoPackageClassEnum;
     /**
@@ -6049,6 +7044,10 @@ export interface UsedishaEstimateFeesDto {
      * Customer\'s delivery state — used for zone-based businessDelivery fees when coordinates are unavailable
      */
     'userState'?: string;
+    /**
+     * Where the order will be placed. `marketplace` (ShopCentral) is held to the methods the platform runs: pickup, platformDelivery and, where the store is in a market, marketDelivery — never the store\'s own businessDelivery. Send the same value as on checkout. Defaults to `storefront`.
+     */
+    'orderSource'?: UsedishaEstimateFeesDtoOrderSourceEnum;
 }
 
 export const UsedishaEstimateFeesDtoDeliveryMethodEnum = {
@@ -6061,16 +7060,26 @@ export const UsedishaEstimateFeesDtoDeliveryMethodEnum = {
 export type UsedishaEstimateFeesDtoDeliveryMethodEnum = typeof UsedishaEstimateFeesDtoDeliveryMethodEnum[keyof typeof UsedishaEstimateFeesDtoDeliveryMethodEnum];
 export const UsedishaEstimateFeesDtoPackageClassEnum = {
     Parcel: 'parcel',
+    Consumable: 'consumable',
     Fragile: 'fragile',
     Bulky: 'bulky',
     Document: 'document'
 } as const;
 
 export type UsedishaEstimateFeesDtoPackageClassEnum = typeof UsedishaEstimateFeesDtoPackageClassEnum[keyof typeof UsedishaEstimateFeesDtoPackageClassEnum];
+export const UsedishaEstimateFeesDtoOrderSourceEnum = {
+    Storefront: 'storefront',
+    Marketplace: 'marketplace'
+} as const;
+
+export type UsedishaEstimateFeesDtoOrderSourceEnum = typeof UsedishaEstimateFeesDtoOrderSourceEnum[keyof typeof UsedishaEstimateFeesDtoOrderSourceEnum];
 
 export interface UsedishaFeeBreakdownDto {
     'deliveryFeeNote': string;
     'serviceFeeNote': string;
+    /**
+     * \'No discount applied\' when no deal applies
+     */
     'discountNote': string;
 }
 export interface UsedishaGuestOrderSummaryDto {
@@ -6132,7 +7141,8 @@ export interface UsedishaInitiateCheckoutDto {
      */
     'deliveryMethod': UsedishaInitiateCheckoutDtoDeliveryMethodEnum;
     /**
-     * Customer-selected package/handling class. Adjusts the delivery fee. Defaults to `parcel`.
+     * Ignored: the delivery class is worked out from the items (product setting, store default, size and weight). Accepted so older apps still validate.
+     * @deprecated
      */
     'packageClass'?: UsedishaInitiateCheckoutDtoPackageClassEnum;
     /**
@@ -6171,6 +7181,7 @@ export const UsedishaInitiateCheckoutDtoDeliveryMethodEnum = {
 export type UsedishaInitiateCheckoutDtoDeliveryMethodEnum = typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum[keyof typeof UsedishaInitiateCheckoutDtoDeliveryMethodEnum];
 export const UsedishaInitiateCheckoutDtoPackageClassEnum = {
     Parcel: 'parcel',
+    Consumable: 'consumable',
     Fragile: 'fragile',
     Bulky: 'bulky',
     Document: 'document'
@@ -6376,9 +7387,13 @@ export interface UsedishaOrderFeeEstimateResponseDto {
      */
     'serviceFee': number;
     /**
-     * Discount amount in NGN
+     * Discount amount in NGN: the store\'s deal, funded by the store. Delivery and service fees are priced on the full subTotal.
      */
     'discountAmount': number;
+    /**
+     * The store\'s deal on this cart, when one applies: the biggest saving of its automatic discounts that work online. Never stacked.
+     */
+    'discount'?: UsedishaAppliedDealDto;
     /**
      * Grand total the customer will pay
      */
@@ -6392,9 +7407,13 @@ export interface UsedishaOrderFeeEstimateResponseDto {
      */
     'isFreeDelivery': boolean;
     /**
-     * Package/handling class the delivery fee was priced for
+     * The order\'s main handling class, worked out from its items; the delivery fee was priced for deliveryRequirements.handling
      */
     'packageClass': UsedishaOrderFeeEstimateResponseDtoPackageClassEnum;
+    /**
+     * What the delivery needs: every handling class (most demanding first), the smallest vehicle (motorcycle, car or van), whether it is urgent (consumables), the known weight (kg) and longest side (cm), and the rules version.
+     */
+    'deliveryRequirements': object;
     /**
      * The market-delivery run this quote is for. Present only for `marketDelivery`.
      */
@@ -6419,6 +7438,7 @@ export interface UsedishaOrderFeeEstimateResponseDto {
 
 export const UsedishaOrderFeeEstimateResponseDtoPackageClassEnum = {
     Parcel: 'parcel',
+    Consumable: 'consumable',
     Fragile: 'fragile',
     Bulky: 'bulky',
     Document: 'document'
@@ -6544,6 +7564,22 @@ export interface UsedishaPlatformOverviewResponseDto {
      */
     'byCategory': object;
 }
+export interface UsedishaPreparationTime {
+    /**
+     * Quickest, in minutes
+     */
+    'minMinutes': number;
+    /**
+     * Longest, in minutes
+     */
+    'maxMinutes': number;
+}
+export interface UsedishaShopmenuServiceAreasControllerJoinV1Request {
+    'state': string;
+    'city'?: string;
+    'phone'?: string;
+    'email'?: string;
+}
 export interface UsedishaStoreOverviewResponseDto {
     'overview': UsedishaStoreOverviewTotalsDto;
     'thisMonth': UsedishaStoreOverviewThisMonthDto;
@@ -6590,13 +7626,16 @@ export interface UsedishaSystemAdminControllerResolveHomeTemplateV1Request {
     'platform': UsedishaSystemAdminControllerResolveHomeTemplateV1RequestPlatformEnum;
     'state'?: string;
     'shopper': UsedishaSystemAdminControllerResolveHomeTemplateV1RequestShopperEnum;
+    'city'?: string;
+    'locationKnown'?: boolean;
     'at'?: string;
     'includeDrafts'?: boolean;
 }
 
 export const UsedishaSystemAdminControllerResolveHomeTemplateV1RequestPlatformEnum = {
     Ios: 'ios',
-    Android: 'android'
+    Android: 'android',
+    Web: 'web'
 } as const;
 
 export type UsedishaSystemAdminControllerResolveHomeTemplateV1RequestPlatformEnum = typeof UsedishaSystemAdminControllerResolveHomeTemplateV1RequestPlatformEnum[keyof typeof UsedishaSystemAdminControllerResolveHomeTemplateV1RequestPlatformEnum];
@@ -6675,6 +7714,16 @@ export interface UsedishaValidateCartDto {
      * Cart items
      */
     'items': Array<UsedishaCheckoutItemDto>;
+}
+export interface VehicleMultipliersDto {
+    /**
+     * A car costs this many times the motorcycle price
+     */
+    'car': number;
+    /**
+     * A van costs this many times the motorcycle price
+     */
+    'van': number;
 }
 export interface VisitPatternBucketDto {
     'label': string;
@@ -8241,6 +9290,757 @@ export class BusinessAdminUsedishaApi extends BaseAPI {
      */
     public usedishaAdminControllerUpdateUsedishaV1(businessId: string, updateUsedishaDto: UpdateUsedishaDto, options?: RawAxiosRequestConfig) {
         return BusinessAdminUsedishaApiFp(this.configuration).usedishaAdminControllerUpdateUsedishaV1(businessId, updateUsedishaDto, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * UsedishaAdminDeliveryRatesApi - axios parameter creator
+ */
+export const UsedishaAdminDeliveryRatesApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Keep a test order for the team
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerCreateScenarioV1: async (saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'saveDeliveryScenarioDto' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerCreateScenarioV1', 'saveDeliveryScenarioDto', saveDeliveryScenarioDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/scenarios`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(saveDeliveryScenarioDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Delete a saved test order
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerDeleteScenarioV1: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerDeleteScenarioV1', 'id', id)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/scenarios/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Saved values over the defaults, its version, who saved it last and why, and `checks`: things that look off.
+         * @summary The delivery rate card
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerGetV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Saved as a new version. 409 RATE_CARD_CHANGED as for a save.
+         * @summary Put an earlier version back
+         * @param {number} version 
+         * @param {RestoreDeliveryRateCardDto} restoreDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerRestoreV1: async (version: number, restoreDeliveryRateCardDto: RestoreDeliveryRateCardDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'version' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerRestoreV1', 'version', version)
+            // verify required parameter 'restoreDeliveryRateCardDto' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerRestoreV1', 'restoreDeliveryRateCardDto', restoreDeliveryRateCardDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/versions/{version}/restore`
+                .replace(`{${"version"}}`, encodeURIComponent(String(version)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(restoreDeliveryRateCardDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Test orders: the built-in ones, then the team\'s
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerScenariosV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/scenarios`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Each scenario priced as checkout would, line by line, with the saved card and, given `draft`, with unsaved changes too. Says why when it would be refused.
+         * @summary Price test orders
+         * @param {SimulateDeliveryDto} simulateDeliveryDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerSimulateV1: async (simulateDeliveryDto: SimulateDeliveryDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'simulateDeliveryDto' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerSimulateV1', 'simulateDeliveryDto', simulateDeliveryDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/simulate`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(simulateDeliveryDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Change a saved test order
+         * @param {string} id 
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerUpdateScenarioV1: async (id: string, saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerUpdateScenarioV1', 'id', id)
+            // verify required parameter 'saveDeliveryScenarioDto' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerUpdateScenarioV1', 'saveDeliveryScenarioDto', saveDeliveryScenarioDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/scenarios/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(saveDeliveryScenarioDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Only the sections sent are replaced. Applies to the next quote. Send `expectedVersion` (the version you edited): if someone has saved since, nothing is saved and the answer is 409 RATE_CARD_CHANGED.
+         * @summary Save a new version of the rate card
+         * @param {UpdateDeliveryRateCardDto} updateDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerUpdateV1: async (updateDeliveryRateCardDto: UpdateDeliveryRateCardDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'updateDeliveryRateCardDto' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerUpdateV1', 'updateDeliveryRateCardDto', updateDeliveryRateCardDto)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateDeliveryRateCardDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary One saved version, with its whole card
+         * @param {number} version 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerVersionV1: async (version: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'version' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerVersionV1', 'version', version)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/versions/{version}`
+                .replace(`{${"version"}}`, encodeURIComponent(String(version)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Saved versions, newest first
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerVersionsV1: async (limit: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'limit' is not null or undefined
+            assertParamExists('usedishaAdminDeliveryRatesControllerVersionsV1', 'limit', limit)
+            const localVarPath = `/v1/usedisha/usedisha/admin/delivery-rates/versions`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaAdminDeliveryRatesApi - functional programming interface
+ */
+export const UsedishaAdminDeliveryRatesApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaAdminDeliveryRatesApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Keep a test order for the team
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerCreateScenarioV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Delete a saved test order
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerDeleteScenarioV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Saved values over the defaults, its version, who saved it last and why, and `checks`: things that look off.
+         * @summary The delivery rate card
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerGetV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerGetV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerGetV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Saved as a new version. 409 RATE_CARD_CHANGED as for a save.
+         * @summary Put an earlier version back
+         * @param {number} version 
+         * @param {RestoreDeliveryRateCardDto} restoreDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerRestoreV1(version: number, restoreDeliveryRateCardDto: RestoreDeliveryRateCardDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerRestoreV1(version, restoreDeliveryRateCardDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerRestoreV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Test orders: the built-in ones, then the team\'s
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerScenariosV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerScenariosV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerScenariosV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Each scenario priced as checkout would, line by line, with the saved card and, given `draft`, with unsaved changes too. Says why when it would be refused.
+         * @summary Price test orders
+         * @param {SimulateDeliveryDto} simulateDeliveryDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto: SimulateDeliveryDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerSimulateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Change a saved test order
+         * @param {string} id 
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id: string, saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id, saveDeliveryScenarioDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerUpdateScenarioV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Only the sections sent are replaced. Applies to the next quote. Send `expectedVersion` (the version you edited): if someone has saved since, nothing is saved and the answer is 409 RATE_CARD_CHANGED.
+         * @summary Save a new version of the rate card
+         * @param {UpdateDeliveryRateCardDto} updateDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto: UpdateDeliveryRateCardDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerUpdateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary One saved version, with its whole card
+         * @param {number} version 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerVersionV1(version: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerVersionV1(version, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerVersionV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Saved versions, newest first
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminDeliveryRatesControllerVersionsV1(limit: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminDeliveryRatesControllerVersionsV1(limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaAdminDeliveryRatesApi.usedishaAdminDeliveryRatesControllerVersionsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaAdminDeliveryRatesApi - factory interface
+ */
+export const UsedishaAdminDeliveryRatesApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaAdminDeliveryRatesApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Keep a test order for the team
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Delete a saved test order
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Saved values over the defaults, its version, who saved it last and why, and `checks`: things that look off.
+         * @summary The delivery rate card
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerGetV1(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerGetV1(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Saved as a new version. 409 RATE_CARD_CHANGED as for a save.
+         * @summary Put an earlier version back
+         * @param {number} version 
+         * @param {RestoreDeliveryRateCardDto} restoreDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerRestoreV1(version: number, restoreDeliveryRateCardDto: RestoreDeliveryRateCardDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerRestoreV1(version, restoreDeliveryRateCardDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Test orders: the built-in ones, then the team\'s
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerScenariosV1(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerScenariosV1(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Each scenario priced as checkout would, line by line, with the saved card and, given `draft`, with unsaved changes too. Says why when it would be refused.
+         * @summary Price test orders
+         * @param {SimulateDeliveryDto} simulateDeliveryDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto: SimulateDeliveryDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Change a saved test order
+         * @param {string} id 
+         * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id: string, saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id, saveDeliveryScenarioDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Only the sections sent are replaced. Applies to the next quote. Send `expectedVersion` (the version you edited): if someone has saved since, nothing is saved and the answer is 409 RATE_CARD_CHANGED.
+         * @summary Save a new version of the rate card
+         * @param {UpdateDeliveryRateCardDto} updateDeliveryRateCardDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto: UpdateDeliveryRateCardDto, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary One saved version, with its whole card
+         * @param {number} version 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerVersionV1(version: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerVersionV1(version, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Saved versions, newest first
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminDeliveryRatesControllerVersionsV1(limit: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminDeliveryRatesControllerVersionsV1(limit, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaAdminDeliveryRatesApi - object-oriented interface
+ */
+export class UsedishaAdminDeliveryRatesApi extends BaseAPI {
+    /**
+     * 
+     * @summary Keep a test order for the team
+     * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerCreateScenarioV1(saveDeliveryScenarioDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Delete a saved test order
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id: string, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerDeleteScenarioV1(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Saved values over the defaults, its version, who saved it last and why, and `checks`: things that look off.
+     * @summary The delivery rate card
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerGetV1(options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerGetV1(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Saved as a new version. 409 RATE_CARD_CHANGED as for a save.
+     * @summary Put an earlier version back
+     * @param {number} version 
+     * @param {RestoreDeliveryRateCardDto} restoreDeliveryRateCardDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerRestoreV1(version: number, restoreDeliveryRateCardDto: RestoreDeliveryRateCardDto, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerRestoreV1(version, restoreDeliveryRateCardDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Test orders: the built-in ones, then the team\'s
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerScenariosV1(options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerScenariosV1(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Each scenario priced as checkout would, line by line, with the saved card and, given `draft`, with unsaved changes too. Says why when it would be refused.
+     * @summary Price test orders
+     * @param {SimulateDeliveryDto} simulateDeliveryDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto: SimulateDeliveryDto, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerSimulateV1(simulateDeliveryDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Change a saved test order
+     * @param {string} id 
+     * @param {SaveDeliveryScenarioDto} saveDeliveryScenarioDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id: string, saveDeliveryScenarioDto: SaveDeliveryScenarioDto, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerUpdateScenarioV1(id, saveDeliveryScenarioDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Only the sections sent are replaced. Applies to the next quote. Send `expectedVersion` (the version you edited): if someone has saved since, nothing is saved and the answer is 409 RATE_CARD_CHANGED.
+     * @summary Save a new version of the rate card
+     * @param {UpdateDeliveryRateCardDto} updateDeliveryRateCardDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto: UpdateDeliveryRateCardDto, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerUpdateV1(updateDeliveryRateCardDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary One saved version, with its whole card
+     * @param {number} version 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerVersionV1(version: number, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerVersionV1(version, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Saved versions, newest first
+     * @param {string} limit 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminDeliveryRatesControllerVersionsV1(limit: string, options?: RawAxiosRequestConfig) {
+        return UsedishaAdminDeliveryRatesApiFp(this.configuration).usedishaAdminDeliveryRatesControllerVersionsV1(limit, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -11539,16 +13339,19 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
-         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections for this shopper: section audience (states, excludeStates, areaStatus, shoppers, locationKnown, and platforms when sent), serving rules and text tokens are applied here; `modes` is left to the client. Section types newer than the client’s `contract` are left out. `sections` is null when the default is chosen and has none. `area` is the shopper\'s service area. All query parameters are optional; invalid values count as unknown. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary ShopCentral home layout
+         * @param {UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum} [locationKnown] The shopper has an address, a saved area or a pin. Omitted: true when state is sent.
+         * @param {any} [city] The shopper\&#39;s city or area (≤ 40): the {city} token and city targeting
          * @param {UsedishaClientControllerGetHomeLayoutV1ShopperEnum} [shopper] 
          * @param {any} [state] Nigerian state of the delivery address, e.g. Lagos or FCT
          * @param {UsedishaClientControllerGetHomeLayoutV1PlatformEnum} [platform] 
          * @param {any} [mode] \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category
+         * @param {number} [contract] The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetHomeLayoutV1: async (shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetHomeLayoutV1: async (locationKnown?: UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum, city?: any, shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, contract?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/usedisha/usedisha/shopmenu/home-layout`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11560,6 +13363,16 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (locationKnown !== undefined) {
+                localVarQueryParameter['locationKnown'] = locationKnown;
+            }
+
+            if (city !== undefined) {
+                for (const [key, value] of Object.entries(city)) {
+                    localVarQueryParameter[key] = value;
+                }
+            }
 
             if (shopper !== undefined) {
                 localVarQueryParameter['shopper'] = shopper;
@@ -11579,6 +13392,10 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
                 for (const [key, value] of Object.entries(mode)) {
                     localVarQueryParameter[key] = value;
                 }
+            }
+
+            if (contract !== undefined) {
+                localVarQueryParameter['contract'] = contract;
             }
 
 
@@ -12146,10 +13963,12 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
          * @param {string} [ids] Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed.
          * @param {UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum} [sellerType] Only return stores of this seller type (e.g. wholesaler)
          * @param {Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>} [badges] Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list.
+         * @param {boolean} [hasDeal] true &#x3D; only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter.
+         * @param {UsedishaClientControllerGetStoresByCategoryV1SortEnum} [sort] newest &#x3D; most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStoresByCategoryV1: async (category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaClientControllerGetStoresByCategoryV1: async (category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, hasDeal?: boolean, sort?: UsedishaClientControllerGetStoresByCategoryV1SortEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/usedisha/usedisha/shopmenu/stores`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12220,6 +14039,14 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
 
             if (badges) {
                 localVarQueryParameter['badges'] = badges;
+            }
+
+            if (hasDeal !== undefined) {
+                localVarQueryParameter['hasDeal'] = hasDeal;
+            }
+
+            if (sort !== undefined) {
+                localVarQueryParameter['sort'] = sort;
             }
 
             localVarHeaderParameter['Accept'] = 'application/json';
@@ -12354,15 +14181,17 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             };
         },
         /**
-         * Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Either `ids` (picked products, in that order), `storeId` (that store’s products) or `source=popular` (the most bought on ShopCentral lately, best first; the ranking is kept for an hour per state). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. With `state`, only products whose store sells there. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary Products for a ShopCentral home section
+         * @param {UsedishaShopmenuProductsControllerProductsV1SourceEnum} [source] popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in &#x60;state&#x60; (nationwide without one). Not with ids or storeId.
          * @param {string} [ids] Picked products, comma-separated, returned in this order
          * @param {string} [storeId] One store\&#39;s products (storefront id)
-         * @param {number} [limit] How many for storeId (default 10)
+         * @param {number} [limit] How many for storeId and popular (default 10)
+         * @param {string} [state] Only products whose store sells in this state (a section with area \&#39;state\&#39;): an active branch there, or its default branch\&#39;s location
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaShopmenuProductsControllerProductsV1: async (ids?: string, storeId?: string, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usedishaShopmenuProductsControllerProductsV1: async (source?: UsedishaShopmenuProductsControllerProductsV1SourceEnum, ids?: string, storeId?: string, limit?: number, state?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/usedisha/usedisha/shopmenu/products`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12375,6 +14204,10 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            if (source !== undefined) {
+                localVarQueryParameter['source'] = source;
+            }
+
             if (ids !== undefined) {
                 localVarQueryParameter['ids'] = ids;
             }
@@ -12386,6 +14219,77 @@ export const UsedishaClientApiAxiosParamCreator = function (configuration?: Conf
             if (limit !== undefined) {
                 localVarQueryParameter['limit'] = limit;
             }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Needs a phone or an email, or a sign-in (the account is used when neither is sent). Phones are stored as +234…, emails lowercased. Joining again with the same phone, email or account returns 200 `{ joined: true, alreadyJoined: true }`; a new entry is 201 `{ joined: true }`. 400 for an unknown state or a bad phone or email; 429 after 10 requests a minute from one address.
+         * @summary Join the waitlist for a state
+         * @param {UsedishaShopmenuServiceAreasControllerJoinV1Request} usedishaShopmenuServiceAreasControllerJoinV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaShopmenuServiceAreasControllerJoinV1: async (usedishaShopmenuServiceAreasControllerJoinV1Request: UsedishaShopmenuServiceAreasControllerJoinV1Request, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'usedishaShopmenuServiceAreasControllerJoinV1Request' is not null or undefined
+            assertParamExists('usedishaShopmenuServiceAreasControllerJoinV1', 'usedishaShopmenuServiceAreasControllerJoinV1Request', usedishaShopmenuServiceAreasControllerJoinV1Request)
+            const localVarPath = `/v1/usedisha/usedisha/shopmenu/waitlist`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usedishaShopmenuServiceAreasControllerJoinV1Request, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Every service area, live first, then pilot and coming soon: for the \"choose your area\" picker.
+         * @summary Where ShopCentral trades
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaShopmenuServiceAreasControllerListV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/shopmenu/service-areas`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
 
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -12421,17 +14325,20 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections for this shopper: section audience (states, excludeStates, areaStatus, shoppers, locationKnown, and platforms when sent), serving rules and text tokens are applied here; `modes` is left to the client. Section types newer than the client’s `contract` are left out. `sections` is null when the default is chosen and has none. `area` is the shopper\'s service area. All query parameters are optional; invalid values count as unknown. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary ShopCentral home layout
+         * @param {UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum} [locationKnown] The shopper has an address, a saved area or a pin. Omitted: true when state is sent.
+         * @param {any} [city] The shopper\&#39;s city or area (≤ 40): the {city} token and city targeting
          * @param {UsedishaClientControllerGetHomeLayoutV1ShopperEnum} [shopper] 
          * @param {any} [state] Nigerian state of the delivery address, e.g. Lagos or FCT
          * @param {UsedishaClientControllerGetHomeLayoutV1PlatformEnum} [platform] 
          * @param {any} [mode] \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category
+         * @param {number} [contract] The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetHomeLayoutV1(shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetHomeLayoutV1(shopper, state, platform, mode, options);
+        async usedishaClientControllerGetHomeLayoutV1(locationKnown?: UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum, city?: any, shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, contract?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetHomeLayoutV1(locationKnown, city, shopper, state, platform, mode, contract, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetHomeLayoutV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12643,11 +14550,13 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
          * @param {string} [ids] Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed.
          * @param {UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum} [sellerType] Only return stores of this seller type (e.g. wholesaler)
          * @param {Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>} [badges] Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list.
+         * @param {boolean} [hasDeal] true &#x3D; only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter.
+         * @param {UsedishaClientControllerGetStoresByCategoryV1SortEnum} [sort] newest &#x3D; most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedShopmenuStoresResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, options);
+        async usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, hasDeal?: boolean, sort?: UsedishaClientControllerGetStoresByCategoryV1SortEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedShopmenuStoresResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, hasDeal, sort, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaClientControllerGetStoresByCategoryV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -12695,18 +14604,45 @@ export const UsedishaClientApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Either `ids` (picked products, in that order), `storeId` (that store’s products) or `source=popular` (the most bought on ShopCentral lately, best first; the ranking is kept for an hour per state). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. With `state`, only products whose store sells there. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary Products for a ShopCentral home section
+         * @param {UsedishaShopmenuProductsControllerProductsV1SourceEnum} [source] popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in &#x60;state&#x60; (nationwide without one). Not with ids or storeId.
          * @param {string} [ids] Picked products, comma-separated, returned in this order
          * @param {string} [storeId] One store\&#39;s products (storefront id)
-         * @param {number} [limit] How many for storeId (default 10)
+         * @param {number} [limit] How many for storeId and popular (default 10)
+         * @param {string} [state] Only products whose store sells in this state (a section with area \&#39;state\&#39;): an active branch there, or its default branch\&#39;s location
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usedishaShopmenuProductsControllerProductsV1(ids?: string, storeId?: string, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaShopmenuProductsControllerProductsV1(ids, storeId, limit, options);
+        async usedishaShopmenuProductsControllerProductsV1(source?: UsedishaShopmenuProductsControllerProductsV1SourceEnum, ids?: string, storeId?: string, limit?: number, state?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaShopmenuProductsControllerProductsV1(source, ids, storeId, limit, state, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaShopmenuProductsControllerProductsV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Needs a phone or an email, or a sign-in (the account is used when neither is sent). Phones are stored as +234…, emails lowercased. Joining again with the same phone, email or account returns 200 `{ joined: true, alreadyJoined: true }`; a new entry is 201 `{ joined: true }`. 400 for an unknown state or a bad phone or email; 429 after 10 requests a minute from one address.
+         * @summary Join the waitlist for a state
+         * @param {UsedishaShopmenuServiceAreasControllerJoinV1Request} usedishaShopmenuServiceAreasControllerJoinV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request: UsedishaShopmenuServiceAreasControllerJoinV1Request, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaShopmenuServiceAreasControllerJoinV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Every service area, live first, then pilot and coming soon: for the \"choose your area\" picker.
+         * @summary Where ShopCentral trades
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaShopmenuServiceAreasControllerListV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaShopmenuServiceAreasControllerListV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaClientApi.usedishaShopmenuServiceAreasControllerListV1']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -12730,17 +14666,20 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
             return localVarFp.usedishaClientControllerCreateStorefrontReviewV1(domain, createStorefrontReviewDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections for this shopper: section audience (states, excludeStates, areaStatus, shoppers, locationKnown, and platforms when sent), serving rules and text tokens are applied here; `modes` is left to the client. Section types newer than the client’s `contract` are left out. `sections` is null when the default is chosen and has none. `area` is the shopper\'s service area. All query parameters are optional; invalid values count as unknown. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary ShopCentral home layout
+         * @param {UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum} [locationKnown] The shopper has an address, a saved area or a pin. Omitted: true when state is sent.
+         * @param {any} [city] The shopper\&#39;s city or area (≤ 40): the {city} token and city targeting
          * @param {UsedishaClientControllerGetHomeLayoutV1ShopperEnum} [shopper] 
          * @param {any} [state] Nigerian state of the delivery address, e.g. Lagos or FCT
          * @param {UsedishaClientControllerGetHomeLayoutV1PlatformEnum} [platform] 
          * @param {any} [mode] \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category
+         * @param {number} [contract] The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetHomeLayoutV1(shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.usedishaClientControllerGetHomeLayoutV1(shopper, state, platform, mode, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetHomeLayoutV1(locationKnown?: UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum, city?: any, shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, contract?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaClientControllerGetHomeLayoutV1(locationKnown, city, shopper, state, platform, mode, contract, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -12910,11 +14849,13 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
          * @param {string} [ids] Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed.
          * @param {UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum} [sellerType] Only return stores of this seller type (e.g. wholesaler)
          * @param {Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>} [badges] Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list.
+         * @param {boolean} [hasDeal] true &#x3D; only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter.
+         * @param {UsedishaClientControllerGetStoresByCategoryV1SortEnum} [sort] newest &#x3D; most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat).
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedShopmenuStoresResponse> {
-            return localVarFp.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, options).then((request) => request(axios, basePath));
+        usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, hasDeal?: boolean, sort?: UsedishaClientControllerGetStoresByCategoryV1SortEnum, options?: RawAxiosRequestConfig): AxiosPromise<PaginatedShopmenuStoresResponse> {
+            return localVarFp.usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, hasDeal, sort, options).then((request) => request(axios, basePath));
         },
         /**
          * Primary tracking endpoint for storefront apps. Send a stable `sessionId` (localStorage) on each page so views group into sessions and counters reflect unique store views, not every page load. Server merges device, UTM, and geo fields.
@@ -12950,16 +14891,37 @@ export const UsedishaClientApiFactory = function (configuration?: Configuration,
             return localVarFp.usedishaClientControllerUploadClaimDocumentV1(id, file, options).then((request) => request(axios, basePath));
         },
         /**
-         * Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+         * Either `ids` (picked products, in that order), `storeId` (that store’s products) or `source=popular` (the most bought on ShopCentral lately, best first; the ranking is kept for an hour per state). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. With `state`, only products whose store sells there. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
          * @summary Products for a ShopCentral home section
+         * @param {UsedishaShopmenuProductsControllerProductsV1SourceEnum} [source] popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in &#x60;state&#x60; (nationwide without one). Not with ids or storeId.
          * @param {string} [ids] Picked products, comma-separated, returned in this order
          * @param {string} [storeId] One store\&#39;s products (storefront id)
-         * @param {number} [limit] How many for storeId (default 10)
+         * @param {number} [limit] How many for storeId and popular (default 10)
+         * @param {string} [state] Only products whose store sells in this state (a section with area \&#39;state\&#39;): an active branch there, or its default branch\&#39;s location
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usedishaShopmenuProductsControllerProductsV1(ids?: string, storeId?: string, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.usedishaShopmenuProductsControllerProductsV1(ids, storeId, limit, options).then((request) => request(axios, basePath));
+        usedishaShopmenuProductsControllerProductsV1(source?: UsedishaShopmenuProductsControllerProductsV1SourceEnum, ids?: string, storeId?: string, limit?: number, state?: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaShopmenuProductsControllerProductsV1(source, ids, storeId, limit, state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Needs a phone or an email, or a sign-in (the account is used when neither is sent). Phones are stored as +234…, emails lowercased. Joining again with the same phone, email or account returns 200 `{ joined: true, alreadyJoined: true }`; a new entry is 201 `{ joined: true }`. 400 for an unknown state or a bad phone or email; 429 after 10 requests a minute from one address.
+         * @summary Join the waitlist for a state
+         * @param {UsedishaShopmenuServiceAreasControllerJoinV1Request} usedishaShopmenuServiceAreasControllerJoinV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request: UsedishaShopmenuServiceAreasControllerJoinV1Request, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Every service area, live first, then pilot and coming soon: for the \"choose your area\" picker.
+         * @summary Where ShopCentral trades
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaShopmenuServiceAreasControllerListV1(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaShopmenuServiceAreasControllerListV1(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -12981,17 +14943,20 @@ export class UsedishaClientApi extends BaseAPI {
     }
 
     /**
-     * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections. `sections` is null when the default is chosen and has none. All query parameters are optional; invalid values count as unknown. Audience filtering is left to the app. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+     * Picks one home template for the shopper (live templates whose schedule and rules match, highest priority first, ties to the most recently updated, else the default) and returns its enabled, in-schedule sections for this shopper: section audience (states, excludeStates, areaStatus, shoppers, locationKnown, and platforms when sent), serving rules and text tokens are applied here; `modes` is left to the client. Section types newer than the client’s `contract` are left out. `sections` is null when the default is chosen and has none. `area` is the shopper\'s service area. All query parameters are optional; invalid values count as unknown. Cacheable for 60 seconds. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
      * @summary ShopCentral home layout
+     * @param {UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum} [locationKnown] The shopper has an address, a saved area or a pin. Omitted: true when state is sent.
+     * @param {any} [city] The shopper\&#39;s city or area (≤ 40): the {city} token and city targeting
      * @param {UsedishaClientControllerGetHomeLayoutV1ShopperEnum} [shopper] 
      * @param {any} [state] Nigerian state of the delivery address, e.g. Lagos or FCT
      * @param {UsedishaClientControllerGetHomeLayoutV1PlatformEnum} [platform] 
      * @param {any} [mode] \&#39;all\&#39;, \&#39;mall\&#39; or a shopping category
+     * @param {number} [contract] The home-layout contract the client was built to (4 for v4). Omitted: 3 when locationKnown is sent, else 2.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetHomeLayoutV1(shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetHomeLayoutV1(shopper, state, platform, mode, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetHomeLayoutV1(locationKnown?: UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum, city?: any, shopper?: UsedishaClientControllerGetHomeLayoutV1ShopperEnum, state?: any, platform?: UsedishaClientControllerGetHomeLayoutV1PlatformEnum, mode?: any, contract?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetHomeLayoutV1(locationKnown, city, shopper, state, platform, mode, contract, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -13175,11 +15140,13 @@ export class UsedishaClientApi extends BaseAPI {
      * @param {string} [ids] Only these stores: comma-separated ObjectIds, at most 24. Still limited to active, approved, listed stores. Order is not guaranteed.
      * @param {UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum} [sellerType] Only return stores of this seller type (e.g. wholesaler)
      * @param {Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>} [badges] Only return stores holding ALL of these badges. Repeat the param or pass a comma-separated list.
+     * @param {boolean} [hasDeal] true &#x3D; only stores with a deal running on ShopCentral (an automatic discount that works online, on a plan with discounts). false or absent: no filter.
+     * @param {UsedishaClientControllerGetStoresByCategoryV1SortEnum} [sort] newest &#x3D; most recently created first, with no featured-first ordering. Absent: featured first, then newest (or nearest with lng/lat).
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, options).then((request) => request(this.axios, this.basePath));
+    public usedishaClientControllerGetStoresByCategoryV1(category?: UsedishaClientControllerGetStoresByCategoryV1CategoryEnum, search?: string, page?: number, limit?: number, lng?: number, lat?: number, radiusKm?: number, country?: string, state?: string, city?: string, lga?: string, featured?: boolean, ids?: string, sellerType?: UsedishaClientControllerGetStoresByCategoryV1SellerTypeEnum, badges?: Array<UsedishaClientControllerGetStoresByCategoryV1BadgesEnum>, hasDeal?: boolean, sort?: UsedishaClientControllerGetStoresByCategoryV1SortEnum, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaClientControllerGetStoresByCategoryV1(category, search, page, limit, lng, lat, radiusKm, country, state, city, lga, featured, ids, sellerType, badges, hasDeal, sort, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -13219,19 +15186,47 @@ export class UsedishaClientApi extends BaseAPI {
     }
 
     /**
-     * Either `ids` (picked products, in that order) or `storeId` (that store’s products). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
+     * Either `ids` (picked products, in that order), `storeId` (that store’s products) or `source=popular` (the most bought on ShopCentral lately, best first; the ranking is kept for an hour per state). Only products a customer can buy online right now come back, at their live price: from a live store, visible, in stock, at a branch taking online orders. With `state`, only products whose store sells there. See docs/SHOPCENTRAL-HOME-LAYOUT.md.
      * @summary Products for a ShopCentral home section
+     * @param {UsedishaShopmenuProductsControllerProductsV1SourceEnum} [source] popular (v4): the most bought on ShopCentral in the last 30 days, from stores selling in &#x60;state&#x60; (nationwide without one). Not with ids or storeId.
      * @param {string} [ids] Picked products, comma-separated, returned in this order
      * @param {string} [storeId] One store\&#39;s products (storefront id)
-     * @param {number} [limit] How many for storeId (default 10)
+     * @param {number} [limit] How many for storeId and popular (default 10)
+     * @param {string} [state] Only products whose store sells in this state (a section with area \&#39;state\&#39;): an active branch there, or its default branch\&#39;s location
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public usedishaShopmenuProductsControllerProductsV1(ids?: string, storeId?: string, limit?: number, options?: RawAxiosRequestConfig) {
-        return UsedishaClientApiFp(this.configuration).usedishaShopmenuProductsControllerProductsV1(ids, storeId, limit, options).then((request) => request(this.axios, this.basePath));
+    public usedishaShopmenuProductsControllerProductsV1(source?: UsedishaShopmenuProductsControllerProductsV1SourceEnum, ids?: string, storeId?: string, limit?: number, state?: string, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaShopmenuProductsControllerProductsV1(source, ids, storeId, limit, state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Needs a phone or an email, or a sign-in (the account is used when neither is sent). Phones are stored as +234…, emails lowercased. Joining again with the same phone, email or account returns 200 `{ joined: true, alreadyJoined: true }`; a new entry is 201 `{ joined: true }`. 400 for an unknown state or a bad phone or email; 429 after 10 requests a minute from one address.
+     * @summary Join the waitlist for a state
+     * @param {UsedishaShopmenuServiceAreasControllerJoinV1Request} usedishaShopmenuServiceAreasControllerJoinV1Request 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request: UsedishaShopmenuServiceAreasControllerJoinV1Request, options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaShopmenuServiceAreasControllerJoinV1(usedishaShopmenuServiceAreasControllerJoinV1Request, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Every service area, live first, then pilot and coming soon: for the \"choose your area\" picker.
+     * @summary Where ShopCentral trades
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaShopmenuServiceAreasControllerListV1(options?: RawAxiosRequestConfig) {
+        return UsedishaClientApiFp(this.configuration).usedishaShopmenuServiceAreasControllerListV1(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
+export const UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum = {
+    True: 'true',
+    False: 'false'
+} as const;
+export type UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum = typeof UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum[keyof typeof UsedishaClientControllerGetHomeLayoutV1LocationKnownEnum];
 export const UsedishaClientControllerGetHomeLayoutV1ShopperEnum = {
     Guest: 'guest',
     New: 'new',
@@ -13240,7 +15235,8 @@ export const UsedishaClientControllerGetHomeLayoutV1ShopperEnum = {
 export type UsedishaClientControllerGetHomeLayoutV1ShopperEnum = typeof UsedishaClientControllerGetHomeLayoutV1ShopperEnum[keyof typeof UsedishaClientControllerGetHomeLayoutV1ShopperEnum];
 export const UsedishaClientControllerGetHomeLayoutV1PlatformEnum = {
     Ios: 'ios',
-    Android: 'android'
+    Android: 'android',
+    Web: 'web'
 } as const;
 export type UsedishaClientControllerGetHomeLayoutV1PlatformEnum = typeof UsedishaClientControllerGetHomeLayoutV1PlatformEnum[keyof typeof UsedishaClientControllerGetHomeLayoutV1PlatformEnum];
 export const UsedishaClientControllerGetStoresByCategoryV1CategoryEnum = {
@@ -13274,6 +15270,14 @@ export const UsedishaClientControllerGetStoresByCategoryV1BadgesEnum = {
     MallStore: 'mall_store'
 } as const;
 export type UsedishaClientControllerGetStoresByCategoryV1BadgesEnum = typeof UsedishaClientControllerGetStoresByCategoryV1BadgesEnum[keyof typeof UsedishaClientControllerGetStoresByCategoryV1BadgesEnum];
+export const UsedishaClientControllerGetStoresByCategoryV1SortEnum = {
+    Newest: 'newest'
+} as const;
+export type UsedishaClientControllerGetStoresByCategoryV1SortEnum = typeof UsedishaClientControllerGetStoresByCategoryV1SortEnum[keyof typeof UsedishaClientControllerGetStoresByCategoryV1SortEnum];
+export const UsedishaShopmenuProductsControllerProductsV1SourceEnum = {
+    Popular: 'popular'
+} as const;
+export type UsedishaShopmenuProductsControllerProductsV1SourceEnum = typeof UsedishaShopmenuProductsControllerProductsV1SourceEnum[keyof typeof UsedishaShopmenuProductsControllerProductsV1SourceEnum];
 
 
 /**
@@ -13391,7 +15395,7 @@ export const UsedishaCustomerCartApiAxiosParamCreator = function (configuration?
         /**
          * 
          * @summary Remove a line from my cart
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13468,7 +15472,7 @@ export const UsedishaCustomerCartApiAxiosParamCreator = function (configuration?
         /**
          * A quantity of 0 removes the line.
          * @summary Change a line quantity
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {UpdateCustomerCartLineDto} updateCustomerCartLineDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13557,7 +15561,7 @@ export const UsedishaCustomerCartApiFp = function(configuration?: Configuration)
         /**
          * 
          * @summary Remove a line from my cart
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13583,7 +15587,7 @@ export const UsedishaCustomerCartApiFp = function(configuration?: Configuration)
         /**
          * A quantity of 0 removes the line.
          * @summary Change a line quantity
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {UpdateCustomerCartLineDto} updateCustomerCartLineDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13634,7 +15638,7 @@ export const UsedishaCustomerCartApiFactory = function (configuration?: Configur
         /**
          * 
          * @summary Remove a line from my cart
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -13654,7 +15658,7 @@ export const UsedishaCustomerCartApiFactory = function (configuration?: Configur
         /**
          * A quantity of 0 removes the line.
          * @summary Change a line quantity
-         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+         * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
          * @param {UpdateCustomerCartLineDto} updateCustomerCartLineDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -13703,7 +15707,7 @@ export class UsedishaCustomerCartApi extends BaseAPI {
     /**
      * 
      * @summary Remove a line from my cart
-     * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+     * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -13725,7 +15729,7 @@ export class UsedishaCustomerCartApi extends BaseAPI {
     /**
      * A quantity of 0 removes the line.
      * @summary Change a line quantity
-     * @param {string} lineId Line id: &#x60;storeId:productId&#x60;
+     * @param {string} lineId Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60;
      * @param {UpdateCustomerCartLineDto} updateCustomerCartLineDto 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -13742,6 +15746,81 @@ export class UsedishaCustomerCartApi extends BaseAPI {
  */
 export const UsedishaCustomerOrdersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * The caller’s delivered or completed ShopCentral orders, newest first, skipping stores no longer listed on ShopCentral. For the home’s order_again section.
+         * @summary My orders to order again
+         * @param {number} [limit] How many orders (1–10, default 5)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrderAgainControllerListV1: async (limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/customer/order-again`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Each item of the caller’s order at today’s price, with `available` and, when it can’t be bought, a `reason`: unavailable, out_of_stock, store_not_taking_orders or not_listed. The same checks as checkout. Nothing is written: the client adds the available items to its cart.
+         * @summary One of my orders as a cart today
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrderAgainControllerReorderV1: async (orderId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'orderId' is not null or undefined
+            assertParamExists('usedishaCustomerOrderAgainControllerReorderV1', 'orderId', orderId)
+            const localVarPath = `/v1/usedisha/usedisha/customer/orders/{orderId}/reorder`
+                .replace(`{${"orderId"}}`, encodeURIComponent(String(orderId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules. Self-service cancellation is limited to 12 hours after the order was placed; after that the customer is directed to support and an admin handles the cancellation and any refund.
          * @summary Cancel an order
@@ -13930,6 +16009,32 @@ export const UsedishaCustomerOrdersApiFp = function(configuration?: Configuratio
     const localVarAxiosParamCreator = UsedishaCustomerOrdersApiAxiosParamCreator(configuration)
     return {
         /**
+         * The caller’s delivered or completed ShopCentral orders, newest first, skipping stores no longer listed on ShopCentral. For the home’s order_again section.
+         * @summary My orders to order again
+         * @param {number} [limit] How many orders (1–10, default 5)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerOrderAgainControllerListV1(limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrderAgainControllerListV1(limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrderAgainControllerListV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Each item of the caller’s order at today’s price, with `available` and, when it can’t be bought, a `reason`: unavailable, out_of_stock, store_not_taking_orders or not_listed. The same checks as checkout. Nothing is written: the client adds the available items to its cart.
+         * @summary One of my orders as a cart today
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerOrderAgainControllerReorderV1(orderId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerOrderAgainControllerReorderV1(orderId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaCustomerOrdersApi.usedishaCustomerOrderAgainControllerReorderV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules. Self-service cancellation is limited to 12 hours after the order was placed; after that the customer is directed to support and an admin handles the cancellation and any refund.
          * @summary Cancel an order
          * @param {string} orderId MongoDB order ID
@@ -13996,6 +16101,26 @@ export const UsedishaCustomerOrdersApiFactory = function (configuration?: Config
     const localVarFp = UsedishaCustomerOrdersApiFp(configuration)
     return {
         /**
+         * The caller’s delivered or completed ShopCentral orders, newest first, skipping stores no longer listed on ShopCentral. For the home’s order_again section.
+         * @summary My orders to order again
+         * @param {number} [limit] How many orders (1–10, default 5)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrderAgainControllerListV1(limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaCustomerOrderAgainControllerListV1(limit, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Each item of the caller’s order at today’s price, with `available` and, when it can’t be bought, a `reason`: unavailable, out_of_stock, store_not_taking_orders or not_listed. The same checks as checkout. Nothing is written: the client adds the available items to its cart.
+         * @summary One of my orders as a cart today
+         * @param {string} orderId MongoDB order ID
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerOrderAgainControllerReorderV1(orderId: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaCustomerOrderAgainControllerReorderV1(orderId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules. Self-service cancellation is limited to 12 hours after the order was placed; after that the customer is directed to support and an admin handles the cancellation and any refund.
          * @summary Cancel an order
          * @param {string} orderId MongoDB order ID
@@ -14047,6 +16172,28 @@ export const UsedishaCustomerOrdersApiFactory = function (configuration?: Config
  * UsedishaCustomerOrdersApi - object-oriented interface
  */
 export class UsedishaCustomerOrdersApi extends BaseAPI {
+    /**
+     * The caller’s delivered or completed ShopCentral orders, newest first, skipping stores no longer listed on ShopCentral. For the home’s order_again section.
+     * @summary My orders to order again
+     * @param {number} [limit] How many orders (1–10, default 5)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerOrderAgainControllerListV1(limit?: number, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaCustomerOrderAgainControllerListV1(limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Each item of the caller’s order at today’s price, with `available` and, when it can’t be bought, a `reason`: unavailable, out_of_stock, store_not_taking_orders or not_listed. The same checks as checkout. Nothing is written: the client adds the available items to its cart.
+     * @summary One of my orders as a cart today
+     * @param {string} orderId MongoDB order ID
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerOrderAgainControllerReorderV1(orderId: string, options?: RawAxiosRequestConfig) {
+        return UsedishaCustomerOrdersApiFp(this.configuration).usedishaCustomerOrderAgainControllerReorderV1(orderId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Cancels an order owned by the authenticated customer. Only orders in a cancellable status (e.g. pending/confirmed) can be cancelled — the order handler enforces the rules. Self-service cancellation is limited to 12 hours after the order was placed; after that the customer is directed to support and an admin handles the cancellation and any refund.
      * @summary Cancel an order
@@ -18297,6 +20444,393 @@ export class UsedishaNudgeVendorApi extends BaseAPI {
 
 
 /**
+ * UsedishaPayLinksApi - axios parameter creator
+ */
+export const UsedishaPayLinksApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Stop a link being paid
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerCancelV1: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('usedishaCustomerPayLinksControllerCancelV1', 'id', id)
+            const localVarPath = `/v1/usedisha/usedisha/customer/pay-links/{id}/cancel`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Takes the bulk checkout body (one store or several). The cart is checked and priced like a checkout but nothing is charged. Returns a link to https://shopcentral.ng/pay/<token>, open for 48 hours; whoever opens it pays the price of the day, and the order is yours.
+         * @summary Share my cart so someone else can pay
+         * @param {CreatePayLinkDto} createPayLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerCreateV1: async (createPayLinkDto: CreatePayLinkDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'createPayLinkDto' is not null or undefined
+            assertParamExists('usedishaCustomerPayLinksControllerCreateV1', 'createPayLinkDto', createPayLinkDto)
+            const localVarPath = `/v1/usedisha/usedisha/customer/pay-links`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createPayLinkDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary My recent pay links, newest first
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerListV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/customer/pay-links`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Creates the shopper\'s order(s) awaiting payment and returns the Paystack page, in the payer\'s name. 409 PAY_LINK_TOTAL_CHANGED (with the new `totalAmount`) when the price moved from `expectedTotal`; 409 PAY_LINK_IN_PROGRESS while someone else is paying; 410 when paid, cancelled or expired.
+         * @summary Pay for a shared cart
+         * @param {string} token From the link
+         * @param {PayForLinkDto} payForLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaPublicPayLinksControllerPayV1: async (token: string, payForLinkDto: PayForLinkDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'token' is not null or undefined
+            assertParamExists('usedishaPublicPayLinksControllerPayV1', 'token', token)
+            // verify required parameter 'payForLinkDto' is not null or undefined
+            assertParamExists('usedishaPublicPayLinksControllerPayV1', 'payForLinkDto', payForLinkDto)
+            const localVarPath = `/v1/usedisha/usedisha/pay-links/{token}/pay`
+                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(payForLinkDto, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * `state`: open, paying (someone is on the payment page), paid, cancelled or expired. `payable` says whether it can be paid right now.
+         * @summary A shared cart, priced now
+         * @param {string} token From the link
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaPublicPayLinksControllerViewV1: async (token: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'token' is not null or undefined
+            assertParamExists('usedishaPublicPayLinksControllerViewV1', 'token', token)
+            const localVarPath = `/v1/usedisha/usedisha/pay-links/{token}`
+                .replace(`{${"token"}}`, encodeURIComponent(String(token)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * UsedishaPayLinksApi - functional programming interface
+ */
+export const UsedishaPayLinksApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = UsedishaPayLinksApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Stop a link being paid
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerPayLinksControllerCancelV1(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayLinkSummaryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerPayLinksControllerCancelV1(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaPayLinksApi.usedishaCustomerPayLinksControllerCancelV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Takes the bulk checkout body (one store or several). The cart is checked and priced like a checkout but nothing is charged. Returns a link to https://shopcentral.ng/pay/<token>, open for 48 hours; whoever opens it pays the price of the day, and the order is yours.
+         * @summary Share my cart so someone else can pay
+         * @param {CreatePayLinkDto} createPayLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto: CreatePayLinkDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayLinkSummaryDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaPayLinksApi.usedishaCustomerPayLinksControllerCreateV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary My recent pay links, newest first
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaCustomerPayLinksControllerListV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<PayLinkSummaryDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaCustomerPayLinksControllerListV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaPayLinksApi.usedishaCustomerPayLinksControllerListV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Creates the shopper\'s order(s) awaiting payment and returns the Paystack page, in the payer\'s name. 409 PAY_LINK_TOTAL_CHANGED (with the new `totalAmount`) when the price moved from `expectedTotal`; 409 PAY_LINK_IN_PROGRESS while someone else is paying; 410 when paid, cancelled or expired.
+         * @summary Pay for a shared cart
+         * @param {string} token From the link
+         * @param {PayForLinkDto} payForLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaPublicPayLinksControllerPayV1(token: string, payForLinkDto: PayForLinkDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayLinkPaymentDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaPublicPayLinksControllerPayV1(token, payForLinkDto, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaPayLinksApi.usedishaPublicPayLinksControllerPayV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * `state`: open, paying (someone is on the payment page), paid, cancelled or expired. `payable` says whether it can be paid right now.
+         * @summary A shared cart, priced now
+         * @param {string} token From the link
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaPublicPayLinksControllerViewV1(token: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PayLinkPublicDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaPublicPayLinksControllerViewV1(token, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaPayLinksApi.usedishaPublicPayLinksControllerViewV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * UsedishaPayLinksApi - factory interface
+ */
+export const UsedishaPayLinksApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = UsedishaPayLinksApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Stop a link being paid
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerCancelV1(id: string, options?: RawAxiosRequestConfig): AxiosPromise<PayLinkSummaryDto> {
+            return localVarFp.usedishaCustomerPayLinksControllerCancelV1(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Takes the bulk checkout body (one store or several). The cart is checked and priced like a checkout but nothing is charged. Returns a link to https://shopcentral.ng/pay/<token>, open for 48 hours; whoever opens it pays the price of the day, and the order is yours.
+         * @summary Share my cart so someone else can pay
+         * @param {CreatePayLinkDto} createPayLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto: CreatePayLinkDto, options?: RawAxiosRequestConfig): AxiosPromise<PayLinkSummaryDto> {
+            return localVarFp.usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary My recent pay links, newest first
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaCustomerPayLinksControllerListV1(options?: RawAxiosRequestConfig): AxiosPromise<Array<PayLinkSummaryDto>> {
+            return localVarFp.usedishaCustomerPayLinksControllerListV1(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Creates the shopper\'s order(s) awaiting payment and returns the Paystack page, in the payer\'s name. 409 PAY_LINK_TOTAL_CHANGED (with the new `totalAmount`) when the price moved from `expectedTotal`; 409 PAY_LINK_IN_PROGRESS while someone else is paying; 410 when paid, cancelled or expired.
+         * @summary Pay for a shared cart
+         * @param {string} token From the link
+         * @param {PayForLinkDto} payForLinkDto 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaPublicPayLinksControllerPayV1(token: string, payForLinkDto: PayForLinkDto, options?: RawAxiosRequestConfig): AxiosPromise<PayLinkPaymentDto> {
+            return localVarFp.usedishaPublicPayLinksControllerPayV1(token, payForLinkDto, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * `state`: open, paying (someone is on the payment page), paid, cancelled or expired. `payable` says whether it can be paid right now.
+         * @summary A shared cart, priced now
+         * @param {string} token From the link
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaPublicPayLinksControllerViewV1(token: string, options?: RawAxiosRequestConfig): AxiosPromise<PayLinkPublicDto> {
+            return localVarFp.usedishaPublicPayLinksControllerViewV1(token, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * UsedishaPayLinksApi - object-oriented interface
+ */
+export class UsedishaPayLinksApi extends BaseAPI {
+    /**
+     * 
+     * @summary Stop a link being paid
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerPayLinksControllerCancelV1(id: string, options?: RawAxiosRequestConfig) {
+        return UsedishaPayLinksApiFp(this.configuration).usedishaCustomerPayLinksControllerCancelV1(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Takes the bulk checkout body (one store or several). The cart is checked and priced like a checkout but nothing is charged. Returns a link to https://shopcentral.ng/pay/<token>, open for 48 hours; whoever opens it pays the price of the day, and the order is yours.
+     * @summary Share my cart so someone else can pay
+     * @param {CreatePayLinkDto} createPayLinkDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto: CreatePayLinkDto, options?: RawAxiosRequestConfig) {
+        return UsedishaPayLinksApiFp(this.configuration).usedishaCustomerPayLinksControllerCreateV1(createPayLinkDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary My recent pay links, newest first
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaCustomerPayLinksControllerListV1(options?: RawAxiosRequestConfig) {
+        return UsedishaPayLinksApiFp(this.configuration).usedishaCustomerPayLinksControllerListV1(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Creates the shopper\'s order(s) awaiting payment and returns the Paystack page, in the payer\'s name. 409 PAY_LINK_TOTAL_CHANGED (with the new `totalAmount`) when the price moved from `expectedTotal`; 409 PAY_LINK_IN_PROGRESS while someone else is paying; 410 when paid, cancelled or expired.
+     * @summary Pay for a shared cart
+     * @param {string} token From the link
+     * @param {PayForLinkDto} payForLinkDto 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaPublicPayLinksControllerPayV1(token: string, payForLinkDto: PayForLinkDto, options?: RawAxiosRequestConfig) {
+        return UsedishaPayLinksApiFp(this.configuration).usedishaPublicPayLinksControllerPayV1(token, payForLinkDto, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * `state`: open, paying (someone is on the payment page), paid, cancelled or expired. `payable` says whether it can be paid right now.
+     * @summary A shared cart, priced now
+     * @param {string} token From the link
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaPublicPayLinksControllerViewV1(token: string, options?: RawAxiosRequestConfig) {
+        return UsedishaPayLinksApiFp(this.configuration).usedishaPublicPayLinksControllerViewV1(token, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * UsedishaRunnerPayoutsApi - axios parameter creator
  */
 export const UsedishaRunnerPayoutsApiAxiosParamCreator = function (configuration?: Configuration) {
@@ -20370,6 +22904,169 @@ export class UsedishaSupportCustomerApi extends BaseAPI {
 export const UsedishaSystemAdminApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * Every area, live → pilot → coming_soon, then by state, each with `waitlistCount`; and `notServedWaitlist: [{ state, count }]` for states with no area, biggest first.
+         * @summary ShopCentral service areas
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerListV1: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/usedisha/usedisha/admin/settings/service-areas`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * The state becomes not served. Clears the home-layout cache.
+         * @summary Remove a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerRemoveV1: async (state: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'state' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerRemoveV1', 'state', state)
+            const localVarPath = `/v1/usedisha/usedisha/admin/settings/service-areas/{state}`
+                .replace(`{${"state"}}`, encodeURIComponent(String(state)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Fields left out are cleared. 400 with paths on validation errors. Clears the home-layout cache.
+         * @summary Create or replace a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {UsedishaAdminServiceAreasControllerUpsertV1Request} usedishaAdminServiceAreasControllerUpsertV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerUpsertV1: async (state: string, usedishaAdminServiceAreasControllerUpsertV1Request: UsedishaAdminServiceAreasControllerUpsertV1Request, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'state' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerUpsertV1', 'state', state)
+            // verify required parameter 'usedishaAdminServiceAreasControllerUpsertV1Request' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerUpsertV1', 'usedishaAdminServiceAreasControllerUpsertV1Request', usedishaAdminServiceAreasControllerUpsertV1Request)
+            const localVarPath = `/v1/usedisha/usedisha/admin/settings/service-areas/{state}`
+                .replace(`{${"state"}}`, encodeURIComponent(String(state)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usedishaAdminServiceAreasControllerUpsertV1Request, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Newest first; `limit` 1–100 (default 20). Any state, with an area or not. Paginated like other admin lists: { data, totalCount, page, limit, totalPages, … }.
+         * @summary A state\'s waitlist
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {string} page 
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerWaitlistV1: async (state: string, page: string, limit: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'state' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerWaitlistV1', 'state', state)
+            // verify required parameter 'page' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerWaitlistV1', 'page', page)
+            // verify required parameter 'limit' is not null or undefined
+            assertParamExists('usedishaAdminServiceAreasControllerWaitlistV1', 'limit', limit)
+            const localVarPath = `/v1/usedisha/usedisha/admin/settings/service-areas/{state}/waitlist`
+                .replace(`{${"state"}}`, encodeURIComponent(String(state)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Runs the ownership transfer (resolves/creates the claimer account, repoints business ownership, updates the OWNER member, emails them), marks the storefront no longer claimable, auto-rejects rival open claims, and records the decision in the storefront\'s moderation history.
          * @summary Approve a claim and transfer the business to the claimer
          * @param {string} claimId Claim MongoDB ID
@@ -21241,7 +23938,7 @@ export const UsedishaSystemAdminApiAxiosParamCreator = function (configuration?:
             };
         },
         /**
-         * Runs the public endpoint\'s matcher. `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
+         * Runs the public endpoint\'s matcher, area status included (from `state` and the service areas). `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
          * @summary Which home template a shopper gets
          * @param {UsedishaSystemAdminControllerResolveHomeTemplateV1Request} usedishaSystemAdminControllerResolveHomeTemplateV1Request 
          * @param {*} [options] Override http request option.
@@ -21783,6 +24480,60 @@ export const UsedishaSystemAdminApiFp = function(configuration?: Configuration) 
     const localVarAxiosParamCreator = UsedishaSystemAdminApiAxiosParamCreator(configuration)
     return {
         /**
+         * Every area, live → pilot → coming_soon, then by state, each with `waitlistCount`; and `notServedWaitlist: [{ state, count }]` for states with no area, biggest first.
+         * @summary ShopCentral service areas
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminServiceAreasControllerListV1(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminServiceAreasControllerListV1(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaAdminServiceAreasControllerListV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * The state becomes not served. Clears the home-layout cache.
+         * @summary Remove a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminServiceAreasControllerRemoveV1(state: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminServiceAreasControllerRemoveV1(state, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaAdminServiceAreasControllerRemoveV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Fields left out are cleared. 400 with paths on validation errors. Clears the home-layout cache.
+         * @summary Create or replace a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {UsedishaAdminServiceAreasControllerUpsertV1Request} usedishaAdminServiceAreasControllerUpsertV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminServiceAreasControllerUpsertV1(state: string, usedishaAdminServiceAreasControllerUpsertV1Request: UsedishaAdminServiceAreasControllerUpsertV1Request, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminServiceAreasControllerUpsertV1(state, usedishaAdminServiceAreasControllerUpsertV1Request, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaAdminServiceAreasControllerUpsertV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Newest first; `limit` 1–100 (default 20). Any state, with an area or not. Paginated like other admin lists: { data, totalCount, page, limit, totalPages, … }.
+         * @summary A state\'s waitlist
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {string} page 
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usedishaAdminServiceAreasControllerWaitlistV1(state: string, page: string, limit: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usedishaAdminServiceAreasControllerWaitlistV1(state, page, limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsedishaSystemAdminApi.usedishaAdminServiceAreasControllerWaitlistV1']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Runs the ownership transfer (resolves/creates the claimer account, repoints business ownership, updates the OWNER member, emails them), marks the storefront no longer claimable, auto-rejects rival open claims, and records the decision in the storefront\'s moderation history.
          * @summary Approve a claim and transfer the business to the claimer
          * @param {string} claimId Claim MongoDB ID
@@ -22065,7 +24816,7 @@ export const UsedishaSystemAdminApiFp = function(configuration?: Configuration) 
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * Runs the public endpoint\'s matcher. `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
+         * Runs the public endpoint\'s matcher, area status included (from `state` and the service areas). `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
          * @summary Which home template a shopper gets
          * @param {UsedishaSystemAdminControllerResolveHomeTemplateV1Request} usedishaSystemAdminControllerResolveHomeTemplateV1Request 
          * @param {*} [options] Override http request option.
@@ -22250,6 +25001,48 @@ export const UsedishaSystemAdminApiFp = function(configuration?: Configuration) 
 export const UsedishaSystemAdminApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = UsedishaSystemAdminApiFp(configuration)
     return {
+        /**
+         * Every area, live → pilot → coming_soon, then by state, each with `waitlistCount`; and `notServedWaitlist: [{ state, count }]` for states with no area, biggest first.
+         * @summary ShopCentral service areas
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerListV1(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminServiceAreasControllerListV1(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * The state becomes not served. Clears the home-layout cache.
+         * @summary Remove a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerRemoveV1(state: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminServiceAreasControllerRemoveV1(state, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Fields left out are cleared. 400 with paths on validation errors. Clears the home-layout cache.
+         * @summary Create or replace a state\'s service area
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {UsedishaAdminServiceAreasControllerUpsertV1Request} usedishaAdminServiceAreasControllerUpsertV1Request 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerUpsertV1(state: string, usedishaAdminServiceAreasControllerUpsertV1Request: UsedishaAdminServiceAreasControllerUpsertV1Request, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminServiceAreasControllerUpsertV1(state, usedishaAdminServiceAreasControllerUpsertV1Request, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Newest first; `limit` 1–100 (default 20). Any state, with an area or not. Paginated like other admin lists: { data, totalCount, page, limit, totalPages, … }.
+         * @summary A state\'s waitlist
+         * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+         * @param {string} page 
+         * @param {string} limit 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usedishaAdminServiceAreasControllerWaitlistV1(state: string, page: string, limit: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.usedishaAdminServiceAreasControllerWaitlistV1(state, page, limit, options).then((request) => request(axios, basePath));
+        },
         /**
          * Runs the ownership transfer (resolves/creates the claimer account, repoints business ownership, updates the OWNER member, emails them), marks the storefront no longer claimable, auto-rejects rival open claims, and records the decision in the storefront\'s moderation history.
          * @summary Approve a claim and transfer the business to the claimer
@@ -22473,7 +25266,7 @@ export const UsedishaSystemAdminApiFactory = function (configuration?: Configura
             return localVarFp.usedishaSystemAdminControllerRequestKycV1(id, adminRequestKycDto, options).then((request) => request(axios, basePath));
         },
         /**
-         * Runs the public endpoint\'s matcher. `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
+         * Runs the public endpoint\'s matcher, area status included (from `state` and the service areas). `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
          * @summary Which home template a shopper gets
          * @param {UsedishaSystemAdminControllerResolveHomeTemplateV1Request} usedishaSystemAdminControllerResolveHomeTemplateV1Request 
          * @param {*} [options] Override http request option.
@@ -22617,6 +25410,52 @@ export const UsedishaSystemAdminApiFactory = function (configuration?: Configura
  * UsedishaSystemAdminApi - object-oriented interface
  */
 export class UsedishaSystemAdminApi extends BaseAPI {
+    /**
+     * Every area, live → pilot → coming_soon, then by state, each with `waitlistCount`; and `notServedWaitlist: [{ state, count }]` for states with no area, biggest first.
+     * @summary ShopCentral service areas
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminServiceAreasControllerListV1(options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaAdminServiceAreasControllerListV1(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * The state becomes not served. Clears the home-layout cache.
+     * @summary Remove a state\'s service area
+     * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminServiceAreasControllerRemoveV1(state: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaAdminServiceAreasControllerRemoveV1(state, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Fields left out are cleared. 400 with paths on validation errors. Clears the home-layout cache.
+     * @summary Create or replace a state\'s service area
+     * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+     * @param {UsedishaAdminServiceAreasControllerUpsertV1Request} usedishaAdminServiceAreasControllerUpsertV1Request 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminServiceAreasControllerUpsertV1(state: string, usedishaAdminServiceAreasControllerUpsertV1Request: UsedishaAdminServiceAreasControllerUpsertV1Request, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaAdminServiceAreasControllerUpsertV1(state, usedishaAdminServiceAreasControllerUpsertV1Request, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Newest first; `limit` 1–100 (default 20). Any state, with an area or not. Paginated like other admin lists: { data, totalCount, page, limit, totalPages, … }.
+     * @summary A state\'s waitlist
+     * @param {string} state A Nigerian state, e.g. Lagos, Akwa Ibom or FCT (case-insensitive)
+     * @param {string} page 
+     * @param {string} limit 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public usedishaAdminServiceAreasControllerWaitlistV1(state: string, page: string, limit: string, options?: RawAxiosRequestConfig) {
+        return UsedishaSystemAdminApiFp(this.configuration).usedishaAdminServiceAreasControllerWaitlistV1(state, page, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Runs the ownership transfer (resolves/creates the claimer account, repoints business ownership, updates the OWNER member, emails them), marks the storefront no longer claimable, auto-rejects rival open claims, and records the decision in the storefront\'s moderation history.
      * @summary Approve a claim and transfer the business to the claimer
@@ -22860,7 +25699,7 @@ export class UsedishaSystemAdminApi extends BaseAPI {
     }
 
     /**
-     * Runs the public endpoint\'s matcher. `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
+     * Runs the public endpoint\'s matcher, area status included (from `state` and the service areas). `at` (ISO with zone) previews a moment in time; `includeDrafts` treats drafts as live.
      * @summary Which home template a shopper gets
      * @param {UsedishaSystemAdminControllerResolveHomeTemplateV1Request} usedishaSystemAdminControllerResolveHomeTemplateV1Request 
      * @param {*} [options] Override http request option.

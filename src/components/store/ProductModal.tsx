@@ -16,10 +16,11 @@ import {
   Divider,
 } from "@mantine/core";
 import { useStorefrontProduct } from "@/hooks/use-storefront";
+import { useVariantChoice } from "@/hooks/use-variant-choice";
 import { useCart } from "@/context/cart-context";
-import { productStock } from "@/lib/product-stock";
 import { useEffect, useState } from "react";
-import { formatPrice } from "@/hooks";
+import { ProductPrice, shownPrice } from "./ProductPrice";
+import { VariantPicker } from "./VariantPicker";
 
 export function ProductModal({
   productId,
@@ -35,8 +36,10 @@ export function ProductModal({
   const [qty, setQty] = useState(1);
 
   const product = data?.data;
-  const stock = productStock(product);
+  const choice = useVariantChoice(product);
+  const { stock, variant } = choice;
   const isInStock = stock.inStock;
+  const price = product ? shownPrice(product, variant) : undefined;
   const availabilityLabel = product?.availability
     ? product.availability.replaceAll("_", " ")
     : "Available";
@@ -47,9 +50,14 @@ export function ProductModal({
     }
   }, [opened, productId]);
 
+  // A different variant can have less stock: keep the quantity within it.
+  useEffect(() => {
+    setQty((q) => Math.min(q, stock.maxQuantity));
+  }, [stock.maxQuantity]);
+
   const handleAddToCart = () => {
-    if (!product) return;
-    addItem(product, qty);
+    if (!product || choice.needsChoice) return;
+    addItem(product, qty, variant);
     setQty(1);
     onClose();
   };
@@ -91,9 +99,9 @@ export function ProductModal({
           <Box className="relative">
             {/* Image — shown in full (not cropped), matching the product page */}
             <div className="flex min-h-[240px] max-h-[min(52vh,380px)] items-center justify-center overflow-hidden border-b border-stone-200 bg-gradient-to-br from-stone-50 to-stone-100 p-5">
-              {product.primaryPhoto ? (
+              {choice.photo ? (
                 <Image
-                  src={product.primaryPhoto}
+                  src={choice.photo}
                   alt={product.name}
                   fit="contain"
                   className="max-h-[min(48vh,340px)] w-auto max-w-full"
@@ -165,14 +173,19 @@ export function ProductModal({
                   <Text size="xs" className="text-stone-500 uppercase tracking-[0.12em] mb-1">
                     Price
                   </Text>
-                  <Text fw={700} className="text-stone-900 text-3xl sm:text-[2rem] leading-none tracking-tight">
-                    {formatPrice(product.amount)}
-                  </Text>
-                  <Text size="xs" className="text-stone-500 mt-2 capitalize">
-                    {availabilityLabel}
-                  </Text>
+                  {price && <ProductPrice price={price} size="lg" />}
+                  {product.deal?.label && price?.badge && (
+                    <Text size="xs" className="text-emerald-700 mt-2">
+                      {product.deal.label}
+                    </Text>
+                  )}
+                  {!choice.soldByVariant && (
+                    <Text size="xs" className="text-stone-500 mt-2 capitalize">
+                      {availabilityLabel}
+                    </Text>
+                  )}
                 </div>
-                {product.SKU && (
+                {choice.sku && (
                   <div className="text-right min-w-0">
                     <Text size="xs" className="text-stone-500 uppercase tracking-wider mb-0.5">
                       SKU
@@ -181,9 +194,9 @@ export function ProductModal({
                       size="sm"
                       fw={500}
                       className="text-stone-700 font-mono truncate max-w-[200px]"
-                      title={product.SKU}
+                      title={choice.sku}
                     >
-                      {product.SKU}
+                      {choice.sku}
                     </Text>
                   </div>
                 )}
@@ -192,6 +205,10 @@ export function ProductModal({
 
             <Divider color="#e7e5e4" label="Add to cart" labelPosition="center" classNames={{ label: "text-stone-400 text-xs" }} />
 
+            {choice.soldByVariant && (
+              <VariantPicker product={product} selection={choice.selection} onChange={choice.setSelection} />
+            )}
+
             <div className="flex flex-col sm:flex-row sm:items-end gap-4">
               <NumberInput
                 label="Quantity"
@@ -199,7 +216,7 @@ export function ProductModal({
                 max={stock.maxQuantity}
                 value={qty}
                 onChange={(v) => setQty(Number(v) || 1)}
-                disabled={!isInStock}
+                disabled={!isInStock || choice.needsChoice}
                 className="flex-1 min-w-[120px] max-w-[160px]"
                 classNames={{
                   label: "text-stone-600 text-xs font-medium mb-1.5",
@@ -214,9 +231,9 @@ export function ProductModal({
                 fullWidth
                 className="flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium rounded-lg h-11 sm:min-h-[44px] sm:max-w-none"
                 onClick={handleAddToCart}
-                disabled={!isInStock}
+                disabled={!isInStock || choice.needsChoice}
               >
-                {isInStock ? "Add to cart" : "Unavailable"}
+                {!isInStock ? (choice.soldByVariant ? "Sold out" : "Unavailable") : (choice.choosePrompt ?? "Add to cart")}
               </Button>
             </div>
           </Stack>

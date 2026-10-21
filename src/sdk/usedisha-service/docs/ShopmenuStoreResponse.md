@@ -16,6 +16,7 @@ Name | Type | Description | Notes
 **supportedPaymentMethods** | **Array&lt;string&gt;** | Payment methods supported by this storefront | [optional] [default to undefined]
 **supportedDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods supported by this storefront (flattened from deliveryConfig) | [optional] [default to undefined]
 **availableDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods a customer may actually choose right now. A subset of &#x60;supportedDeliveryMethods&#x60;: a store either delivers its own orders OR uses platform delivery (incl. bulk market delivery), never both. Prefer this over &#x60;supportedDeliveryMethods&#x60;, which records the merchant\&#39;s configuration only. | [optional] [default to undefined]
+**marketplaceDeliveryMethods** | **Array&lt;string&gt;** | Delivery methods a ShopCentral shopper may choose. ShopCentral orders only go by methods the platform runs: pickup and platformDelivery always, and marketDelivery where the store is in a market — never the store\&#39;s own &#x60;businessDelivery&#x60;, which is for its own link. ShopCentral clients prefer this over &#x60;availableDeliveryMethods&#x60; and send &#x60;orderSource: marketplace&#x60;. | [optional] [default to undefined]
 **badges** | **Array&lt;string&gt;** | Trust/quality badges awarded to this storefront by a platform admin | [optional] [default to undefined]
 **sellerTypes** | **Array&lt;string&gt;** | What kind of seller this storefront is (retailer, wholesaler, ...) | [optional] [default to undefined]
 **theme** | [**UDThemeSettings**](UDThemeSettings.md) | Theme settings for the storefront | [default to undefined]
@@ -31,6 +32,7 @@ Name | Type | Description | Notes
 **reviewCount** | **number** | Total number of reviews | [optional] [default to undefined]
 **minimumOrderAmount** | **number** | Minimum cart value for checkout | [optional] [default to undefined]
 **estimatedDeliveryTime** | **string** | Estimated delivery time | [optional] [default to undefined]
+**preparationTime** | [**UsedishaPreparationTime**](UsedishaPreparationTime.md) | How long an order takes to be ready, in minutes | [optional] [default to undefined]
 **priceRange** | **string** |  | [optional] [default to undefined]
 **tags** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
 **featured** | **boolean** | Featured/promoted listing | [optional] [default to undefined]
@@ -39,7 +41,9 @@ Name | Type | Description | Notes
 **takingOnlineOrders** | **boolean** | Whether the storefront\&#39;s default branch takes online orders (its &#x60;enableOnlineOrdering&#x60; setting, default true). Per-branch values are on the branches endpoints. | [optional] [default to undefined]
 **appLayout** | [**UsedishaAppLayout**](UsedishaAppLayout.md) | Owner-edited store app home layout (store-app/docs/APP-LAYOUT.md), with disabled sections included (the app skips them). null when the owner has never saved one; the app then uses its default. | [default to undefined]
 **storeUrl** | **string** | Full store URL | [default to undefined]
+**activeDeal** | [**ShopDealResponse**](ShopDealResponse.md) | The store\&#39;s deal on ShopCentral, when it has one: the biggest saving of its automatic discounts that work online. Checkout applies it (or a bigger one for the cart) by itself. | [optional] [default to undefined]
 **categories** | **Array&lt;string&gt;** | Shopmenu categories this store belongs to | [optional] [default to undefined]
+**distanceKm** | **number** | Kilometres (1 decimal) to its nearest branch with a location; only when the list was asked with lng + lat | [optional] [default to undefined]
 
 ## Example
 
@@ -58,6 +62,7 @@ const instance: ShopmenuStoreResponse = {
     supportedPaymentMethods,
     supportedDeliveryMethods,
     availableDeliveryMethods,
+    marketplaceDeliveryMethods,
     badges,
     sellerTypes,
     theme,
@@ -73,6 +78,7 @@ const instance: ShopmenuStoreResponse = {
     reviewCount,
     minimumOrderAmount,
     estimatedDeliveryTime,
+    preparationTime,
     priceRange,
     tags,
     featured,
@@ -81,7 +87,9 @@ const instance: ShopmenuStoreResponse = {
     takingOnlineOrders,
     appLayout,
     storeUrl,
+    activeDeal,
     categories,
+    distanceKm,
 };
 ```
 

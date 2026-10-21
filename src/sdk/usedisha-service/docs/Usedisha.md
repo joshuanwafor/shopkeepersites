@@ -39,6 +39,9 @@ Name | Type | Description | Notes
 **reviewCount** | **number** | Total number of reviews | [optional] [default to undefined]
 **minimumOrderAmount** | **number** | Minimum cart value required for checkout | [optional] [default to undefined]
 **estimatedDeliveryTime** | **string** | Estimated delivery time display string | [optional] [default to undefined]
+**preparationTime** | [**UsedishaPreparationTime**](UsedishaPreparationTime.md) | How long an order takes to be ready once accepted; null clears it. Shoppers see it on ShopCentral, and orders get an estimated ready time from it. | [optional] [default to undefined]
+**defaultPackageClass** | **string** | How the store\&#39;s products are delivered unless a product says otherwise: consumable (food, perishables: fast), fragile, bulky, document or parcel. Unset: worked out from the store\&#39;s categories (a restaurant is consumable), else parcel. | [optional] [default to undefined]
+**defaultPerishability** | **string** | How long the store\&#39;s products keep unless a product says otherwise (see Perishability). Unset: worked out from the store\&#39;s categories (a restaurant\&#39;s food is same-day), else none. | [optional] [default to undefined]
 **priceRange** | **string** | Price tier | [optional] [default to undefined]
 **tags** | **Array&lt;string&gt;** | Freeform discovery keywords | [optional] [default to undefined]
 **featured** | **boolean** | Promoted/featured listing flag | [optional] [default to false]
@@ -88,6 +91,9 @@ const instance: Usedisha = {
     reviewCount,
     minimumOrderAmount,
     estimatedDeliveryTime,
+    preparationTime,
+    defaultPackageClass,
+    defaultPerishability,
     priceRange,
     tags,
     featured,

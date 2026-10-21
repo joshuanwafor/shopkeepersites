@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **deliveryFeeNote** | **string** |  | [default to undefined]
 **serviceFeeNote** | **string** |  | [default to undefined]
-**discountNote** | **string** |  | [default to undefined]
+**discountNote** | **string** | \&#39;No discount applied\&#39; when no deal applies | [default to undefined]
 
 ## Example
 

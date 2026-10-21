@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -21,14 +21,15 @@ import {
 import { useClipboard } from "@mantine/hooks";
 import { Share, TickCircle, ArrowLeft2 } from "iconsax-react";
 import { StoreLayout } from "@/components/store/StoreLayout";
-import { formatPrice } from "@/hooks";
+import { ProductPrice, shownPrice } from "@/components/store/ProductPrice";
+import { VariantPicker } from "@/components/store/VariantPicker";
+import { useVariantChoice } from "@/hooks/use-variant-choice";
 import {
   useStorefrontProfile,
   useStorefrontProduct,
   useStorefrontQueryString,
 } from "@/hooks/use-storefront";
 import { useCart } from "@/context/cart-context";
-import { productStock } from "@/lib/product-stock";
 
 function ProductDetail() {
   const params = useParams();
@@ -45,8 +46,15 @@ function ProductDetail() {
   const [shared, setShared] = useState(false);
   const [qty, setQty] = useState(1);
 
-  const stock = productStock(product);
+  const choice = useVariantChoice(product);
+  const { stock, variant } = choice;
   const isInStock = stock.inStock;
+  const price = product ? shownPrice(product, variant) : undefined;
+
+  // A different variant can have less stock: keep the quantity within it.
+  useEffect(() => {
+    setQty((q) => Math.min(q, stock.maxQuantity));
+  }, [stock.maxQuantity]);
   const backHref = queryString ? `/${queryString}` : "/";
   const shareDone = shared || clipboard.copied;
 
@@ -113,9 +121,9 @@ function ProductDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2">
               {/* Image — shown in full (not cropped) */}
               <div className="relative bg-gradient-to-br from-stone-50 to-stone-100 border-b md:border-b-0 md:border-r border-stone-200 flex items-center justify-center p-6 min-h-[280px]">
-                {product.primaryPhoto ? (
+                {choice.photo ? (
                   <Image
-                    src={product.primaryPhoto}
+                    src={choice.photo}
                     alt={product.name}
                     fit="contain"
                     className="max-h-[440px] w-auto max-w-full"
@@ -161,9 +169,12 @@ function ProductDetail() {
                       {shareDone ? "Shared" : "Share"}
                     </Button>
                   </Group>
-                  <Text fw={700} className="text-stone-900 text-3xl mt-3 tracking-tight">
-                    {formatPrice(product.amount)}
-                  </Text>
+                  <div className="mt-3">{price && <ProductPrice price={price} size="lg" />}</div>
+                  {product.deal?.label && price?.badge && (
+                    <Text size="xs" className="text-emerald-700 mt-2">
+                      {product.deal.label}
+                    </Text>
+                  )}
                   <Text size="xs" className="text-stone-500 mt-1">
                     {isInStock
                       ? stock.quantity
@@ -195,13 +206,17 @@ function ProductDetail() {
                   </Group>
                 )}
 
-                {product.SKU && (
+                {choice.sku && (
                   <Text size="xs" className="text-stone-400">
-                    SKU: <span className="font-mono text-stone-600">{product.SKU}</span>
+                    SKU: <span className="font-mono text-stone-600">{choice.sku}</span>
                   </Text>
                 )}
 
                 <Divider className="border-stone-200" />
+
+                {choice.soldByVariant && (
+                  <VariantPicker product={product} selection={choice.selection} onChange={choice.setSelection} />
+                )}
 
                 <div className="flex flex-col sm:flex-row sm:items-end gap-3">
                   <NumberInput
@@ -210,7 +225,7 @@ function ProductDetail() {
                     max={stock.maxQuantity}
                     value={qty}
                     onChange={(v) => setQty(Number(v) || 1)}
-                    disabled={!isInStock}
+                    disabled={!isInStock || choice.needsChoice}
                     className="max-w-[140px]"
                     classNames={{
                       label: "text-stone-600 text-xs font-medium mb-1.5",
@@ -221,15 +236,15 @@ function ProductDetail() {
                   <Button
                     size="md"
                     className="flex-1 bg-stone-800 hover:bg-stone-900 text-white rounded-lg h-11"
-                    disabled={!isInStock}
+                    disabled={!isInStock || choice.needsChoice}
                     onClick={() => {
-                      if (isInStock && product) {
-                        addItem(product, qty);
+                      if (isInStock && product && !choice.needsChoice) {
+                        addItem(product, qty, variant);
                         setQty(1);
                       }
                     }}
                   >
-                    {isInStock ? "Add to cart" : "Unavailable"}
+                    {!isInStock ? (choice.soldByVariant ? "Sold out" : "Unavailable") : (choice.choosePrompt ?? "Add to cart")}
                   </Button>
                 </div>
 

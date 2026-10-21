@@ -18,6 +18,12 @@ Name | Type | Description | Notes
 **brand** | **string** | Product brand | [optional] [default to undefined]
 **stockTracked** | **boolean** | Whether stockQuantity limits how many can be bought: the product tracks stock and so does the branch. When false, ignore stockQuantity — checkout does. | [optional] [default to undefined]
 **unit** | **string** | The unit it is sold in | [optional] [default to undefined]
+**hasVariants** | **boolean** | Bought one variant at a time: the shopper picks one, and checkout gets its &#x60;variantId&#x60;. Absent for products sold as themselves. The product-level price and stock above stay those of the base product. | [optional] [default to undefined]
+**_options** | [**Array&lt;StorefrontProductOptionResponse&gt;**](StorefrontProductOptionResponse.md) | The options to choose from (with hasVariants) | [optional] [default to undefined]
+**variants** | [**Array&lt;StorefrontProductVariantResponse&gt;**](StorefrontProductVariantResponse.md) | Every variant, in the merchant order (with hasVariants) | [optional] [default to undefined]
+**priceRange** | [**StorefrontPriceRange**](StorefrontPriceRange.md) | Lowest and highest variant price, among those in stock when any are (with hasVariants) | [optional] [default to undefined]
+**salePrice** | **number** | Price under the store\&#39;s deal (₦), shown with &#x60;amount&#x60; struck through. Only a percentage deal on chosen products or categories with no minimum spend prices a product on its own; others are applied at checkout. | [optional] [default to undefined]
+**deal** | [**ProductDealResponse**](ProductDealResponse.md) | The store\&#39;s deal on this product (with salePrice) | [optional] [default to undefined]
 **createdAt** | **string** | Creation date | [default to undefined]
 **updatedAt** | **string** | Last update date | [default to undefined]
 **warranty** | **string** | Warranty terms | [optional] [default to undefined]
@@ -44,6 +50,12 @@ const instance: StorefrontProductDetailResponse = {
     brand,
     stockTracked,
     unit,
+    hasVariants,
+    _options,
+    variants,
+    priceRange,
+    salePrice,
+    deal,
     createdAt,
     updatedAt,
     warranty,

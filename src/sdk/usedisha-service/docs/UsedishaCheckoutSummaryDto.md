@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **subTotal** | **number** | Subtotal before fees and discounts | [default to undefined]
 **taxAmount** | **number** | Tax amount | [optional] [default to undefined]
 **discountAmount** | **number** | Discount amount | [optional] [default to undefined]
+**discount** | [**UsedishaAppliedDealDto**](UsedishaAppliedDealDto.md) | The store\&#39;s deal, when one applies: biggest saving of its automatic online discounts | [optional] [default to undefined]
 **deliveryFee** | **number** | Delivery fee (0 for PICKUP) | [default to undefined]
 **serviceFee** | **number** | Platform service fee | [default to undefined]
 **totalAmount** | **number** | Total amount charged to the customer | [default to undefined]
@@ -24,6 +25,7 @@ const instance: UsedishaCheckoutSummaryDto = {
     subTotal,
     taxAmount,
     discountAmount,
+    discount,
     deliveryFee,
     serviceFee,
     totalAmount,

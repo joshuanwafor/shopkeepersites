@@ -168,7 +168,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsedishaCustomerCartApi(configuration);
 
-let lineId: string; //Line id: `storeId:productId` (default to undefined)
+let lineId: string; //Line id: `storeId:productId`, or `storeId:productId:variantId` (default to undefined)
 
 const { status, data } = await apiInstance.usedishaCustomerCartControllerRemoveLineV1(
     lineId
@@ -179,7 +179,7 @@ const { status, data } = await apiInstance.usedishaCustomerCartControllerRemoveL
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **lineId** | [**string**] | Line id: &#x60;storeId:productId&#x60; | defaults to undefined|
+| **lineId** | [**string**] | Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60; | defaults to undefined|
 
 
 ### Return type
@@ -274,7 +274,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UsedishaCustomerCartApi(configuration);
 
-let lineId: string; //Line id: `storeId:productId` (default to undefined)
+let lineId: string; //Line id: `storeId:productId`, or `storeId:productId:variantId` (default to undefined)
 let updateCustomerCartLineDto: UpdateCustomerCartLineDto; //
 
 const { status, data } = await apiInstance.usedishaCustomerCartControllerSetLineQuantityV1(
@@ -288,7 +288,7 @@ const { status, data } = await apiInstance.usedishaCustomerCartControllerSetLine
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **updateCustomerCartLineDto** | **UpdateCustomerCartLineDto**|  | |
-| **lineId** | [**string**] | Line id: &#x60;storeId:productId&#x60; | defaults to undefined|
+| **lineId** | [**string**] | Line id: &#x60;storeId:productId&#x60;, or &#x60;storeId:productId:variantId&#x60; | defaults to undefined|
 
 
 ### Return type

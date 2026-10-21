@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { Image, Text, Button } from "@mantine/core";
 import type { StorefrontProductResponse } from "@/sdk/usedisha-service";
-import { formatPrice } from "@/hooks";
-import { useCart } from "@/context/cart-context";
-import { productStock } from "@/lib/product-stock";
+import { cartLineKey, useCart } from "@/context/cart-context";
+import { lineStock } from "@/lib/product-stock";
+import { isSoldByVariant } from "@/lib/variants";
+import { ProductPrice, shownPrice } from "./ProductPrice";
 
 function EyeIcon({ size = 16 }: { size?: number }) {
   return (
@@ -72,9 +73,13 @@ export function ProductCard({
   onQuickView: () => void;
 }) {
   const { items, addItem, updateQuantity } = useCart();
-  const quantityInCart =
-    items.find((i) => i.product.id === product.id)?.quantity ?? 0;
-  const stock = productStock(product);
+  // A product sold by variant is chosen in the quick view: its card can't add one blind.
+  const soldByVariant = isSoldByVariant(product);
+  const lineKey = cartLineKey({ product });
+  const quantityInCart = soldByVariant
+    ? 0
+    : items.find((i) => cartLineKey(i) === lineKey)?.quantity ?? 0;
+  const stock = lineStock(product);
   const isInStock = stock.inStock;
 
   return (
@@ -139,9 +144,9 @@ export function ProductCard({
           >
             {product.name}
           </Text>
-          <Text fw={700} className="shrink-0 text-base text-stone-900">
-            {formatPrice(product.amount)}
-          </Text>
+          <span className="shrink-0 text-right">
+            <ProductPrice price={shownPrice(product)} />
+          </span>
         </div>
 
         <Text size="sm" className="line-clamp-2 min-h-[2.5rem] leading-relaxed text-stone-500">
@@ -157,7 +162,7 @@ export function ProductCard({
             >
               <button
                 type="button"
-                onClick={() => updateQuantity(product.id, quantityInCart - 1)}
+                onClick={() => updateQuantity(lineKey, quantityInCart - 1)}
                 aria-label={
                   quantityInCart === 1
                     ? `Remove ${product.name} from cart`
@@ -172,8 +177,8 @@ export function ProductCard({
               </span>
               <button
                 type="button"
-                onClick={() => updateQuantity(product.id, Math.min(stock.maxQuantity, quantityInCart + 1))}
-                disabled={!isInStock}
+                onClick={() => updateQuantity(lineKey, quantityInCart + 1)}
+                disabled={!isInStock || quantityInCart >= stock.maxQuantity}
                 aria-label={`Increase quantity of ${product.name}`}
                 className="flex w-9 items-center justify-center bg-stone-800 text-white transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
               >
@@ -185,9 +190,9 @@ export function ProductCard({
               size="xs"
               className="flex-1 rounded-md bg-stone-800 font-medium text-white hover:bg-stone-700"
               disabled={!isInStock}
-              onClick={() => addItem(product, 1)}
+              onClick={() => (soldByVariant ? onQuickView() : addItem(product, 1))}
             >
-              Add to cart
+              {soldByVariant ? "Choose options" : "Add to cart"}
             </Button>
           )}
           <Button

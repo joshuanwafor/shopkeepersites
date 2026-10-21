@@ -12,6 +12,8 @@ Name | Type | Description | Notes
 **branchName** | **string** | Branch name, for display | [optional] [default to undefined]
 **marketplaceId** | **string** | Market the store was opened from (order attribution) | [optional] [default to undefined]
 **productId** | **string** | Product id | [default to undefined]
+**variantId** | **string** | Variant id, for a product sold by variant. Each variant is its own line. | [optional] [default to undefined]
+**variantTitle** | **string** | The variant, for display | [optional] [default to undefined]
 **title** | **string** | Product name, for display | [default to undefined]
 **quantity** | **number** | How many. When adding a product already in the cart, how many more. | [default to undefined]
 **unitPriceMinor** | **number** | Unit price in minor units (kobo), for display — checkout prices items itself | [default to undefined]
@@ -30,6 +32,8 @@ const instance: CustomerCartLineDto = {
     branchName,
     marketplaceId,
     productId,
+    variantId,
+    variantTitle,
     title,
     quantity,
     unitPriceMinor,
