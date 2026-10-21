@@ -199,7 +199,7 @@ function AboutContact({ profile }: { profile: StorefrontProfileResponse }) {
 function tabButtonClass(active: boolean) {
   return `
     px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-    ${active ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
+    ${active ? "bg-sf-brand text-sf-brand-ink shadow-sm" : "text-stone-700 hover:bg-stone-100"}
   `;
 }
 

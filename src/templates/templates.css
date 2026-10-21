@@ -1,0 +1,120 @@
+/*
+ * Storefront templates (templates.ts). The components are written with
+ * Tailwind's stone greys and radius scale; Tailwind reads those from CSS
+ * variables, so a template re-skins the whole site by redefining them on
+ * `html[data-sf-template]`. Mantine's radius and font variables follow along.
+ *
+ * Every template sets:
+ *   --sf-heading-font / --sf-body-font (Mantine text) / --sf-ui-font (plain elements)
+ *   --sf-header-bg / --sf-header-ink / --sf-header-muted / --sf-header-border
+ * and the page sets --sf-brand / --sf-brand-ink (the business's colour and the
+ * text on it) inline. Without an attribute the page is Classic.
+ */
+
+:root {
+  --sf-brand: #292524;
+  --sf-brand-ink: #ffffff;
+  --sf-heading-font: Georgia, Cambria, "Times New Roman", Times, serif;
+  --sf-body-font: Georgia, "Times New Roman", Times, serif;
+  --sf-ui-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sf-header-bg: #ffffff;
+  --sf-header-ink: var(--color-stone-800);
+  --sf-header-muted: var(--color-stone-500);
+  --sf-header-border: var(--color-stone-200);
+  /* `font-serif` is the components' heading face. Mantine reads the body and
+     heading fonts from these variables too (app/theme.ts). */
+  --font-serif: var(--sf-heading-font);
+}
+
+/* ── Market: bright and rounded, for food and groceries ─────────────────── */
+html[data-sf-template="market"] {
+  --color-stone-50: oklch(0.985 0 0);
+  --color-stone-100: oklch(0.97 0 0);
+  --color-stone-200: oklch(0.922 0 0);
+  --color-stone-300: oklch(0.87 0 0);
+  --color-stone-400: oklch(0.708 0 0);
+  --color-stone-500: oklch(0.556 0 0);
+  --color-stone-600: oklch(0.439 0 0);
+  --color-stone-700: oklch(0.371 0 0);
+  --color-stone-800: oklch(0.269 0 0);
+  --color-stone-900: oklch(0.205 0 0);
+  --color-stone-950: oklch(0.145 0 0);
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+  --sf-heading-font: var(--font-jakarta), system-ui, sans-serif;
+  --sf-body-font: var(--font-jakarta), system-ui, sans-serif;
+  --sf-ui-font: var(--sf-body-font);
+}
+
+/* ── Boutique: quiet greys, sharp corners, a serif display face ─────────── */
+html[data-sf-template="boutique"] {
+  --color-stone-50: oklch(0.985 0 0);
+  --color-stone-100: oklch(0.967 0.001 286.375);
+  --color-stone-200: oklch(0.92 0.004 286.32);
+  --color-stone-300: oklch(0.871 0.006 286.286);
+  --color-stone-400: oklch(0.705 0.015 286.067);
+  --color-stone-500: oklch(0.552 0.016 285.938);
+  --color-stone-600: oklch(0.442 0.017 285.786);
+  --color-stone-700: oklch(0.37 0.013 285.805);
+  --color-stone-800: oklch(0.274 0.006 286.033);
+  --color-stone-900: oklch(0.21 0.006 285.885);
+  --color-stone-950: oklch(0.141 0.005 285.823);
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0.125rem;
+  --radius-lg: 0.125rem;
+  --radius-xl: 0.25rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.375rem;
+  --sf-heading-font: var(--font-playfair), Georgia, serif;
+  --sf-body-font: var(--font-inter), system-ui, sans-serif;
+  --sf-ui-font: var(--sf-body-font);
+}
+
+/* ── Bold: cool greys, the brand colour across the header ───────────────── */
+html[data-sf-template="bold"] {
+  --color-stone-50: oklch(0.984 0.003 247.858);
+  --color-stone-100: oklch(0.968 0.007 247.896);
+  --color-stone-200: oklch(0.929 0.013 255.508);
+  --color-stone-300: oklch(0.869 0.022 252.894);
+  --color-stone-400: oklch(0.704 0.04 256.788);
+  --color-stone-500: oklch(0.554 0.046 257.417);
+  --color-stone-600: oklch(0.446 0.043 257.281);
+  --color-stone-700: oklch(0.372 0.044 257.287);
+  --color-stone-800: oklch(0.279 0.041 260.031);
+  --color-stone-900: oklch(0.208 0.042 265.755);
+  --color-stone-950: oklch(0.129 0.042 264.695);
+  --radius-xl: 0.625rem;
+  --radius-2xl: 0.875rem;
+  --sf-heading-font: var(--font-grotesk), system-ui, sans-serif;
+  --sf-body-font: var(--font-inter), system-ui, sans-serif;
+  --sf-ui-font: var(--sf-body-font);
+  --sf-header-bg: var(--sf-brand);
+  --sf-header-ink: var(--sf-brand-ink);
+  --sf-header-muted: color-mix(in srgb, var(--sf-brand-ink) 72%, transparent);
+  --sf-header-border: transparent;
+}
+
+/* Bold: the search strip above the header joins the brand-coloured bar. */
+html[data-sf-template="bold"] .sf-search {
+  background: var(--sf-brand);
+  border-color: transparent;
+}
+
+/* Mantine's own radius scale follows the template's. */
+html[data-sf-template] {
+  --mantine-radius-xs: var(--radius-xs);
+  --mantine-radius-sm: var(--radius-sm);
+  --mantine-radius-md: var(--radius-md);
+  --mantine-radius-lg: var(--radius-lg);
+  --mantine-radius-xl: var(--radius-xl);
+  --mantine-radius-default: var(--radius-sm);
+}
+
+/* Boutique's catalogue headings: small capitals, spaced out. */
+html[data-sf-template="boutique"] .sf-catalogue-title {
+  letter-spacing: 0.02em;
+}

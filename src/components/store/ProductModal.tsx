@@ -173,7 +173,7 @@ export function ProductModal({
                   <Text size="xs" className="text-stone-500 uppercase tracking-[0.12em] mb-1">
                     Price
                   </Text>
-                  {price && <ProductPrice price={price} size="lg" />}
+                  {price && <ProductPrice price={price} size="lg" align="start" />}
                   {product.deal?.label && price?.badge && (
                     <Text size="xs" className="text-emerald-700 mt-2">
                       {product.deal.label}
@@ -229,7 +229,7 @@ export function ProductModal({
               <Button
                 size="md"
                 fullWidth
-                className="flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium rounded-lg h-11 sm:min-h-[44px] sm:max-w-none"
+                className="flex-1 bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 font-medium rounded-lg h-11 sm:min-h-[44px] sm:max-w-none"
                 onClick={handleAddToCart}
                 disabled={!isInStock || choice.needsChoice}
               >

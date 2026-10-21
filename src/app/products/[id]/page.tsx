@@ -82,7 +82,7 @@ function ProductDetail() {
           href={backHref}
           variant="subtle"
           size="sm"
-          leftSection={<ArrowLeft2 size={16} />}
+          leftSection={<ArrowLeft2 size={16} color="currentColor" />}
           className="text-stone-600 hover:bg-stone-100 -ml-2 mb-4"
         >
           Back to store
@@ -162,14 +162,14 @@ function ProductDetail() {
                       size="sm"
                       onClick={handleShare}
                       leftSection={
-                        shareDone ? <TickCircle size={16} color="#059669" /> : <Share size={16} />
+                        shareDone ? <TickCircle size={16} color="#059669" /> : <Share size={16} color="currentColor" />
                       }
                       className="shrink-0 border-stone-300 text-stone-700 hover:bg-stone-100 rounded-full"
                     >
                       {shareDone ? "Shared" : "Share"}
                     </Button>
                   </Group>
-                  <div className="mt-3">{price && <ProductPrice price={price} size="lg" />}</div>
+                  <div className="mt-3">{price && <ProductPrice price={price} size="lg" align="start" />}</div>
                   {product.deal?.label && price?.badge && (
                     <Text size="xs" className="text-emerald-700 mt-2">
                       {product.deal.label}
@@ -235,7 +235,7 @@ function ProductDetail() {
                   />
                   <Button
                     size="md"
-                    className="flex-1 bg-stone-800 hover:bg-stone-900 text-white rounded-lg h-11"
+                    className="flex-1 bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 rounded-lg h-11"
                     disabled={!isInStock || choice.needsChoice}
                     onClick={() => {
                       if (isInStock && product && !choice.needsChoice) {
