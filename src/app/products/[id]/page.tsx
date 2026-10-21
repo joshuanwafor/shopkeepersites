@@ -235,7 +235,7 @@ function ProductDetail() {
                   />
                   <Button
                     size="md"
-                    className="flex-1 bg-stone-800 hover:bg-stone-900 text-white rounded-lg h-11"
+                    className="w-full shrink-0 sm:w-auto sm:flex-1 bg-stone-800 hover:bg-stone-900 text-white rounded-lg h-11"
                     disabled={!isInStock || choice.needsChoice}
                     onClick={() => {
                       if (isInStock && product && !choice.needsChoice) {

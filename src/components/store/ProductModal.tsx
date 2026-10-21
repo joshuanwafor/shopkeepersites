@@ -229,7 +229,7 @@ export function ProductModal({
               <Button
                 size="md"
                 fullWidth
-                className="flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium rounded-lg h-11 sm:min-h-[44px] sm:max-w-none"
+                className="w-full shrink-0 sm:w-auto sm:flex-1 bg-stone-800 hover:bg-stone-900 text-white font-medium rounded-lg h-11 sm:min-h-[44px] sm:max-w-none"
                 onClick={handleAddToCart}
                 disabled={!isInStock || choice.needsChoice}
               >
