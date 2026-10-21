@@ -235,7 +235,7 @@ function ProductDetail() {
                   />
                   <Button
                     size="md"
-                    className="flex-1 bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 rounded-lg h-11"
+                    className="w-full shrink-0 sm:w-auto sm:flex-1 bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 rounded-lg h-11"
                     disabled={!isInStock || choice.needsChoice}
                     onClick={() => {
                       if (isInStock && product && !choice.needsChoice) {
