@@ -21,7 +21,7 @@ export function StoreLayout({ storeName, children }: StoreLayoutProps) {
         footer={{ height: 56 }}
         padding="md"
         classNames={{
-          main: "flex-1 bg-stone-50 pb-24 sm:pb-0",
+          main: "flex-1 bg-stone-50",
         }}
       >
         <AppShellMain className="flex-1">{children}</AppShellMain>
