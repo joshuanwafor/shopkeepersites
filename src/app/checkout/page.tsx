@@ -314,8 +314,9 @@ function CheckoutContent() {
             onStepClick={setActive}
             allowNextStepsSelect={false}
             size="sm"
-            color="dark"
+            color="var(--sf-brand)"
             classNames={{
+              stepCompletedIcon: "text-sf-brand-ink",
               stepLabel: "store-classic-title text-stone-800",
               stepDescription: "text-stone-500 hidden sm:block",
             }}
@@ -460,6 +461,7 @@ function CheckoutContent() {
                         >
                           <Radio
                             value={m}
+                            color="var(--sf-brand)"
                             label={METHOD_META[m]?.label ?? m}
                             description={METHOD_META[m]?.hint}
                             classNames={{ label: "text-stone-800 font-medium", description: "text-stone-500" }}
@@ -699,7 +701,7 @@ function CheckoutContent() {
               <Button
                 type="button"
                 onClick={goNext}
-                className="bg-stone-800 hover:bg-stone-900 text-white rounded"
+                className="bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 rounded"
               >
                 Continue
               </Button>
@@ -707,7 +709,7 @@ function CheckoutContent() {
               <Button
                 type="submit"
                 disabled={!canPay}
-                className="bg-stone-800 hover:bg-stone-900 text-white rounded"
+                className="bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 rounded"
                 loading={validateCart.isPending || initiateCheckout.isPending}
                 loaderProps={{ type: "dots" }}
               >

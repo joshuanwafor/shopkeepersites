@@ -67,7 +67,7 @@ export function ProductSearchBar() {
   };
 
   return (
-    <div className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
+    <div className="sf-search sticky top-0 z-30 border-b border-stone-200 bg-stone-50/95 backdrop-blur supports-[backdrop-filter]:bg-white/90">
       <form
         onSubmit={onSubmit}
         className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-2"

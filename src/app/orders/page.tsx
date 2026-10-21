@@ -100,7 +100,7 @@ function OrdersContent() {
               classNames={{ input: "rounded border-stone-300" }}
               {...form.getInputProps("email")}
             />
-            <Button type="submit" className="bg-stone-700 hover:bg-stone-800 text-white font-normal rounded shrink-0">
+            <Button type="submit" className="bg-sf-brand text-sf-brand-ink hover:opacity-90 disabled:opacity-50 font-normal rounded shrink-0">
               Find orders
             </Button>
           </Group>

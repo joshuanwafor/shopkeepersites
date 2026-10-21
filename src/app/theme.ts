@@ -22,9 +22,10 @@ const theme = createTheme({
       "#020617",
     ],
   },
-  fontFamily: 'Georgia, "Times New Roman", Times, serif',
+  // The storefront template's fonts (templates/templates.css).
+  fontFamily: "var(--sf-body-font)",
   headings: {
-    fontFamily: 'Georgia, "Times New Roman", Times, serif',
+    fontFamily: "var(--sf-heading-font)",
   },
   defaultRadius: "sm",
 });

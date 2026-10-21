@@ -14,12 +14,15 @@ import {
   Paper,
   Stack,
   Button,
+  Image,
 } from "@mantine/core";
 import { StoreLayout } from "@/components/store/StoreLayout";
 import { StorefrontInfo } from "@/components/store/StorefrontInfo";
-import { ProductCard } from "@/components/store/ProductCard";
+import { PRODUCT_GRID_CLASS, ProductCard } from "@/components/store/ProductCard";
 import { ProductModal } from "@/components/store/ProductModal";
 import { dealBannerText, storeActiveDeal } from "@/lib/deals";
+import { storeCover } from "@/templates/branding";
+import { useStorefrontStyle } from "@/templates/use-storefront-style";
 import {
   useStorefrontProfile,
   useStorefrontProducts,
@@ -66,6 +69,8 @@ function HomeContent() {
   const { data: categoriesRes } = useStorefrontCategories();
 
   const profile = profileRes?.data;
+  const { template, ready: styleReady } = useStorefrontStyle();
+  const cover = template.hero ? storeCover(profile) : undefined;
   const deal = storeActiveDeal(profile);
   const dealText = deal ? dealBannerText(deal) : undefined;
   // Records a session-aware store view once the storefront resolves (fire-and-forget).
@@ -99,15 +104,27 @@ function HomeContent() {
   const renderMenuItem = (product: StorefrontProductResponse) => (
     <ProductCard
       key={product.id}
+      layout={template.productLayout}
       product={product}
       href={`/products/${product.id}${queryString}`}
       onQuickView={() => setQuickViewId(product.id)}
     />
   );
+  // Until the store's template is known, show placeholders rather than another template's layout.
+  const showProductsLoading = productsLoading || !styleReady;
 
   return (
     <StoreLayout storeName={profile?.name ?? "Store"}>
-      <Container size="lg" className="max-w-4xl mx-auto py-6 sm:py-10 px-3 sm:px-6">
+      {cover && (
+        <div className="relative w-full overflow-hidden bg-stone-200">
+          <Image src={cover} alt="" fit="cover" className="h-48 w-full sm:h-64 md:h-80" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+        </div>
+      )}
+      <Container
+        size="lg"
+        className={`${template.wide ? "max-w-6xl" : "max-w-4xl"} mx-auto py-6 sm:py-10 px-3 sm:px-6`}
+      >
         {!profile && profileLoading && (
           <Paper p="lg" className="store-classic-paper rounded-2xl mb-8">
             <Skeleton height={36} width={180} className="rounded-xl mb-3" />
@@ -143,8 +160,8 @@ function HomeContent() {
           <div className="p-4 sm:p-6 sm:pb-4">
             <Group justify="space-between" align="flex-end" wrap="wrap" gap="sm">
               <div>
-                <Title order={2} className="store-classic-title text-2xl sm:text-3xl text-stone-800">
-                  Menu
+                <Title order={2} className="sf-catalogue-title store-classic-title text-2xl sm:text-3xl text-stone-800">
+                  {template.catalogueTitle}
                 </Title>
                 <Text size="sm" className="text-stone-500 mt-1.5 sm:mt-2">
                   {searchQuery
@@ -180,7 +197,7 @@ function HomeContent() {
                     onClick={() => selectCategory(null)}
                     className={`
                   px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-                  ${activeCategoryId == null ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
+                  ${activeCategoryId == null ? "bg-sf-brand text-sf-brand-ink shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                 `}
                   >
                     All
@@ -191,7 +208,7 @@ function HomeContent() {
                       onClick={() => selectCategory(category.id)}
                       className={`
                     px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors whitespace-nowrap
-                    ${activeCategoryId === category.id ? "bg-stone-800 text-white shadow-sm" : "text-stone-700 hover:bg-stone-100"}
+                    ${activeCategoryId === category.id ? "bg-sf-brand text-sf-brand-ink shadow-sm" : "text-stone-700 hover:bg-stone-100"}
                   `}
                     >
                       {category.name}
@@ -203,14 +220,14 @@ function HomeContent() {
           )}
         </Paper>
 
-        {productsLoading && (
+        {showProductsLoading && (
           <Stack gap="sm">
             {[1, 2, 3, 4].map((i) => (
               <Skeleton key={i} height={88} className="rounded-xl" />
             ))}
           </Stack>
         )}
-        {!productsLoading && products.length === 0 && (
+        {!showProductsLoading && products.length === 0 && (
           <Paper p="xl" className="store-classic-paper rounded-2xl border border-stone-200/80 text-center">
             <Text className="text-stone-500">
               {searchQuery
@@ -219,9 +236,9 @@ function HomeContent() {
             </Text>
           </Paper>
         )}
-        {!productsLoading && products.length > 0 && (
+        {!showProductsLoading && products.length > 0 && (
           <Stack gap="lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+            <div className={PRODUCT_GRID_CLASS[template.productLayout]}>
               {products.map((product) => renderMenuItem(product))}
             </div>
             {totalPages > 1 && (

@@ -11,6 +11,10 @@ import { Providers } from "./providers";
 import theme from "./theme";
 import "./globals.css";
 import { ProductSearchBar } from "@/components/store/ProductSearchBar";
+import { storeFavicon } from "@/templates/branding";
+import { templateFontVariables } from "@/templates/fonts";
+import { StorefrontStyleProvider } from "@/templates/storefront-style-context";
+import { resolveStorefrontStyle, styleAttributes } from "@/templates/templates";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -40,9 +44,19 @@ type StoreProfile = {
   caption?: string;
   coverPhoto?: string;
   logo?: string;
+  favicon?: string;
   storeUrl?: string;
-  theme?: { coverImageUrl?: string };
+  theme?: { coverImageUrl?: string; faviconUrl?: string };
+  storefrontStyle?: { template?: unknown; color?: unknown };
 };
+
+/** The store this request is for (from its subdomain), read once per request: fetches are de-duplicated. */
+async function requestStoreProfile(): Promise<{ domain: string; profile: StoreProfile }> {
+  const headerList = await headers();
+  const host = headerList.get("x-forwarded-host") ?? headerList.get("host");
+  const domain = resolveStorefrontDomain(host);
+  return { domain, profile: await getStoreProfile(domain) };
+}
 
 async function getStoreProfile(domain: string): Promise<StoreProfile> {
   if (!CORE_HOST) return {};
@@ -134,6 +148,7 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   })();
   const metaImageUrl = absoluteCoverUrl ?? DEFAULT_META_IMAGE;
+  const favicon = storeFavicon(profile);
   const absolutePageUrl = (() => {
     try {
       return new URL("/", preferredBaseUrl).toString();
@@ -163,6 +178,8 @@ export async function generateMetadata(): Promise<Metadata> {
     alternates: {
       canonical: absolutePageUrl,
     },
+    // The store's own icon, else the site's (public/favicon.ico).
+    icons: { icon: favicon ?? "/favicon.ico" },
     robots: {
       index: true,
       follow: true,
@@ -199,18 +216,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The store's template and colour, on the first paint (the page follows later changes and previews).
+  const { profile } = await requestStoreProfile();
+  const look = styleAttributes(resolveStorefrontStyle(profile.storefrontStyle));
+  // What the page's first render uses; undefined when the store couldn't be read.
+  const found = Object.keys(profile).length > 0;
+  const initialStyle = found ? profile.storefrontStyle ?? {} : undefined;
   return (
-    <html lang="en" {...mantineHtmlProps}>
+    <html lang="en" {...mantineHtmlProps} className={templateFontVariables} {...look}>
       <head>
         <ColorSchemeScript />
       </head>
       <body className="antialiased bg-stone-50 text-stone-800">
         <MantineProvider theme={theme}>
+          <StorefrontStyleProvider initial={initialStyle}>
           <Notifications />
           <Suspense
             fallback={
@@ -223,6 +247,7 @@ export default function RootLayout({
             <ProductSearchBar />
           </Suspense>
           <Providers>{children}</Providers>
+          </StorefrontStyleProvider>
         </MantineProvider>
       </body>
     </html>

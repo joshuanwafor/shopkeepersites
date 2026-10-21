@@ -1,16 +1,26 @@
 @import "tailwind-preset-mantine";
 @import "./theme.css";
+@import "../templates/templates.css";
 
-/* Classic store presentation */
+/* The business's colour as Tailwind colours: bg-sf-brand, text-sf-brand-ink… */
+@theme inline {
+  --color-sf-brand: var(--sf-brand);
+  --color-sf-brand-ink: var(--sf-brand-ink);
+  --color-sf-header: var(--sf-header-bg);
+  --color-sf-header-ink: var(--sf-header-ink);
+  --color-sf-header-muted: var(--sf-header-muted);
+  --color-sf-header-border: var(--sf-header-border);
+}
+
+/* Store presentation; the template (templates/templates.css) sets the greys and fonts. */
 .store-root {
-  --store-bg: #fafaf9;
+  --store-bg: var(--color-stone-50);
   --store-paper: #ffffff;
-  --store-border: #e7e5e4;
-  --store-text: #1c1917;
-  --store-muted: #78716c;
-  --store-accent: #1e293b;
-  --store-title-font: Georgia, Cambria, "Times New Roman", Times, serif;
-  --store-body-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --store-border: var(--color-stone-200);
+  --store-text: var(--color-stone-900);
+  --store-muted: var(--color-stone-500);
+  --store-title-font: var(--sf-heading-font);
+  --store-body-font: var(--sf-ui-font);
   background-color: var(--store-bg);
   color: var(--store-text);
   font-family: var(--store-body-font);
@@ -19,8 +29,7 @@
 .store-classic-paper {
   background: var(--store-paper);
   border: 1px solid var(--store-border);
-  border-radius: 12px;
-  /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); */
+  border-radius: var(--radius-xl);
 }
 
 .store-classic-title {

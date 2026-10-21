@@ -4,6 +4,7 @@ import { AppShell, AppShellMain } from "@mantine/core";
 import { StoreHeader } from "./StoreHeader";
 import { StoreFooter } from "./StoreFooter";
 import { useStorefrontProfile } from "@/hooks/use-storefront";
+import { useApplyStorefrontStyle } from "@/templates/use-storefront-style";
 
 type StoreLayoutProps = {
   storeName: string;
@@ -11,6 +12,7 @@ type StoreLayoutProps = {
 };
 
 export function StoreLayout({ storeName, children }: StoreLayoutProps) {
+  useApplyStorefrontStyle();
   return (
     <div className="store-root min-h-screen flex flex-col bg-stone-50">
       <StoreHeader storeName={storeName} />

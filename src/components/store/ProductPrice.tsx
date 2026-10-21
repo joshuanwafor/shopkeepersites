@@ -56,17 +56,21 @@ export function shownPrice(
 export function ProductPrice({
   price,
   size = "md",
+  align = "end",
 }: {
   price: ShownPrice;
-  size?: "md" | "lg";
+  /** md on cards, emphasis where the price leads (Bold's tiles), lg on a product page. */
+  size?: "md" | "emphasis" | "lg";
+  align?: "start" | "end";
 }) {
   const large = size === "lg";
+  const sizeClass = large ? "text-3xl leading-none" : size === "emphasis" ? "text-lg leading-tight" : "text-base";
   return (
-    <span className="inline-flex flex-wrap items-baseline justify-end gap-x-2 gap-y-1">
+    <span
+      className={`inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 ${align === "end" ? "justify-end" : "justify-start"}`}
+    >
       <span
-        className={`font-bold tracking-tight ${price.was ? "text-emerald-700" : "text-stone-900"} ${
-          large ? "text-3xl leading-none" : "text-base"
-        }`}
+        className={`whitespace-nowrap font-bold tracking-tight ${price.was ? "text-emerald-700" : "text-stone-900"} ${sizeClass}`}
       >
         {price.text}
       </span>
